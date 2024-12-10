@@ -1,252 +1,197 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from 'react-query';
+import * as apiClient from '../api-client';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from "react-icons/fa";
+import { useAppContext } from '../contexts/AppContext';
 
 const CreateSeminar = () => {
-    const [createSeminar, setCreateSeminar] = useState({
-        title: '',
-        description: '',
-        date: '',
-        timeFrame: {
-            from: '',
-            to: ''
+    /* Navigate to different routes */
+    const navigate = useNavigate();
+    /* Extract showToast function from context for displaying notifications */
+    const { showToast, data } = useAppContext();
+
+    /* Initialize the React Query client to manage cache and query state */
+    const queryClient = useQueryClient();
+
+    /* Initialize the React Query client to manage cache and query state */
+    const { register, formState: { errors }, handleSubmit } = useForm();
+
+    /* Set up the mutation for sign-in API call */
+    const mutation = useMutation((formData)=>apiClient.createSeminar(formData, data.token), {
+        onSuccess: async () => {
+            /* Show success toast */
+            showToast({ message: "Seminar Created", type: "SUCCESS" })
+            await queryClient.invalidateQueries("validateToken", { exact: true });
+            /* Navigate to dashboard page */
+            navigate("/dashboard");
         },
-        venue: '',
-        speaker: {
-            name: '',
-            image: '',
-            linkedin: ''
-        },
-        fee: 0,
-        slotsAvailable: 0
-    });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-    
-        if (name.includes('.')) {
-            const [parent, child] = name.split('.');
-            setCreateSeminar((prev) => ({
-                ...prev,
-                [parent]: {
-                    ...prev[parent],
-                    [child]: value // Update the nested field
-                }
-            }));
-        } else {
-            setCreateSeminar((prev) => ({
-                ...prev,
-                [name]: value // Update top-level fields
-            }));
+        onError: (error) => {
+            /* Show error toast  */
+            showToast({ message: error.message, type: "ERROR"});
         }
-    };
+    })
 
-    const handleCreateSeminar = async (e) => {
-        e.preventDefault();
+    /* Handle form submission */
+    const onSubmit = handleSubmit((data)=>{
+        const formData = new FormData();
 
-        const { title, description, date, timeFrame, venue, speaker, fee, slotsAvailable } = createSeminar;
+        /* Append text fields */
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+        formData.append("date", data.date);
+        formData.append("timeFrame.from", data.timeFrame.from);
+        formData.append("timeFrame.to", data.timeFrame.to);
+        formData.append("venue", data.venue);
+        formData.append("speaker.name", data.speaker.name);
+        formData.append("speaker.linkedin", data.speaker.linkedin);
+        formData.append("fee", data.fee);
+        formData.append("slotsAvailable", data.slotsAvailable);
 
-        try {
-            const response = await fetch(`${import.meta.env.VITE_APP_URI}/seminars`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                },
-                body: JSON.stringify({ title, description, date, timeFrame, venue, speaker, fee, slotsAvailable }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Creating seminar failed. Please try again.');
-            }
-
-            const data = await response.json();
-
-            if (response.status === 201) {
-                setCreateSeminar({
-                    title: '',
-                    description: '',
-                    date: '',
-                    timeFrame: {
-                        from: '',
-                        to: ''
-                    },
-                    venue: '',
-                    speaker: {
-                        name: '',
-                        image: '',
-                        linkedin: ''
-                    },
-                    fee: 0,
-                    slotsAvailable: 0
-                });
-                
-                alert(data.message);
-            } else {
-                console.error('Creating seminar failed:', data.error);
-            }
-        } catch (error) {
-            console.error('Create seminar error:', error);
-            // setErrorMessage(error.message);
+        /* Handle file inputs (for speaker image) */
+        if (data.speaker.image && data.speaker.image[0]) {
+            formData.append("speaker.image", data.speaker.image[0]);
         }
-    };
+
+        mutation.mutate(formData);
+    })
 
     return (
-        <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Create New Seminar</h2>
-            <form onSubmit={handleCreateSeminar} className="flex flex-col space-y-6 w-full max-w-xl mx-auto">
-                {/* Title Field */}
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium mb-2">Title</label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={createSeminar.title}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-    
-                {/* Description Field */}
-                <div>
-                    <label htmlFor="description" className="block text-sm font-medium mb-2">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={createSeminar.description}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    ></textarea>
-                </div>
-    
-                {/* Date Field */}
-                <div>
-                    <label htmlFor="date" className="block text-sm font-medium mb-2">Date</label>
-                    <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        value={createSeminar.date}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-    
-                {/* TimeFrame Fields */}
-                <div className="flex space-x-4">
-                    <div className="w-1/2">
-                        <label htmlFor="from" className="block text-sm font-medium mb-2">From</label>
-                        <input
-                            type="time"
-                            id="from"
-                            name="timeFrame.from"
-                            value={createSeminar.timeFrame.from}
-                            onChange={handleInputChange}
-                            className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div className="w-1/2">
-                        <label htmlFor="to" className="block text-sm font-medium mb-2">To</label>
-                        <input
-                            type="time"
-                            id="to"
-                            name="timeFrame.to"
-                            value={createSeminar.timeFrame.to}
-                            onChange={handleInputChange}
-                            className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                </div>
-    
-                {/* Venue Field */}
-                <div>
-                    <label htmlFor="venue" className="block text-sm font-medium mb-2">Venue</label>
-                    <input
-                        type="text"
-                        id="venue"
-                        name="venue"
-                        value={createSeminar.venue}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-    
-                {/* Speaker Fields */}
-                <div>
-                    <label htmlFor="speakerName" className="block text-sm font-medium mb-2">Speaker Name</label>
-                    <input
-                        type="text"
-                        id="speakerName"
-                        name="speaker.name"
-                        value={createSeminar.speaker.name}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-    
-                <div>
-                    <label htmlFor="speakerImage" className="block text-sm font-medium mb-2">Speaker Image URL</label>
-                    <input
-                        type="url"
-                        id="speakerImage"
-                        name="speaker.image"
-                        value={createSeminar.speaker.image}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-    
-                <div>
-                    <label htmlFor="speakerLinkedIn" className="block text-sm font-medium mb-2">Speaker LinkedIn</label>
-                    <input
-                        type="url"
-                        id="speakerLinkedIn"
-                        name="speaker.linkedin"
-                        value={createSeminar.speaker.linkedin}
-                        onChange={handleInputChange}
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-    
-                {/* Fee Field */}
-                <div>
-                    <label htmlFor="fee" className="block text-sm font-medium mb-2">Fee</label>
-                    <input
-                        type="number"
-                        id="fee"
-                        name="fee"
-                        value={createSeminar.fee}
-                        onChange={handleInputChange}
-                        min="0"
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-    
-                {/* Slots Available Field */}
-                <div>
-                    <label htmlFor="slotsAvailable" className="block text-sm font-medium mb-2">Slots Available</label>
-                    <input
-                        type="number"
-                        id="slotsAvailable"
-                        name="slotsAvailable"
-                        value={createSeminar.slotsAvailable}
-                        onChange={handleInputChange}
-                        min="0"
-                        className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
-                </div>
-    
-                <button type="submit" className="bg-blue-600 text-white font-medium py-2 px-4 rounded hover:bg-blue-700 transition mt-4">
+        <div className="flex flex-col items-center mt-12">
+            <h1 className="text-2xl font-bold">Create Seminar</h1>
+            <form encType="multipart/form-data" className="flex flex-col max-w-sm w-full" onSubmit={onSubmit}>
+                <label htmlFor="title" className="mb-2 font-medium">Title:</label>
+                <input
+                    type="text"
+                    id="title"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("title", { required: "*This field is required" })}
+                />
+                {errors.title && (
+                    <span className="text-red-500">{errors.title.message}</span>
+                )}
+
+                <label htmlFor="description" className="mb-2 font-medium">Description:</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    {...register("description", { required: "*This field is required" })}
+                />
+                {errors.description && (
+                    <span className="text-red-500">{errors.description.message}</span>
+                )}
+                
+                <label htmlFor="date" className="mb-2 font-medium">Date:</label>
+                <input
+                    type="date"
+                    id="date"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("date", { required: "*This field is required" })}
+                />
+                {errors.date && (
+                    <span className="text-red-500">{errors.date.message}</span>
+                )}
+
+                <label htmlFor="from" className="mb-2 font-medium">From:</label>
+                <input
+                    type="time"
+                    id="from"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("timeFrame.from", { required: "*This field is required" })}
+                />
+                {errors.timeFrame?.from && (
+                    <span className="text-red-500">{errors.timeFrame?.from.message}</span>
+                )}
+
+                <label htmlFor="to" className="mb-2 font-medium">To:</label>
+                <input
+                    type="time"
+                    id="to"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("timeFrame.to", { required: "*This field is required" })}
+                />
+                {errors.timeFrame?.timeFrame.to && (
+                    <span className="text-red-500">{errors.timeFrame?.to.message}</span>
+                )}
+
+                <label htmlFor="venue" className="mb-2 font-medium">Venue:</label>
+                <input
+                    type="text"
+                    id="venue"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("venue", { required: "*This field is required" })}
+                />
+                {errors.venue && (
+                    <span className="text-red-500">{errors.venue.message}</span>
+                )}
+
+                <label htmlFor="speaker_name" className="mb-2 font-medium">Speaker Name:</label>
+                <input
+                    type="text"
+                    id="speaker_name"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("speaker.name", { required: "*This field is required" })}
+                />
+                {errors.speaker?.name && (
+                    <span className="text-red-500">{errors.speaker?.name.message}</span>
+                )}
+
+                <label htmlFor="speaker_image" className="mb-2 font-medium">Speaker Image:</label>
+                <input
+                    type="file"
+                    id="speaker_image"
+                    accept="image/*"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("speaker.image")}
+                />
+                {errors.speaker?.image && (
+                    <span className="text-red-500">{errors.speaker?.image.message}</span>
+                )}
+
+                <label htmlFor="speaker_linkedin" className="mb-2 font-medium">Speaker LinkedIn:</label>
+                <input
+                    type="url"
+                    id="speaker_linkedin"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    {...register("speaker.linkedin")}
+                />
+                {errors.speaker?.linkedin && (
+                    <span className="text-red-500">{errors.speaker?.linkedin.message}</span>
+                )}
+
+                <label htmlFor="fee" className="mb-2 font-medium">Fee:</label>
+                <input
+                    type="number"
+                    id="fee"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    min="0"
+                    {...register("fee")}
+                />
+                {errors.fee && (
+                    <span className="text-red-500">{errors.fee.message}</span>
+                )}
+
+                <label htmlFor="slots_available" className="mb-2 font-medium">Slots Available:</label>
+                <input
+                    type="number"
+                    id="slots_available"
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    min="0"
+                    {...register("slotsAvailable")}
+                />
+                {errors.slotsAvailable && (
+                    <span className="text-red-500">{errors.slotsAvailable.message}</span>
+                )}
+
+                <button type="submit" className="py-2 px-4 mt-4 rounded bg-green-500 text-white hover:bg-green-600">
                     Create Seminar
                 </button>
             </form>
+            <button className="flex items-center px-4 py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
+                <FaArrowLeft className="mr-2" /> Go Back
+            </button>
         </div>
     );
 }

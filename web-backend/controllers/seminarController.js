@@ -1,4 +1,5 @@
 import Seminar from '../models/Seminar.js';
+import cloudinary from 'cloudinary';
 
 /**
 * DOCU: This function is used to fetch all seminars. <br>
@@ -22,7 +23,7 @@ const getSeminars = async (req, res) => {
 /**
 * DOCU: This function is used to create a seminar. <br>
 * This is being called when admin wants to create a seminar. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 10, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -30,8 +31,25 @@ const getSeminars = async (req, res) => {
 */
 const createSeminar = async (req, res) => {
     try {
+        /* Get the uploaded image file from the request */
+        const imageFile = req.file;
+
         /* Create a new seminar using the data from the request body */
         const seminar = await Seminar.create(req.body);
+
+        /* Convert the image file buffer into a base64 encoded string */
+        const convert_to_base64 = Buffer.from(imageFile.buffer).toString("base64");
+        
+        /* Construct the data URI for the image */
+        let dataURI = `data:${imageFile.mimetype};base64,${convert_to_base64}`;
+
+        /* Upload the image to Cloudinary and get the image URL */
+        const uploadResult = await cloudinary.v2.uploader.upload(dataURI);
+
+        /* Assign and save to seminar the uploaded image URL to the speaker's image field */
+        seminar.speaker.image = uploadResult.url; 
+        await seminar.save();
+
         res.status(201).json({ message: 'Seminar created successfully', seminar });
     } catch (error) {
         res.status(500).json({ message: 'Error creating seminar', error });

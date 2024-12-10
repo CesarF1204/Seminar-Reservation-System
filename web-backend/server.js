@@ -2,17 +2,24 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import seminarRoutes from './routes/seminarRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import cookieParser from 'cookie-parser';
+import { v2 as cloudinary } from 'cloudinary'; 
 
 /* Load environment variables from .env file */
 dotenv.config();
 /* Connect to the database */
 connectDB();
+
+/* Cloudinary configuration */
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const app = express();
 

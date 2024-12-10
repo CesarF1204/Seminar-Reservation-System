@@ -135,4 +135,36 @@ const fetchSeminarById = async (id) => {
     return data;
 };
 
-export {register, signIn, signOut, validateToken, fetchAllSeminar, fetchSeminarById};
+/*
+    Register function: 
+    Sends a POST request to the /seminars endpoint with form data to create a new seminar.
+*/
+const createSeminar = async (formData, token) => {
+    /* Sending a POST request to create seminar API */
+    const response = await fetch(`${API_BASE_URL}/api/seminars`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
+export {
+    register,
+    signIn,
+    signOut,
+    validateToken,
+    fetchAllSeminar,
+    fetchSeminarById,
+    createSeminar
+};

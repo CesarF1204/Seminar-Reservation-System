@@ -37,7 +37,7 @@ const register = async (req, res) => {
 /**
 * DOCU: This function is used to handle the user's login. <br>
 * This is being called when user is logging in. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 10, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -81,8 +81,8 @@ const login = async (req, res) => {
             maxAge: 86400000, /* Cookie expires in 1 day */
         });
 
-        /* Send a success response with the user ID */
-        res.status(200).json({ userId: user._id, firstName: user.firstName, role: user.role });
+        /* Send a success response with the token and user's details */
+        res.status(200).json({token, user: { id: user._id, name: `${user.firstName} ${user.lastName}`, email: user.email, role: user.role } });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Something went wrong" });

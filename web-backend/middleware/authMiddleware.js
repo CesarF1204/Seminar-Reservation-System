@@ -4,7 +4,7 @@ import User from '../models/User.js';
 /**
 * DOCU: This function is used as a middleware to authenticate users based on a token provided in the Authorization header. <br>
 * This is being called when user logged-in and token will be created. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 10, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -22,8 +22,8 @@ const authMiddleware = async (req, res, next) => {
         /* Verify the token using the secret key */
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        /* Fetch user details by ID from the decoded token and exclude the password field */
-        req.user = await User.findById(decoded.id).select('-password');
+        /* Fetch user details by userId from the decoded token and exclude the password field */
+        req.user = await User.findById(decoded.userId).select('-password');
         next();
     } catch (error) {
         res.status(401).json({ message: 'Token is not valid' });
@@ -33,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
 /**
 * DOCU: This function is used as a middleware to verify tokens sent as cookies. <br>
 * This is being called when user logged-in and token will be created. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 10, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -57,6 +57,7 @@ const verifyToken = (req, res, next) => {
         req.userId = decoded.userId;
         req.firstName = decoded.firstName;
         req.role = decoded.role;
+        req.token = token;
         
         next();
     } catch (error) {

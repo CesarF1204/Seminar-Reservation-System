@@ -34,7 +34,6 @@ const Login = () => {
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"});
-            navigate("/sign_in");
         }
     })
 

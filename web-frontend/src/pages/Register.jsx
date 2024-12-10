@@ -124,7 +124,7 @@ const Register = () => {
             <p className="text-sm">
                 Already have an account?{' '}
                 <span 
-                    onClick={() => navigate('/')} 
+                    onClick={() => navigate('/sign_in')} 
                     className="text-blue-600 cursor-pointer underline hover:text-blue-700"
                 >
                     Sign In
