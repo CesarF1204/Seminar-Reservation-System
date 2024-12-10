@@ -126,7 +126,7 @@ const EditSeminar = () => {
                     defaultValue={seminar.timeFrame.to}
                     {...register("timeFrame.to", { required: "*This field is required" })}
                 />
-                {errors.timeFrame?.timeFrame.to && (
+                {errors.timeFrame?.to && (
                     <span className="text-red-500">{errors.timeFrame?.to.message}</span>
                 )}
 
@@ -184,9 +184,8 @@ const EditSeminar = () => {
                     type="number"
                     id="fee"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
-                    min="0"
                     defaultValue={seminar.fee}
-                    {...register("fee")}
+                    {...register("fee", { required: "*This field is required", validate: value => value >= 0 || "*Fee must be greater than or equal to 0" })}
                 />
                 {errors.fee && (
                     <span className="text-red-500">{errors.fee.message}</span>
@@ -197,9 +196,8 @@ const EditSeminar = () => {
                     type="number"
                     id="slots_available"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
-                    min="0"
                     defaultValue={seminar.slotsAvailable}
-                    {...register("slotsAvailable")}
+                    {...register("slotsAvailable", { required: "*This field is required", validate: value => value >= 0 || "*Slots Available must be greater than or equal to 0" })}
                 />
                 {errors.slotsAvailable && (
                     <span className="text-red-500">{errors.slotsAvailable.message}</span>
