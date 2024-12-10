@@ -5,6 +5,7 @@ import * as apiClient from '../api-client';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import { useAppContext } from '../contexts/AppContext';
+import { convertToAmPm } from '../helpers/globalHelpers';
 
 const CreateSeminar = () => {
     /* Navigate to different routes */
@@ -41,8 +42,8 @@ const CreateSeminar = () => {
         formData.append("title", data.title);
         formData.append("description", data.description);
         formData.append("date", data.date);
-        formData.append("timeFrame.from", data.timeFrame.from);
-        formData.append("timeFrame.to", data.timeFrame.to);
+        formData.append("timeFrame.from", convertToAmPm(data.timeFrame.from));
+        formData.append("timeFrame.to", convertToAmPm(data.timeFrame.to));
         formData.append("venue", data.venue);
         formData.append("speaker.name", data.speaker.name);
         formData.append("speaker.image", data.speaker.image[0] || "");
