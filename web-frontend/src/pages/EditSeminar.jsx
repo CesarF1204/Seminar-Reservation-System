@@ -1,12 +1,12 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../api-client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import { useAppContext } from '../contexts/AppContext';
 
-const CreateSeminar = () => {
+const EditSeminar = () => {
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -18,11 +18,24 @@ const CreateSeminar = () => {
     /* Initialize the React Query client to manage cache and query state */
     const { register, formState: { errors }, handleSubmit } = useForm();
 
+    /* Get seminar id in params */
+    const { id: seminar_id } = useParams();
+
+    const { data: seminar = [] } = useQuery(
+        "fetchSeminarById",
+        () => apiClient.fetchSeminarById(seminar_id),
+        {
+            suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
+            refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */
+            retry: 1, /* Optional: Number of retry attempts */
+        }
+    );
+
     /* Set up the mutation for sign-in API call */
-    const mutation = useMutation((formData)=>apiClient.createSeminar(formData, data.token), {
+    const mutation = useMutation((formData)=>apiClient.updateSeminar(seminar_id, formData, data.token), {
         onSuccess: async () => {
             /* Show success toast */
-            showToast({ message: "Seminar Created", type: "SUCCESS" })
+            showToast({ message: "Seminar Updated", type: "SUCCESS" })
             await queryClient.invalidateQueries("validateToken", { exact: true });
             /* Navigate to dashboard page */
             navigate("/dashboard");
@@ -45,7 +58,7 @@ const CreateSeminar = () => {
         formData.append("timeFrame.to", data.timeFrame.to);
         formData.append("venue", data.venue);
         formData.append("speaker.name", data.speaker.name);
-        formData.append("speaker.image", data.speaker.image[0] || "");
+        formData.append("speaker.image", data.speaker.image[0] || seminar.speaker.image);
         formData.append("speaker.linkedin", data.speaker.linkedin || "");
         formData.append("fee", data.fee);
         formData.append("slotsAvailable", data.slotsAvailable);
@@ -55,13 +68,14 @@ const CreateSeminar = () => {
 
     return (
         <div className="flex flex-col items-center mt-12">
-            <h1 className="text-2xl font-bold">Create Seminar</h1>
+            <h1 className="text-2xl font-bold">Edit Seminar</h1>
             <form encType="multipart/form-data" className="flex flex-col max-w-sm w-full" onSubmit={onSubmit}>
                 <label htmlFor="title" className="mb-2 font-medium">Title:</label>
                 <input
                     type="text"
                     id="title"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.title}
                     {...register("title", { required: "*This field is required" })}
                 />
                 {errors.title && (
@@ -73,6 +87,7 @@ const CreateSeminar = () => {
                     id="description"
                     name="description"
                     className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    defaultValue={seminar.description}
                     {...register("description", { required: "*This field is required" })}
                 />
                 {errors.description && (
@@ -84,6 +99,7 @@ const CreateSeminar = () => {
                     type="date"
                     id="date"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.date ? seminar.date.split("T")[0] : ""}
                     {...register("date", { required: "*This field is required" })}
                 />
                 {errors.date && (
@@ -95,6 +111,7 @@ const CreateSeminar = () => {
                     type="time"
                     id="from"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.timeFrame.from}
                     {...register("timeFrame.from", { required: "*This field is required" })}
                 />
                 {errors.timeFrame?.from && (
@@ -106,6 +123,7 @@ const CreateSeminar = () => {
                     type="time"
                     id="to"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.timeFrame.to}
                     {...register("timeFrame.to", { required: "*This field is required" })}
                 />
                 {errors.timeFrame?.timeFrame.to && (
@@ -117,6 +135,7 @@ const CreateSeminar = () => {
                     type="text"
                     id="venue"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.venue}
                     {...register("venue", { required: "*This field is required" })}
                 />
                 {errors.venue && (
@@ -128,6 +147,7 @@ const CreateSeminar = () => {
                     type="text"
                     id="speaker_name"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.speaker.name}
                     {...register("speaker.name", { required: "*This field is required" })}
                 />
                 {errors.speaker?.name && (
@@ -140,6 +160,7 @@ const CreateSeminar = () => {
                     id="speaker_image"
                     accept="image/*"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue=""
                     {...register("speaker.image")}
                 />
                 {errors.speaker?.image && (
@@ -151,6 +172,7 @@ const CreateSeminar = () => {
                     type="url"
                     id="speaker_linkedin"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    defaultValue={seminar.speaker.linkedin}
                     {...register("speaker.linkedin")}
                 />
                 {errors.speaker?.linkedin && (
@@ -163,6 +185,7 @@ const CreateSeminar = () => {
                     id="fee"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
                     min="0"
+                    defaultValue={seminar.fee}
                     {...register("fee")}
                 />
                 {errors.fee && (
@@ -175,6 +198,7 @@ const CreateSeminar = () => {
                     id="slots_available"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
                     min="0"
+                    defaultValue={seminar.slotsAvailable}
                     {...register("slotsAvailable")}
                 />
                 {errors.slotsAvailable && (
@@ -182,7 +206,7 @@ const CreateSeminar = () => {
                 )}
 
                 <button type="submit" className="py-2 px-4 mt-4 rounded bg-green-500 text-white hover:bg-green-600">
-                    Create Seminar
+                    Update Seminar
                 </button>
             </form>
             <button className="flex items-center px-4 py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
@@ -192,4 +216,4 @@ const CreateSeminar = () => {
     );
 }
 
-export default CreateSeminar
+export default EditSeminar

@@ -31,23 +31,26 @@ const getSeminars = async (req, res) => {
 */
 const createSeminar = async (req, res) => {
     try {
-        /* Get the uploaded image file from the request */
-        const imageFile = req.file;
-
         /* Create a new seminar using the data from the request body */
         const seminar = await Seminar.create(req.body);
-
-        /* Convert the image file buffer into a base64 encoded string */
-        const convert_to_base64 = Buffer.from(imageFile.buffer).toString("base64");
         
-        /* Construct the data URI for the image */
-        let dataURI = `data:${imageFile.mimetype};base64,${convert_to_base64}`;
+        /* Get the uploaded image file from the request */
+        const image_file = req?.file;
 
-        /* Upload the image to Cloudinary and get the image URL */
-        const uploadResult = await cloudinary.v2.uploader.upload(dataURI);
+        if(image_file){
+            /* Convert the image file buffer into a base64 encoded string */
+            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
+            
+            /* Construct the data URI for the image */
+            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
 
-        /* Assign and save to seminar the uploaded image URL to the speaker's image field */
-        seminar.speaker.image = uploadResult.url; 
+            /* Upload the image to Cloudinary and get the image URL */
+            const upload_result = await cloudinary.v2.uploader.upload(dataURI);
+
+            /* Assign and save to seminar the uploaded image URL to the speaker's image field */
+            seminar.speaker.image = upload_result.url; 
+        }
+        
         await seminar.save();
 
         res.status(201).json({ message: 'Seminar created successfully', seminar });
@@ -59,7 +62,7 @@ const createSeminar = async (req, res) => {
 /**
 * DOCU: This function is used to update a seminar. <br>
 * This is being called when admin wants to update a seminar. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 10, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -67,9 +70,30 @@ const createSeminar = async (req, res) => {
 */
 const updateSeminar = async (req, res) => {
     try {
+        /* Get the updated seminar details from the request */
+        const seminar_to_update = req.body;
+
+        /* Get the updated image file from the request */
+        const image_file = req.file;
+
+        if(image_file){
+            /* Convert the image file buffer into a base64 encoded string */
+            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
+            
+            /* Construct the data URI for the image */
+            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
+
+            /* Upload the image to Cloudinary and get the image URL */
+            const upload_result = await cloudinary.v2.uploader.upload(dataURI);
+
+            /* Assign and save to seminar_to_update the updated image URL to the speaker's image field */
+            seminar_to_update['speaker.image'] = upload_result.url;
+        }
+
         /* Update the seminar by ID with the new data from the request body */
-        const updatedSeminar = await Seminar.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.status(200).json({ message: 'Seminar updated successfully', seminar: updatedSeminar });
+        const updated_seminar = await Seminar.findByIdAndUpdate(req.params.id, seminar_to_update, { new: true });
+        
+        res.status(200).json({ message: 'Seminar updated successfully', seminar: updated_seminar });
     } catch (error) {
         res.status(500).json({ message: 'Error updating seminar', error });
     }

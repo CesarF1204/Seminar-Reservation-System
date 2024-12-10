@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext'; 
@@ -9,7 +9,8 @@ const SeminarDetails = () => {
     /* Get the seminar ID from the URL parameters */
     const { id } = useParams();
     /* Extract showToast function from context for displaying notifications */
-    const {showToast} = useAppContext();
+    const {showToast, data} = useAppContext();
+
     /* Navigate to different routes */
     const navigate = useNavigate();
 
@@ -23,13 +24,12 @@ const SeminarDetails = () => {
             retry: 1, /* Optional: Number of retry attempts */
         }
     );
-
     /* Error state: show error toast if there is an issue loading data */
     if (isError) {
         showToast({ message: "Failed to load seminar details. Please try again later.", type: "ERROR" })
     }
 
-    const { title, description, date, timeFrame, venue, speaker, fee, slotsAvailable } = seminar;
+    const {title, description, date, timeFrame, venue, speaker, fee, slotsAvailable } = seminar;
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -67,6 +67,11 @@ const SeminarDetails = () => {
                 <p className="text-md text-gray-700"><strong>Fee:</strong> ₱{fee}</p>
                 <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>
             </div>
+            { data.role === 'admin' &&
+                <Link to={`/seminar/${seminar._id}/edit`} className="text-blue-400 hover:text-blue-600">
+                    Edit
+                </Link>
+            }
             <button  className="go-back-btn mt-6 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
                 <FaArrowLeft className="left-arrow mr-2" /> Go Back
             </button>

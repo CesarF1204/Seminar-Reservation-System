@@ -23,7 +23,7 @@ router.get('/:id', getSeminarDetails);
 router.post('/', authMiddleware, adminMiddleware, upload.single('speaker.image'), createSeminar);
 
 /* Route to update seminar details by ID. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
-router.put('/:id', authMiddleware, adminMiddleware, updateSeminar);
+router.put('/:id', authMiddleware, adminMiddleware, upload.single('speaker.image'), updateSeminar);
 
 /* Route to delete a seminar by ID. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
 router.delete('/:id', authMiddleware, adminMiddleware, deleteSeminar);

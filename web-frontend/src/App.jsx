@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateSeminar from './pages/CreateSeminar';
 import SeminarDetails from './components/SeminarDetails';
+import EditSeminar from './pages/EditSeminar';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -20,14 +21,15 @@ function App() {
         {/* Redirect to /dashboard if logged in, otherwise redirect to registration page */}
         <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
 
-        {/* Protected route: only accessible if logged in */}
-        {isLoggedIn && (
+        {/* Protected routes */}
+        <Route path="/dashboard" element={isLoggedIn ? <Dashboard user={data} /> : <Navigate to="/sign_in" />} />
+        <Route path="/seminar/:id" element={isLoggedIn ? <SeminarDetails /> : <Navigate to="/sign_in" />} />
+
+        {/* Protected route: only accessible if logged in and admin */}
+        {isLoggedIn && data.role === 'admin' && (
           <>
-            <Route path="/dashboard" element={<Dashboard user={data} />} />
-            <Route path="/seminar/:id" element={<SeminarDetails />} />
-            {data.role === 'admin' && 
-              <Route path="/create_seminar" element={<CreateSeminar />} />
-            }
+            <Route path="/create_seminar" element={<CreateSeminar />} />
+            <Route path="/seminar/:id/edit" element={<EditSeminar />} />
           </>
         )}
 
