@@ -183,6 +183,29 @@ const updateSeminar = async (seminar_id, formData, token) => {
     }
 };
 
+/*
+    deleteSeminar function: 
+    Sends a DELETE request to the /seminars/{id} endpoint to delete a seminar.
+*/
+const deleteSeminar = async (seminar_id, token) => {
+    /* Sending a POST request to update seminar API */
+    const response = await fetch(`${API_BASE_URL}/api/seminars/${seminar_id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        }
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -191,5 +214,6 @@ export {
     fetchAllSeminar,
     fetchSeminarById,
     createSeminar,
-    updateSeminar
+    updateSeminar,
+    deleteSeminar,
 };

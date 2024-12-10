@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext'; 
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
+import DeleteSeminarModal from './DeleteSeminarModal';
 
 const SeminarDetails = () => {
     /* Get the seminar ID from the URL parameters */
@@ -13,6 +14,9 @@ const SeminarDetails = () => {
 
     /* Navigate to different routes */
     const navigate = useNavigate();
+
+    /* State for showing delete modal */
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     /* Fetch seminar details using react-query's useQuery hook */
     const { data: seminar = [], isError } = useQuery(
@@ -68,13 +72,23 @@ const SeminarDetails = () => {
                 <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>
             </div>
             { data.role === 'admin' &&
-                <Link to={`/seminar/${seminar._id}/edit`} className="text-blue-400 hover:text-blue-600">
-                    Edit
-                </Link>
+                <div className="flex space-x-4 items-center">
+                    <Link to={`/seminar/${seminar._id}/edit`} className="text-blue-400 hover:text-blue-600 inline-flex items-center">
+                        Edit <FaEdit className="ml-1" />
+                    </Link>
+                    <Link className="text-red-400 hover:text-red-600 inline-flex items-center" onClick={() => setShowDeleteModal(true)}>
+                        Delete <FaTrashAlt className="ml-1" />
+                    </Link>
+                </div>
             }
-            <button  className="go-back-btn mt-6 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
+            <button className="go-back-btn mt-6 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
                 <FaArrowLeft className="left-arrow mr-2" /> Go Back
             </button>
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <DeleteSeminarModal setShowDeleteModal={setShowDeleteModal}/>
+            )}
         </div>
     );
 };
