@@ -173,10 +173,30 @@ const updateRoleOrRestriction = async (req, res) => {
     }
 };
 
+/**
+* DOCU: This function is used to delete an account. <br>
+* This is being called when admin wants to delete an account. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const deleteAccount = async (req, res) => {
+    try {
+        /* Delete the account by ID */
+        await User.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting account', error });
+    }
+};
+
 export { 
     getProfile, 
     updateProfile, 
     updateProfilePicture, 
     fetchUsers,
     updateRoleOrRestriction,
+    deleteAccount,
 };

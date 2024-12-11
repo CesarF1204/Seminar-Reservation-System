@@ -7,6 +7,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 import UpdateUserRole from '../../components/User/UpdateUserRole';
 import AccountDisable from '../../components/User/AccountDisable';
+import UserAction from '../../components/User/UserAction';
 
 const ViewUsers = () => {
     /* Navigate to different routes */
@@ -15,7 +16,7 @@ const ViewUsers = () => {
     const {showToast, data} = useAppContext();
 
     /* Fetch users data using react-query's useQuery hook */
-    const { data: users = [], isError, error } = useQuery(
+    const { data: users = [], isError, refetch } = useQuery(
         "fetchUsers",
         ()=>apiClient.fetchUsers(data.token),
         {
@@ -42,6 +43,7 @@ const ViewUsers = () => {
                                 <th className="px-4 py-2">Email Address</th>
                                 <th className="px-4 py-2">Role</th>
                                 <th className="px-4 py-2">Restriction</th>
+                                <th className="px-4 py-2">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,6 +57,9 @@ const ViewUsers = () => {
                                     </td>
                                     <td className="px-4 py-2">
                                         <AccountDisable user={user} />
+                                    </td>
+                                    <td>
+                                        <UserAction user={user} refetch={refetch} />
                                     </td>
                                 </tr>
                             ))}
