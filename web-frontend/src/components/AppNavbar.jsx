@@ -16,9 +16,11 @@ const AppNavbar = ({ user }) => {
                             <Nav.Link as={Link} to="/create_seminar">Create Seminar</Nav.Link>
                         }
                     </Nav>
+                    {/* Logout Button */}
+                    <Nav.Link as={Link} to="#" className="logout-link">
+                        <LogOutButton className="btn-sm" />
+                    </Nav.Link>
                 </Navbar.Collapse>
-                {/* Logout Button */}
-                <LogOutButton />
             </Container>
         </Navbar>
     )

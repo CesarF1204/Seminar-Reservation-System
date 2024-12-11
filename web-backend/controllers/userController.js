@@ -1,4 +1,6 @@
 import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import { validationResult } from "express-validator";
 import cloudinary from 'cloudinary';
 
 /**
@@ -27,7 +29,7 @@ const getProfile = async (req, res) => {
 /**
 * DOCU: This function is used to update profile of a user. <br>
 * This is being called when admin wants to update the details for an specific user. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 11, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -35,19 +37,36 @@ const getProfile = async (req, res) => {
 */
 const updateProfile = async (req, res) => {
     try {
-        console.log('req.user.id :>> ', req.user.id);
-        console.log('req.user.userId :>> ', req.user.userId);
-        console.log('req.body :>> ', req.body);
-        /* Extract firstName and lastName from the request body */
-        const { firstName, lastName, email } = req.body;
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
+        /* Extract the needed data from the request body */
+        const { firstName, lastName, email, password } = req.body;
+
+        let updatedData = {};
+
+        /* Update fields only if new values are provided */
+        if (firstName) updatedData.firstName = firstName;
+        if (lastName) updatedData.lastName = lastName;
+        if (email) updatedData.email = email;
+
+        /* Check if a password is provided before proceeding with hashing */
+        if(password){
+            /* Hash the new password before saving */
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedData.password = hashedPassword;
+        }
 
         /* Update the user's profile and return the updated document */
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id, /* ID of the user to update */
-            { firstName, lastName, email }, /* Data to update */
+            updatedData, /* Data to update */
             { new: true, runValidators: true } /* Options: return updated document and run validators */
         );
-// console.log('updatedUser :>> ', updatedUser);
+
         res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
     } catch (error) {
         res.status(500).json({ message: 'Error updating profile', error });
