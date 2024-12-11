@@ -135,15 +135,15 @@ const updateProfilePicture = async (req, res) => {
 };
 
 /**
-* DOCU: This function is used to update role of a registered user. <br>
-* This is being called when admin wants to update the role for an specific user. <br>
-* Last Updated Date: December 11, 2024 <br>
+* DOCU: This function is used to update role or restriction of a registered user. <br>
+* This is being called when admin wants to update the role or restriction of an specific user. <br>
+* Last Updated Date: December 12, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
 * @author Cesar
 */
-const updateUserRole = async (req, res) => {
+const updateRoleOrRestriction = async (req, res) => {
     try {
         /* Handle validation errors */
         const errors = validationResult(req);
@@ -152,19 +152,31 @@ const updateUserRole = async (req, res) => {
         }
 
         /* Extract the needed data from the request body */
-        const { user_id, role } = req.body;
+        const { user_id, role, isDisabled } = req.body;
+
+        let updatedData = {};
+
+        /* Update fields only if new values are provided */
+        if (role) updatedData.role = role;
+        if (isDisabled) updatedData.isDisabled = isDisabled;
 
         /* Update the user's role and return the updated document */
-        const updatedRole = await User.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             user_id, /* ID of the user to update */
-            { role }, /* Data to update */
+            updatedData, /* Data to update */
             { new: true, runValidators: true } /* Options: return updated document and run validators */
         );
 
-        res.status(200).json({ message: 'User Role Updated Successfully', user: updatedRole });
+        res.status(200).json({ message: 'User Updated Successfully', user: updatedUser });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating user role', error });
+        res.status(500).json({ message: 'Error updating user', error });
     }
 };
 
-export { getProfile, updateProfile, updateProfilePicture, fetchUsers, updateUserRole };
+export { 
+    getProfile, 
+    updateProfile, 
+    updateProfilePicture, 
+    fetchUsers,
+    updateRoleOrRestriction,
+};

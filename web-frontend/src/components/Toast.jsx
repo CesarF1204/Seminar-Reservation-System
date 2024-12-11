@@ -4,7 +4,7 @@ const Toast = ({ message, type, onClose }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
         onClose(); /* Automatically close the toast after 5 seconds */
-        }, 1500);
+        }, 3000);
 
         return () => clearTimeout(timer); /* Clean up timer on component unmount */
     }, [onClose]);

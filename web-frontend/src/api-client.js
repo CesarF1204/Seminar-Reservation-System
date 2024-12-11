@@ -309,10 +309,10 @@ const fetchUsers = async (token) => {
 };
 
 /*
-    updateUserRole function: 
-    Sends a PUT request to the /users/:id endpoint with form data to update the user's role.
+    updateRoleOrRestriction function: 
+    Sends a PUT request to the /users/:id endpoint with form data to update the user's role or restriction.
 */
-const updateUserRole = async (user_id, formData, token) => {
+const updateRoleOrRestriction = async (user_id, formData, token) => {
     /* Sending a PUT request to users API */
     const response = await fetch(`${API_BASE_URL}/api/users/${user_id}`, {
         method: "PUT",
@@ -347,5 +347,5 @@ export {
     updateProfilePicture,
     updateProfile,
     fetchUsers,
-    updateUserRole,
+    updateRoleOrRestriction,
 };

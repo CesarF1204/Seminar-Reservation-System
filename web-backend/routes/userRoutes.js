@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProfile, updateProfile, updateProfilePicture, fetchUsers, updateUserRole } from '../controllers/userController.js';
+import { getProfile, updateProfile, updateProfilePicture, fetchUsers, updateRoleOrRestriction } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
 import multer from 'multer';
@@ -26,7 +26,7 @@ router.put('/profile', authMiddleware, updateProfile);
 /* Route to update the user's profile profile picture. Requires authentication using authMiddleware */
 router.put('/profile/:id', authMiddleware, upload.single('profilePicture'), updateProfilePicture);
 
-/* Route to update the user's role. Requires authentication using authMiddleware and adminMiddleware */
-router.put('/:id', authMiddleware, adminMiddleware, updateUserRole);
+/* Route to update the user's role or restriction. Requires authentication using authMiddleware and adminMiddleware */
+router.put('/:id', authMiddleware, adminMiddleware, updateRoleOrRestriction);
 
 export default router;

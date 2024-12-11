@@ -37,7 +37,7 @@ const register = async (req, res) => {
 /**
 * DOCU: This function is used to handle the user's login. <br>
 * This is being called when user is logging in. <br>
-* Last Updated Date: December 11, 2024 <br>
+* Last Updated Date: December 12, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -57,6 +57,11 @@ const login = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "Invalid Credentials" });
+        }
+
+        /* Check if account is disabled is true then return an error response */
+        if(user.isDisabled){
+            return res.status(403).json({ message: "Account Restricted or Disabled. Kindly Contact The Administrator." });
         }
 
          /* Compare the provided password with the hashed password stored in the database */

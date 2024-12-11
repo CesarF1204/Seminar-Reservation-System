@@ -3,9 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
-import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 
-const UpdateUserRole = ({ user }) => {
+const AccountDisable = ({ user }) => {
     /* Extract showToast function from context for displaying notifications */
     const {showToast, data} = useAppContext();
     /* Initialize the React Query client to manage cache and query state */
@@ -18,7 +17,7 @@ const UpdateUserRole = ({ user }) => {
         handleSubmit, /* Handle form submission */ 
     } = useForm();
 
-    /* Mutation for updating the user role */
+    /* Mutation for updating the user restriction */
     const mutation = useMutation((formData) => apiClient.updateRoleOrRestriction(user._id, formData, data.token), {
         onSuccess: async () => {
             /* Show success toast */
@@ -40,13 +39,13 @@ const UpdateUserRole = ({ user }) => {
         <form onChange={onChange}>
             <select 
                 className="text-black"
-                {...register('role', { required: 'Role is required' })}>
-                    <option value={user.role}>{capitalizeFirstLetter(user.role)}</option>
-                    <option value={user.role !== 'admin' ? 'admin' : 'user'}>{user.role !== 'admin' ? 'Admin' : 'User'}</option>
+                {...register('isDisabled', { required: '*This field is required' })}>
+                    <option value={user.isDisabled}>{user.isDisabled ? 'Yes': 'No'}</option>
+                    <option value={user.isDisabled ? false : true}>{user.isDisabled ? 'No' : 'Yes'}</option>
             </select>
             <input type="hidden" {...register('user_id', { value: user._id })} />
         </form>
     )
 }
 
-export default UpdateUserRole
+export default AccountDisable

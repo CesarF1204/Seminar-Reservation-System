@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 import UpdateUserRole from '../../components/User/UpdateUserRole';
+import AccountDisable from '../../components/User/AccountDisable';
 
 const ViewUsers = () => {
     /* Navigate to different routes */
@@ -40,6 +41,7 @@ const ViewUsers = () => {
                                 <th className="px-4 py-2">Name</th>
                                 <th className="px-4 py-2">Email Address</th>
                                 <th className="px-4 py-2">Role</th>
+                                <th className="px-4 py-2">Restriction</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +52,9 @@ const ViewUsers = () => {
                                     <td className="px-4 py-2">
                                         {/* select option for role */}
                                         <UpdateUserRole user={user} />
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <AccountDisable user={user} />
                                     </td>
                                 </tr>
                             ))}
