@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import * as apiClient from '../api-client';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAppContext } from '../contexts/AppContext';
 import { FaArrowLeft } from "react-icons/fa";
+import * as apiClient from '../../api-client';
+import { useAppContext } from '../../contexts/AppContext';
 
 const EditProfile = () => {
     const location = useLocation();

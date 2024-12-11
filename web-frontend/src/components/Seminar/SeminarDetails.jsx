@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import * as apiClient from '../api-client';
-import { useAppContext } from '../contexts/AppContext'; 
+import * as apiClient from '../../api-client';
+import { useAppContext } from '../../contexts/AppContext'; 
 import { FaArrowLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
 import DeleteSeminarModal from './DeleteSeminarModal';
 

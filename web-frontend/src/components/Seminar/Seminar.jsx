@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import * as apiClient from '../api-client';
-import { useAppContext } from '../contexts/AppContext';
+import * as apiClient from '../../api-client';
+import { useAppContext } from '../../contexts/AppContext';
 
 const Seminar = () => {
     /* Extract showToast function from context for displaying notifications */

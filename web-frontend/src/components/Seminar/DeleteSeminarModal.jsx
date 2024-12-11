@@ -1,7 +1,7 @@
 import React from 'react';
-import * as apiClient from '../api-client';
+import * as apiClient from '../../api-client';
 import { useMutation, useQueryClient } from 'react-query';
-import { useAppContext } from '../contexts/AppContext'; 
+import { useAppContext } from '../../contexts/AppContext'; 
 import { useParams, useNavigate } from 'react-router-dom';
 
 const DeleteSeminarModal = ({ setShowDeleteModal }) => {

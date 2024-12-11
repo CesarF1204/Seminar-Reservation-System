@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import Seminar from '../components/Seminar';
-import Profile from '../components/Profile';
+import Seminar from '../components/Seminar/Seminar';
+import Profile from '../components/User/Profile';
 
 const Dashboard = ({ user }) => {
     const location = useLocation();

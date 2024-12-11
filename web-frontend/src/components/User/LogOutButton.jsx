@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from 'react-router-dom';
-import * as apiClient from "../api-client";
-import { useAppContext } from "../contexts/AppContext";
+import * as apiClient from "../../api-client";
+import { useAppContext } from "../../contexts/AppContext";
 
 const LogOutButton = () => {
     /* Initialize query client to manage cache invalidation */

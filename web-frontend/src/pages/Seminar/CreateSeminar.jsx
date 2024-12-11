@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import * as apiClient from '../api-client';
+import * as apiClient from '../../api-client';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
-import { useAppContext } from '../contexts/AppContext';
-import { convertToAmPm } from '../helpers/globalHelpers';
+import { useAppContext } from '../../contexts/AppContext';
+import { convertToAmPm } from '../../helpers/globalHelpers';
 
 const CreateSeminar = () => {
     /* Navigate to different routes */

@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useNavigate, Link } from 'react-router-dom';
-import * as apiClient from '../api-client';
-import { useAppContext } from '../contexts/AppContext';
-import { capitalizeFirstLetter } from '../helpers/globalHelpers';
+import * as apiClient from '../../api-client';
+import { useAppContext } from '../../contexts/AppContext';
+import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 import { FaEdit, FaKey } from "react-icons/fa";
 
 const Profile = ({ user, newProfileDetails }) => {

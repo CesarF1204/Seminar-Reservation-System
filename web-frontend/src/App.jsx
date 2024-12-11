@@ -4,11 +4,11 @@ import AppNavbar from './components/AppNavbar';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import CreateSeminar from './pages/CreateSeminar';
-import SeminarDetails from './components/SeminarDetails';
-import EditSeminar from './pages/EditSeminar';
-import EditProfile from './pages/EditProfile';
-import ChangePassword from './pages/ChangePassword';
+import CreateSeminar from './pages/Seminar/CreateSeminar';
+import SeminarDetails from './components/Seminar/SeminarDetails';
+import EditSeminar from './pages/Seminar/EditSeminar';
+import EditProfile from './pages/User/EditProfile';
+import ChangePassword from './pages/User/ChangePassword';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();

@@ -261,7 +261,6 @@ const updateProfilePicture = async (user_id, formData, token) => {
     Sends a PUT request to the /users/profile endpoint with form data to update the user's profile details.
 */
 const updateProfile = async (formData, token) => {
-// console.log('formData :>> ', formData);
     /* Sending a PUT request to users API */
     const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: "PUT",
