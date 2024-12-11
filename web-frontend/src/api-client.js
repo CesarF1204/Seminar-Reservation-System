@@ -52,9 +52,8 @@ const signIn = async (formData) => {
 };
 
 /* 
-    Sign In function:
-    Sends a POST request to the /login endpoint with user credentials for authentication.
-    Includes credentia tls inhe request for session management.
+    validateToken function:
+    Sends a GET request to the /auth/validate-token endpoint for user authentication.
 */
 const validateToken = async () => {
     /* Sending a request to the validate-token API endpoint to check if the token is valid */
@@ -140,7 +139,7 @@ const fetchSeminarById = async (id) => {
     Sends a POST request to the /seminars endpoint with form data to create a new seminar.
 */
 const createSeminar = async (formData, token) => {
-    /* Sending a POST request to create seminar API */
+    /* Sending a POST request to seminars API */
     const response = await fetch(`${API_BASE_URL}/api/seminars`, {
         method: "POST",
         credentials: "include",
@@ -161,10 +160,10 @@ const createSeminar = async (formData, token) => {
 
 /*
     updateSeminar function: 
-    Sends a POST request to the /seminars/{id} endpoint with form data to update a seminar.
+    Sends a PUT request to the /seminars/{id} endpoint with form data to update a seminar.
 */
 const updateSeminar = async (seminar_id, formData, token) => {
-    /* Sending a POST request to update seminar API */
+    /* Sending a PUT request to seminars API */
     const response = await fetch(`${API_BASE_URL}/api/seminars/${seminar_id}`, {
         method: "PUT",
         credentials: "include",
@@ -188,13 +187,64 @@ const updateSeminar = async (seminar_id, formData, token) => {
     Sends a DELETE request to the /seminars/{id} endpoint to delete a seminar.
 */
 const deleteSeminar = async (seminar_id, token) => {
-    /* Sending a POST request to update seminar API */
+    /* Sending a DELETE request to seminars API */
     const response = await fetch(`${API_BASE_URL}/api/seminars/${seminar_id}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
             "Authorization": `Bearer ${token}`,
         }
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
+/*
+    fetchProfile function: 
+    Sends a GET request to the /users/profile endpoint to get the user's profile details.
+*/
+const fetchProfile = async (token) => {
+    /* Sending a GET request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+
+    /* Return the data (user's information) if the request is successful */
+    return responseBody;
+};
+
+/*
+    updateProfilePicture function: 
+    Sends a PUT request to the /users/profile/{id} endpoint with form data to update the user's profile id.
+*/
+const updateProfilePicture = async (seminar_id, formData, token) => {
+    /* Sending a PUT request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/profile/${seminar_id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
     });
 
     /* Parse the JSON response body */
@@ -216,4 +266,6 @@ export {
     createSeminar,
     updateSeminar,
     deleteSeminar,
+    fetchProfile,
+    updateProfilePicture,
 };

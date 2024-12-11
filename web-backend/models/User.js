@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 /**
 * DOCU: Defines the schema for a user <br>
 * It specifies the fields and their validation rules for a user record <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 11, 2024 <br>
 * @constant userSchema
 * @type {Schema}
 * @description Defines the Mongoose schema for users, including details about the first name, last name, email, password, and role.
@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    profilePicture: { type: String, default: "https://res.cloudinary.com/dyw3wg9sl/image/upload/v1733851951/blank-profile-picture-973460_1280_fh1318.png"},
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },

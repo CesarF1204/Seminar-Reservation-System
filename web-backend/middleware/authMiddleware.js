@@ -33,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
 /**
 * DOCU: This function is used as a middleware to verify tokens sent as cookies. <br>
 * This is being called when user logged-in and token will be created. <br>
-* Last Updated Date: December 10, 2024 <br>
+* Last Updated Date: December 11, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -56,8 +56,10 @@ const verifyToken = (req, res, next) => {
         /* Attach relevant user information to the request object for further use */
         req.userId = decoded.userId;
         req.firstName = decoded.firstName;
+        req.lastName = decoded.lastName;
         req.role = decoded.role;
         req.token = token;
+        req.profilePicture = decoded.profilePicture;
         
         next();
     } catch (error) {
