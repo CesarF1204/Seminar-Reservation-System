@@ -110,7 +110,7 @@ const fetchAllSeminar = async () => {
 
 /* 
     Fetch Specific Seminar:
-    Sends a GET request to the /seminars/${id} endpoint to retrieve an specific seminar and to fetch its details.
+    Sends a GET request to the /seminars/:id endpoint to retrieve an specific seminar and to fetch its details.
 */
 const fetchSeminarById = async (id) => {
     /* Sending a GET request to fetch specific seminar */
@@ -160,7 +160,7 @@ const createSeminar = async (formData, token) => {
 
 /*
     updateSeminar function: 
-    Sends a PUT request to the /seminars/{id} endpoint with form data to update a seminar.
+    Sends a PUT request to the /seminars/:id endpoint with form data to update a seminar.
 */
 const updateSeminar = async (seminar_id, formData, token) => {
     /* Sending a PUT request to seminars API */
@@ -184,7 +184,7 @@ const updateSeminar = async (seminar_id, formData, token) => {
 
 /*
     deleteSeminar function: 
-    Sends a DELETE request to the /seminars/{id} endpoint to delete a seminar.
+    Sends a DELETE request to the /seminars/:id endpoint to delete a seminar.
 */
 const deleteSeminar = async (seminar_id, token) => {
     /* Sending a DELETE request to seminars API */
@@ -234,7 +234,7 @@ const fetchProfile = async (token) => {
 
 /*
     updateProfilePicture function: 
-    Sends a PUT request to the /users/profile/{id} endpoint with form data to update the user's profile id.
+    Sends a PUT request to the /users/profile/:id endpoint with form data to update the user's profile id.
 */
 const updateProfilePicture = async (user_id, formData, token) => {
     /* Sending a PUT request to users API */
@@ -281,6 +281,58 @@ const updateProfile = async (formData, token) => {
     }
 };
 
+/*
+    fetchUsers function: 
+    Sends a GET request to the /users/profile endpoint to get the user's profile details.
+*/
+const fetchUsers = async (token) => {
+    /* Sending a GET request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+
+    /* Return the data (user's information) if the request is successful */
+    return responseBody;
+};
+
+/*
+    updateUserRole function: 
+    Sends a PUT request to the /users/:id endpoint with form data to update the user's role.
+*/
+const updateUserRole = async (user_id, formData, token) => {
+    /* Sending a PUT request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/${user_id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -294,4 +346,6 @@ export {
     fetchProfile,
     updateProfilePicture,
     updateProfile,
+    fetchUsers,
+    updateUserRole,
 };

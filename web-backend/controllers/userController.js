@@ -4,6 +4,29 @@ import { validationResult } from "express-validator";
 import cloudinary from 'cloudinary';
 
 /**
+* DOCU: This function is used to fetch users. <br>
+* This is being called when admin wants to fetch users. <br>
+* Last Updated Date: December 11, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const fetchUsers = async (req, res) => {
+    try {
+        /* Fetch all the registered users, excluding the password field for security purposes */
+        const users = await User.find().select('-password');
+        
+        /* Check if there are registered user found */
+        if (!users) return res.status(404).json({ message: 'No registered user found' });
+
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+};
+
+/**
 * DOCU: This function is used to fetch profile of a user. <br>
 * This is being called when admin wants to fetch the details for an specific user. <br>
 * Last Updated Date: December 6, 2024 <br>
@@ -111,4 +134,37 @@ const updateProfilePicture = async (req, res) => {
     }
 };
 
-export { getProfile, updateProfile, updateProfilePicture };
+/**
+* DOCU: This function is used to update role of a registered user. <br>
+* This is being called when admin wants to update the role for an specific user. <br>
+* Last Updated Date: December 11, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const updateUserRole = async (req, res) => {
+    try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
+        /* Extract the needed data from the request body */
+        const { user_id, role } = req.body;
+
+        /* Update the user's role and return the updated document */
+        const updatedRole = await User.findByIdAndUpdate(
+            user_id, /* ID of the user to update */
+            { role }, /* Data to update */
+            { new: true, runValidators: true } /* Options: return updated document and run validators */
+        );
+
+        res.status(200).json({ message: 'User Role Updated Successfully', user: updatedRole });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user role', error });
+    }
+};
+
+export { getProfile, updateProfile, updateProfilePicture, fetchUsers, updateUserRole };

@@ -9,6 +9,7 @@ import SeminarDetails from './components/Seminar/SeminarDetails';
 import EditSeminar from './pages/Seminar/EditSeminar';
 import EditProfile from './pages/User/EditProfile';
 import ChangePassword from './pages/User/ChangePassword';
+import ViewUsers from './pages/User/ViewUsers';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -34,6 +35,7 @@ function App() {
           <>
             <Route path="/create_seminar" element={<CreateSeminar />} />
             <Route path="/seminar/:id/edit" element={<EditSeminar />} />
+            <Route path="/view_users" element={<ViewUsers />} />
           </>
         )}
 
