@@ -35,16 +35,19 @@ const getProfile = async (req, res) => {
 */
 const updateProfile = async (req, res) => {
     try {
+        console.log('req.user.id :>> ', req.user.id);
+        console.log('req.user.userId :>> ', req.user.userId);
+        console.log('req.body :>> ', req.body);
         /* Extract firstName and lastName from the request body */
-        const { firstName, lastName } = req.body;
+        const { firstName, lastName, email } = req.body;
 
         /* Update the user's profile and return the updated document */
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id, /* ID of the user to update */
-            { firstName, lastName }, /* Data to update */
+            { firstName, lastName, email }, /* Data to update */
             { new: true, runValidators: true } /* Options: return updated document and run validators */
         );
-
+// console.log('updatedUser :>> ', updatedUser);
         res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
     } catch (error) {
         res.status(500).json({ message: 'Error updating profile', error });
@@ -74,7 +77,7 @@ const updateProfilePicture = async (req, res) => {
 
             /* Upload the image to Cloudinary and get the image URL */
             const upload_result = await cloudinary.v2.uploader.upload(dataURI);
-            console.log('upload_result.url :>> ', upload_result.url);
+
             /* Update the user's profile and return the updated document */
             const updatedProfilePicture = await User.findByIdAndUpdate(
                 req.user.id, /* ID of the user to update */

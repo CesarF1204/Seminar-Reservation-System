@@ -1,16 +1,16 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import Seminar from '../components/Seminar';
-import LogOutButton from '../components/LogOutButton';
 import Profile from '../components/Profile';
 
 const Dashboard = ({ user }) => {
+    const location = useLocation();
+    const { newProfileDetails } = location.state || {}; 
+
     return (
         <div className="text-center mt-4">
             {/* User Profile */}
-            <Profile user={user} />
-
-            {/* Logout Button */}
-            <LogOutButton />
+            <Profile user={user} newProfileDetails={newProfileDetails} />
 
             {/* View All Seminar */}
             <Seminar />

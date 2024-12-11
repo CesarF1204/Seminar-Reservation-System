@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext';
 import { capitalizeFirstLetter } from '../helpers/globalHelpers';
+import { FaEdit, FaKey } from "react-icons/fa";
 
-const Profile = ({ user }) => {
+const Profile = ({ user, newProfileDetails }) => {
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -28,7 +29,7 @@ const Profile = ({ user }) => {
             enabled: !!data.token, /* Only fetch if token is available */
         }
     );
-    
+
     /* Set up the mutation for sign-in API call */
     const mutation = useMutation((formData)=>apiClient.updateProfilePicture(data.userId, formData, data.token), {
         onSuccess: async () => {
@@ -63,29 +64,49 @@ const Profile = ({ user }) => {
     const {firstName, lastName, profilePicture, role} = user;
 
     return (
-        <form encType="multipart/form-data" onChange={onChange}>
-            <label htmlFor="profile-pic-upload">
-                <img
-                    src={newProfilePicture || profilePicture}
-                    alt={`${firstName} ${lastName}'s profile`}
-                    className="w-24 h-24 mx-auto rounded-full shadow-lg border-4 border-gray-500 cursor-pointer"
+        <div className="flex items-center justify-center">
+            <form encType="multipart/form-data" onChange={onChange} className="mr-4">
+                <label htmlFor="profile-pic-upload">
+                    <img
+                        src={newProfilePicture || profilePicture}
+                        alt={`${firstName} ${lastName}'s profile`}
+                        className="w-24 h-24 rounded-full shadow-lg border-4 border-gray-500 cursor-pointer"
+                    />
+                </label>
+                <input
+                    id="profile-pic-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    {...register("profilePicture")}
                 />
-            </label>
-            <input
-                id="profile-pic-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                {...register("profilePicture")}
-            />
-            <div>
+            </form>
+            <div className="flex flex-col">
                 <h1 className="text-2xl font-bold">
-                    {capitalizeFirstLetter(firstName)} {capitalizeFirstLetter(lastName)}
+                    {newProfileDetails && newProfileDetails.firstName && newProfileDetails.lastName
+                        ? `${capitalizeFirstLetter(newProfileDetails.firstName)} ${capitalizeFirstLetter(newProfileDetails.lastName)}`
+                        : `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`}
                 </h1>
                 <p className="text-gray-500 italic">{capitalizeFirstLetter(role)}</p>
+                <div className="mt-2">
+                    <Link
+                        to={`/profile/${user.userId}/edit`}
+                        className="text-blue-400 hover:text-blue-600 inline-flex items-center"
+                        state={{ newProfileDetails }}
+                    >
+                        <FaEdit className="mr-1" /> Edit
+                    </Link>
+                    <Link
+                        to={`/profile/${user.userId}/change_password`}
+                        className="text-blue-400 hover:text-blue-600 inline-flex items-center ml-6"
+                        state={{ newProfileDetails }}
+                    >
+                        <FaKey className="mr-1" /> Change Password
+                    </Link>
+                </div>
             </div>
-        </form>
-    )
+        </div>
+    );    
 }
 
 export default Profile

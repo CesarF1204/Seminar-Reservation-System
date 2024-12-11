@@ -236,15 +236,41 @@ const fetchProfile = async (token) => {
     updateProfilePicture function: 
     Sends a PUT request to the /users/profile/{id} endpoint with form data to update the user's profile id.
 */
-const updateProfilePicture = async (seminar_id, formData, token) => {
+const updateProfilePicture = async (user_id, formData, token) => {
     /* Sending a PUT request to users API */
-    const response = await fetch(`${API_BASE_URL}/api/users/profile/${seminar_id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/users/profile/${user_id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
             "Authorization": `Bearer ${token}`,
         },
         body: formData,
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
+/*
+    updateProfile function: 
+    Sends a PUT request to the /users/profile endpoint with form data to update the user's profile details.
+*/
+const updateProfile = async (formData, token) => {
+// console.log('formData :>> ', formData);
+    /* Sending a PUT request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
     });
 
     /* Parse the JSON response body */
@@ -268,4 +294,5 @@ export {
     deleteSeminar,
     fetchProfile,
     updateProfilePicture,
+    updateProfile,
 };

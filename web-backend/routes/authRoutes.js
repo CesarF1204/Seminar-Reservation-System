@@ -21,7 +21,7 @@ router.post('/login',
 
 /* Route to validate the token and get user details (requires authentication) */
 router.get('/validate-token', verifyToken, (req, res) => {
-    res.status(200).send({ userId: req.userId, firstName: req.firstName, lastName: req.lastName, role: req.role, token: req.token, profilePicture: req.profilePicture});
+    res.status(200).send({ userId: req.userId, firstName: req.firstName, lastName: req.lastName, email: req.email, role: req.role, token: req.token, profilePicture: req.profilePicture});
 });
 
 /* Route to log out user by clearing the auth_token cookie */

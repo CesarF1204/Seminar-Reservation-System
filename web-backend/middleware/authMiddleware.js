@@ -60,6 +60,7 @@ const verifyToken = (req, res, next) => {
         req.role = decoded.role;
         req.token = token;
         req.profilePicture = decoded.profilePicture;
+        req.email = decoded.email;
         
         next();
     } catch (error) {
