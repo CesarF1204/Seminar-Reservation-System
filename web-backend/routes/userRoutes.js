@@ -8,7 +8,8 @@ import {
     deleteAccount,
     fetchUserById,
     updateUserById,
-    fetchUserByEmail
+    resetPasswordLink,
+    resetPassword
 } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
@@ -46,5 +47,11 @@ router.get('/id/:id', authMiddleware, fetchUserById);
 
 /* Route to update a specific user's profile by ID. Requires authentication using authMiddleware and adminMiddleware */
 router.put('/id/:id', authMiddleware, adminMiddleware, updateUserById);
+
+/* Route to handle password reset link */
+router.get('/reset_password/:token', resetPasswordLink);
+
+/* Route to handle updating of password in password reset link */
+router.put('/reset_password', resetPassword);
 
 export default router;

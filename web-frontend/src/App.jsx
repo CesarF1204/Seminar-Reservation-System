@@ -12,6 +12,7 @@ import ChangePassword from './pages/User/ChangePassword';
 import ViewUsers from './pages/User/ViewUsers';
 import EditUser from './pages/User/EditUser';
 import ForgotPassword from './pages/ForgotPassword';
+import AccountRecoveryURL from './components/AccountRecoveryURL';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -20,6 +21,8 @@ function App() {
     <Router>
       {isLoggedIn && <AppNavbar user={data} />}
       <Routes>
+        <Route path="/reset_password/:token" element={<AccountRecoveryURL />} />
+        
         {/* Redirect to /dashboard if logged in, otherwise redirect to login page */}
         <Route path="/sign_in" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />} />
         

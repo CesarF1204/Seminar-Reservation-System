@@ -433,6 +433,52 @@ const sendEmailAccountRecovery = async (formData) => {
     }
 };
 
+/* 
+    resetPasswordLink function:
+    Sends a GET request to the /users/reset_password/:token endpoint to validate the reset password link.
+*/
+const resetPasswordLink = async (token) => {
+    const response = await fetch(`${API_BASE_URL}/api/users/reset_password/${token}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+
+    const responseBody = await response.json();
+
+    if (!response.ok) {
+        throw new Error(responseBody.message); /* Throw an error if the response is not ok */
+    }
+
+    return responseBody;
+}
+
+/* 
+    resetPasswordLink function:
+    Sends a PUT request to the /users/reset_password endpoint to update the user's password.
+*/
+const resetPassword = async (formData) => {
+    /* Sending a PUT request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/reset_password`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -452,4 +498,6 @@ export {
     fetchUserById,
     updateUserById,
     sendEmailAccountRecovery,
+    resetPasswordLink,
+    resetPassword,
 };

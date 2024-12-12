@@ -50,7 +50,7 @@ const ForgotPassword = () => {
                 {errors.to && (
                     <span className="text-red-500">{errors.to.message}</span>
                 )}
-                <button type="submit" className="py-2 px-4 mt-4 rounded bg-blue-500 text-white hover:bg-blue-600">Reset Password</button>
+                <button type="submit" className="py-2 px-4 mt-4 rounded bg-blue-500 text-white hover:bg-blue-600">Send Reset Link</button>
             </form>
             <p className="mt-2">A reset password link will be sent to your email address</p>
         </div>

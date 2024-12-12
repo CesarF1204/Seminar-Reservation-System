@@ -50,37 +50,6 @@ const getProfile = async (req, res) => {
 };
 
 /**
-* DOCU: This function is used to fetch profile details of an specific user using email address. <br>
-* This is being called when user wants to fetch the details for an specific user using email address. <br>
-* Last Updated Date: December 12, 2024 <br>
-* @function
-* @param {object} req - request
-* @param {object} res - response
-* @author Cesar
-*/
-const fetchUserByEmail = async (email) => { // Change the function signature to accept email
-    try {
-        /* Check if email was not found then return an error */
-        if (!email) {
-            throw new Error('Email is required');
-        }
-    
-        /* Fetch the user by email, excluding the password field for security purposes */
-        const user = await User.findOne({ email }).select('firstName lastName');
-
-        /* Check if user was not found then return an error */
-        if (!user) {
-            throw new Error('User not found');
-        }
-    
-        return user; // Return the user
-    } catch (error) {
-        console.error('Error finding user by email:', error);
-        throw error; // Rethrow the error to be handled in the calling function
-    }
-};
-
-/**
 * DOCU: This function is used to fetch profile details of an specific user. <br>
 * This is being called when admin wants to fetch the details for an specific user. <br>
 * Last Updated Date: December 12, 2024 <br>
@@ -286,6 +255,74 @@ const deleteAccount = async (req, res) => {
     }
 };
 
+/**
+* DOCU: This function is used in getting user details and checking for the passwordResetToken for reset password link validation. <br>
+* This is being called when user requested for password reset. <br>
+* Last Updated Date: December 13, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const resetPasswordLink = async (req, res) => {
+    try{
+        const { token } = req.params;
+    
+        /* Find the user by the passwordResetToken */
+        const user = await User.findOne({ passwordResetToken: token }).select('firstName lastName email passwordResetExpires passwordResetToken');
+
+        /* Check if user data is provided or the data in passwordResetExpires is expired  */
+        if (!user || user.passwordResetExpires < Date.now()) {
+            return res.status(404).json({ message: 'Invalid or expired link' });
+        }
+
+        res.status(200).json({ message: 'Reset Password', user});
+    }catch(error){
+        res.status(500).json({ message: 'Invalid Link', error });
+    }
+};
+
+/**
+* DOCU: This function is used for updating password in request for resetting password. <br>
+* This is being called when user will reset their password. <br>
+* Last Updated Date: December 13, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const resetPassword = async (req, res) => {
+    try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
+        /* Extract the needed data from the request body */
+        const { user_id, password } = req.body;
+
+        let updatedData = {};
+        /* Check if user_id and password is provided before proceeding with hashing */
+        if(user_id && password){
+            /* Hash the new password before saving */
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedData.password = hashedPassword;
+        }
+
+        /* Update the user's password by user_id */
+        const updatedPassword = await User.findByIdAndUpdate(
+            user_id, /* ID of the user to update */
+            updatedData, /* Data to update */
+            { new: true, runValidators: true } /* Options: return updated document and run validators */
+        );
+
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error resetting password', error });
+    }
+};
+
 export { 
     getProfile, 
     updateProfile, 
@@ -295,5 +332,6 @@ export {
     deleteAccount,
     fetchUserById,
     updateUserById,
-    fetchUserByEmail,
+    resetPasswordLink,
+    resetPassword,
 };
