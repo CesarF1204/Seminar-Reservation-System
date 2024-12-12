@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import seminarRoutes from './routes/seminarRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import emailRoutes from './routes/emailRoutes.js';
 import cookieParser from 'cookie-parser';
 import { v2 as cloudinary } from 'cloudinary'; 
 
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/seminars', seminarRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/email', emailRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

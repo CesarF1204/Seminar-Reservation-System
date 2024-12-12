@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext';
 
@@ -73,15 +73,26 @@ const Login = () => {
                     <span className="text-red-500">{errors.password.message}</span>
                 )}
                 <button type="submit" className="py-2 px-4 mt-4 rounded bg-blue-500 text-white hover:bg-blue-600">Login</button>
-                <p className="text-sm mt-2">
-                    No account yet?{' '}
-                    <span
-                        onClick={() => navigate('/register')}
+                <div className="flex justify-between text-sm mt-2">
+                    <p>
+                        No account yet?{' '}
+                        <Link
+                            to="/register"
+                            className="text-blue-500 cursor-pointer underline"
+                        >
+                            Register
+                        </Link>
+                    </p>
+                    <p>
+                        Forgot Password?{' '}
+                        <Link
+                        to="/forgot_password"
                         className="text-blue-500 cursor-pointer underline"
-                    >
-                        Register
-                    </span>
-                </p>
+                        >
+                            Reset Password
+                        </Link>
+                    </p>
+                </div>
             </form>
         </div>
     )

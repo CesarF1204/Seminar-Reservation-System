@@ -11,6 +11,7 @@ import EditProfile from './pages/User/EditProfile';
 import ChangePassword from './pages/User/ChangePassword';
 import ViewUsers from './pages/User/ViewUsers';
 import EditUser from './pages/User/EditUser';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -24,6 +25,9 @@ function App() {
         
         {/* Redirect to /dashboard if logged in, otherwise redirect to registration page */}
         <Route path="/register" element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} />
+
+        {/* Redirect to /dashboard if logged in, otherwise redirect to registration page */}
+        <Route path="/forgot_password" element={isLoggedIn ? <Navigate to="/dashboard" /> : <ForgotPassword />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard user={data} /> : <Navigate to="/sign_in" />} />

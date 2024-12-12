@@ -310,11 +310,11 @@ const fetchUsers = async (token) => {
 
 /*
     fetchUserById function: 
-    Sends a GET request to the /users/profile/:id endpoint to get the specific user's profile details.
+    Sends a GET request to the /users/profile/id/:id endpoint to get the specific user's profile details.
 */
 const fetchUserById = async (user_id, token) => {
     /* Sending a GET request to users API */
-    const response = await fetch(`${API_BASE_URL}/api/users/${user_id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/users/id/${user_id}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -337,11 +337,11 @@ const fetchUserById = async (user_id, token) => {
 
 /*
     updateUserById function: 
-    Sends a PUT request to the /users/:id endpoint with form data to update the specific user's details.
+    Sends a PUT request to the /users/id/:id endpoint with form data to update the specific user's details.
 */
 const updateUserById = async (user_id, formData, token) => {
     /* Sending a PUT request to users API */
-    const response = await fetch(`${API_BASE_URL}/api/users/${user_id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/users/id/${user_id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -408,6 +408,31 @@ const deleteAccount = async (user_id, token) => {
     }
 };
 
+/*
+    sendEmail function: 
+    Sends a POST request to the /email/send endpoint to send an email.
+*/
+const sendEmailAccountRecovery = async (formData) => {
+    console.log('formData :>> ', formData);
+    /* Sending a POST request to email API */
+    const response = await fetch(`${API_BASE_URL}/api/email/send-account-recovery`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -425,5 +450,6 @@ export {
     updateRoleOrRestriction,
     deleteAccount,
     fetchUserById,
-    updateUserById
+    updateUserById,
+    sendEmailAccountRecovery,
 };

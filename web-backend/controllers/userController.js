@@ -50,6 +50,37 @@ const getProfile = async (req, res) => {
 };
 
 /**
+* DOCU: This function is used to fetch profile details of an specific user using email address. <br>
+* This is being called when user wants to fetch the details for an specific user using email address. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const fetchUserByEmail = async (email) => { // Change the function signature to accept email
+    try {
+        /* Check if email was not found then return an error */
+        if (!email) {
+            throw new Error('Email is required');
+        }
+    
+        /* Fetch the user by email, excluding the password field for security purposes */
+        const user = await User.findOne({ email }).select('firstName lastName');
+
+        /* Check if user was not found then return an error */
+        if (!user) {
+            throw new Error('User not found');
+        }
+    
+        return user; // Return the user
+    } catch (error) {
+        console.error('Error finding user by email:', error);
+        throw error; // Rethrow the error to be handled in the calling function
+    }
+};
+
+/**
 * DOCU: This function is used to fetch profile details of an specific user. <br>
 * This is being called when admin wants to fetch the details for an specific user. <br>
 * Last Updated Date: December 12, 2024 <br>
@@ -264,4 +295,5 @@ export {
     deleteAccount,
     fetchUserById,
     updateUserById,
+    fetchUserByEmail,
 };
