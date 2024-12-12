@@ -52,7 +52,6 @@ const ViewUsers = () => {
                                     <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
                                     <td className="px-4 py-2">{user.email}</td>
                                     <td className="px-4 py-2">
-                                        {/* select option for role */}
                                         <UpdateUserRole user={user} />
                                     </td>
                                     <td className="px-4 py-2">

@@ -28,7 +28,7 @@ const fetchUsers = async (req, res) => {
 
 /**
 * DOCU: This function is used to fetch profile of a user. <br>
-* This is being called when admin wants to fetch the details for an specific user. <br>
+* This is being called when admin wants to fetch the details for an authenticated user. <br>
 * Last Updated Date: December 6, 2024 <br>
 * @function
 * @param {object} req - request
@@ -50,8 +50,71 @@ const getProfile = async (req, res) => {
 };
 
 /**
-* DOCU: This function is used to update profile of a user. <br>
+* DOCU: This function is used to fetch profile details of an specific user. <br>
+* This is being called when admin wants to fetch the details for an specific user. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const fetchUserById = async (req, res) => {
+    try {
+        /* Fetch the user by ID, excluding the password field for security purposes */
+        const user = await User.findById(req.params.id).select('-password');
+        
+        /* Check if the user was found */
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching profile', error });
+    }
+};
+
+/**
+* DOCU: This function is used to update specific user. <br>
 * This is being called when admin wants to update the details for an specific user. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const updateUserById = async (req, res) => {
+    try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
+        /* Extract the needed data from the request body */
+        const { firstName, lastName, email } = req.body;
+
+        let updatedData = {};
+
+        /* Update fields only if new values are provided */
+        if (firstName) updatedData.firstName = firstName;
+        if (lastName) updatedData.lastName = lastName;
+        if (email) updatedData.email = email;
+
+        /* Update the user's profile and return the updated document */
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id, /* ID of the user to update */
+            updatedData, /* Data to update */
+            { new: true, runValidators: true } /* Options: return updated document and run validators */
+        );
+
+        res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user', error });
+    }
+};
+
+/**
+* DOCU: This function is used to update profile of a user. <br>
+* This is being called when admin or user wants to update their details (firstName, lastName, email) and change password. <br>
 * Last Updated Date: December 11, 2024 <br>
 * @function
 * @param {object} req - request
@@ -199,4 +262,6 @@ export {
     fetchUsers,
     updateRoleOrRestriction,
     deleteAccount,
+    fetchUserById,
+    updateUserById,
 };

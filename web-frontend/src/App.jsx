@@ -10,6 +10,7 @@ import EditSeminar from './pages/Seminar/EditSeminar';
 import EditProfile from './pages/User/EditProfile';
 import ChangePassword from './pages/User/ChangePassword';
 import ViewUsers from './pages/User/ViewUsers';
+import EditUser from './pages/User/EditUser';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -27,8 +28,8 @@ function App() {
         {/* Protected routes */}
         <Route path="/dashboard" element={isLoggedIn ? <Dashboard user={data} /> : <Navigate to="/sign_in" />} />
         <Route path="/seminar/:id" element={isLoggedIn ? <SeminarDetails /> : <Navigate to="/sign_in" />} />
-        <Route path="/profile/:id/edit" element={isLoggedIn ? <EditProfile /> : <Navigate to="/sign_in" />} />
-        <Route path="/profile/:id/change_password" element={isLoggedIn ? <ChangePassword /> : <Navigate to="/sign_in" />} />
+        <Route path="/edit_profile" element={isLoggedIn ? <EditProfile /> : <Navigate to="/sign_in" />} />
+        <Route path="/change_password" element={isLoggedIn ? <ChangePassword /> : <Navigate to="/sign_in" />} />
 
         {/* Protected route: only accessible if logged in and admin */}
         {isLoggedIn && data.role === 'admin' && (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/create_seminar" element={<CreateSeminar />} />
             <Route path="/seminar/:id/edit" element={<EditSeminar />} />
             <Route path="/view_users" element={<ViewUsers />} />
+            <Route path="/edit_user/:id" element={<EditUser />} />
           </>
         )}
 

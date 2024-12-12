@@ -5,7 +5,9 @@ import {
     updateProfilePicture, 
     fetchUsers, 
     updateRoleOrRestriction, 
-    deleteAccount
+    deleteAccount,
+    fetchUserById,
+    updateUserById
 } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
@@ -24,17 +26,23 @@ const upload = multer({
 /* Route to fetch the registered users. Requires authentication using authMiddleware and adminMiddleware*/
 router.get('/', authMiddleware, adminMiddleware, fetchUsers);
 
-/* Route to fetch the authenticated user's profile. Requires authentication using authMiddleware */
-router.get('/profile', authMiddleware, getProfile);
-
 /* Route to update the authenticated user's profile. Requires authentication using authMiddleware */
 router.put('/profile', authMiddleware, updateProfile);
+
+/* Route to fetch the authenticated user's profile. Requires authentication using authMiddleware */
+router.get('/profile', authMiddleware, getProfile);
 
 /* Route to update the user's profile profile picture. Requires authentication using authMiddleware */
 router.put('/profile/:id', authMiddleware, upload.single('profilePicture'), updateProfilePicture);
 
 /* Route to update the user's role or restriction. Requires authentication using authMiddleware and adminMiddleware */
-router.put('/:id', authMiddleware, adminMiddleware, updateRoleOrRestriction);
+router.put('/update_role_restriction/:id', authMiddleware, adminMiddleware, updateRoleOrRestriction);
+
+/* Route to fetch the specific user's profile. Requires authentication using authMiddleware */
+router.get('/:id', authMiddleware, fetchUserById);
+
+/* Route to update the specific user's profile. Requires authentication using authMiddleware and adminMiddleware */
+router.put('/:id', authMiddleware, adminMiddleware, updateUserById);
 
 /* Route to delete the user's account. Requires authentication using authMiddleware and adminMiddleware */
 router.delete('/:id', authMiddleware, adminMiddleware, deleteAccount);

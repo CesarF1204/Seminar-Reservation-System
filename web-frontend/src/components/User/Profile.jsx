@@ -70,7 +70,7 @@ const Profile = ({ user, newProfileDetails }) => {
                     <img
                         src={newProfilePicture || profilePicture}
                         alt={`${firstName} ${lastName}'s profile`}
-                        className="w-24 h-24 rounded-full shadow-lg border-4 border-gray-500 cursor-pointer"
+                        className="w-24 h-24 rounded-full shadow-lg border-4 border-blue-500 cursor-pointer"
                     />
                 </label>
                 <input
@@ -90,14 +90,14 @@ const Profile = ({ user, newProfileDetails }) => {
                 <p className="text-gray-500 italic">{capitalizeFirstLetter(role)}</p>
                 <div className="mt-2">
                     <Link
-                        to={`/profile/${user.userId}/edit`}
+                        to={`/edit_profile`}
                         className="text-blue-400 hover:text-blue-600 inline-flex items-center"
                         state={{ newProfileDetails }}
                     >
                         <FaEdit className="mr-1" /> Edit
                     </Link>
                     <Link
-                        to={`/profile/${user.userId}/change_password`}
+                        to={`/change_password`}
                         className="text-blue-400 hover:text-blue-600 inline-flex items-center ml-6"
                         state={{ newProfileDetails }}
                     >

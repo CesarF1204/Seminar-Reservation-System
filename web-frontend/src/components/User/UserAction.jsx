@@ -11,10 +11,10 @@ const UserAction = ({ user, refetch}) => {
     return (
         <>
         <div className="flex space-x-4 items-center">
-            <Link className="text-blue-400 hover:text-blue-600 inline-flex items-center">
+            <Link to={`/edit_user/${user._id}`} className="text-blue-400 hover:text-blue-600 inline-flex items-center">
                 <FaEdit className="mr-1" /> Edit 
             </Link>
-            <Link className="text-red-400 hover:text-red-600 inline-flex items-center"  onClick={() => setShowDeleteModal(true)}>
+            <Link className="text-red-400 hover:text-red-600 inline-flex items-center" onClick={() => setShowDeleteModal(true)}>
                 <FaTrashAlt className="mr-1" /> Delete 
             </Link>
         </div>

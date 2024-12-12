@@ -21,7 +21,7 @@ const EditSeminar = () => {
     /* Get seminar id in params */
     const { id: seminar_id } = useParams();
 
-    const { data: seminar = [] } = useQuery(
+    const { data: seminar = [], isError } = useQuery(
         "fetchSeminarById",
         () => apiClient.fetchSeminarById(seminar_id),
         {
@@ -30,6 +30,11 @@ const EditSeminar = () => {
             retry: 1, /* Optional: Number of retry attempts */
         }
     );
+
+    /* Error state: show error toast if there is an issue loading data */
+    if (isError) {
+        showToast({ message: "Failed to load seminar. Please try again later.", type: "ERROR" })
+    }
 
     /* Set up the mutation for sign-in API call */
     const mutation = useMutation((formData)=>apiClient.updateSeminar(seminar_id, formData, data.token), {
