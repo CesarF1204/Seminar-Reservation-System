@@ -5,8 +5,8 @@ import LogOutButton from './User/LogOutButton';
 
 const AppNavbar = ({ user }) => {
     return(
-        <Navbar bg="dark" variant="dark" expand="lg">
-            <Container>
+        <Navbar className="sticky top-0" bg="dark" variant="dark" expand="lg">
+            <Container className="p-1">
                 <Navbar.Brand as={Link} to="/">Seminar Reservation System</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -20,7 +20,7 @@ const AppNavbar = ({ user }) => {
                         }
                     </Nav>
                     {/* Logout Button */}
-                    <Nav.Link as={Link} to="#" className="logout-link">
+                    <Nav.Link as={Link}>
                         <LogOutButton className="btn-sm" />
                     </Nav.Link>
                 </Navbar.Collapse>

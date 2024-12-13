@@ -47,8 +47,8 @@ const ForgotPassword = () => {
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
                     {...register("email", { required: "*This field is required" })}
                 />
-                {errors.to && (
-                    <span className="text-red-500">{errors.to.message}</span>
+                {errors.email && (
+                    <span className="text-red-500">{errors.email.message}</span>
                 )}
                 <button type="submit" className="py-2 px-4 mt-4 rounded bg-blue-500 text-white hover:bg-blue-600">Send Reset Link</button>
             </form>

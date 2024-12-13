@@ -2,12 +2,20 @@ import express from 'express';
 import { createBooking, getUserBookings, updateBookingStatus } from '../controllers/bookingController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
-
+import multer from 'multer';
 
 const router = express.Router();
 
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 /* 5MB */
+    }
+});
+
 /* Route to create a new booking. Requires authentication using authMiddleware */
-router.post('/', authMiddleware, createBooking);
+router.post('/', authMiddleware, upload.single('proofOfPayment'), createBooking);
+
 /* Route to fetch all bookings for the authenticated user. Requires authentication using authMiddleware */
 router.get('/', authMiddleware, getUserBookings);
 /* Route to update booking status. Requires authentication and admin privileges using authMiddleware and adminMiddleware */

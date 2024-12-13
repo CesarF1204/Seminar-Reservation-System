@@ -413,7 +413,6 @@ const deleteAccount = async (user_id, token) => {
     Sends a POST request to the /email/send endpoint to send an email.
 */
 const sendEmailAccountRecovery = async (formData) => {
-    console.log('formData :>> ', formData);
     /* Sending a POST request to email API */
     const response = await fetch(`${API_BASE_URL}/api/email/send-account-recovery`, {
         method: "POST",
@@ -479,6 +478,30 @@ const resetPassword = async (formData) => {
     }
 };
 
+/*
+    createBooking function: 
+    Sends a POST request to the /api/bookings endpoint to book a seminar.
+*/
+const createBooking = async (formData, token) => {
+    /* Sending a POST request to bookings API */
+    const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        body: formData,
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -500,4 +523,5 @@ export {
     sendEmailAccountRecovery,
     resetPasswordLink,
     resetPassword,
+    createBooking,
 };

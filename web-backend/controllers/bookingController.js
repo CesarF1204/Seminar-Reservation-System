@@ -1,10 +1,11 @@
 import Booking from '../models/Booking.js';
 import Seminar from '../models/Seminar.js';
+import cloudinary from 'cloudinary';
 
 /**
 * DOCU: This function is used to handle the booking of a seminar. <br>
 * This is being called when user wants to book a seminar. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 13, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -12,6 +13,7 @@ import Seminar from '../models/Seminar.js';
 */
 const createBooking = async (req, res) => {
     try {
+        /* Get seminar id from request body */
         const { seminarId } = req.body;
 
         /* Find the seminar by its ID */
@@ -23,14 +25,39 @@ const createBooking = async (req, res) => {
         /* Check if the seminar has available slots */
         if (seminar.slotsAvailable <= 0) return res.status(400).json({ message: 'Seminar is full' });
 
-        /* Create a booking record for the user and seminar */
-        const booking = await Booking.create({ user: req.user.id, seminar: seminarId });
-        
-        /* Decrement the available slots for the seminar */
-        seminar.slotsAvailable -= 1;
-        await seminar.save();
+        /* Get image file from request file */
+        const image_file = req?.file;
 
-        res.status(201).json({ message: 'Booking created successfully', booking });
+        /* Check if proof of payment image exist */
+        if(image_file){
+            /* Convert the image file buffer into a base64 encoded string */
+            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
+            
+            /* Construct the data URI for the image */
+            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
+
+            /* Upload the image to Cloudinary and get the image URL */
+            const { url: upload_result_url } = await cloudinary.v2.uploader.upload(dataURI);
+            
+            /* Check if the of image is uploaded to cloudinary and returned a url */
+            if(upload_result_url){
+                /* Create a booking record for to the database with proof of payment */
+                const booking = await Booking.create({ user: req.user.id, seminar: seminarId, proofOfPayment: upload_result_url });
+
+                /* Decrement the available slots for the seminar */
+                seminar.slotsAvailable -= 1;
+                /* Save to database */
+                await seminar.save();
+
+                res.status(201).json({ message: 'Booking created successfully', booking });
+            }
+            else {
+                res.status(400).json({ message: 'Error uploading proof of payment.' });
+            }
+        }
+        else {
+            res.status(400).json({ message: 'Proof of payment not exist. Please try again' });
+        }
     } catch (error) {
         res.status(500).json({ message: 'Error creating booking', error });
     }

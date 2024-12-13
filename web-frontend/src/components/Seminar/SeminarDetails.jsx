@@ -5,6 +5,7 @@ import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext'; 
 import { FaArrowLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
 import DeleteSeminarModal from './DeleteSeminarModal';
+import BookSeminar from './BookSeminar';
 
 const SeminarDetails = () => {
     /* Get the seminar ID from the URL parameters */
@@ -67,12 +68,16 @@ const SeminarDetails = () => {
                 </div>
                 </div>
             </div>
-            <div className="seminar-fee mt-6">
-                <p className="text-md text-gray-700"><strong>Fee:</strong> ₱{fee}</p>
-                <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>
+            <div className="seminar-fee mt-6 flex justify-start items-center">
+                <div>
+                    <p className="text-md text-gray-700"><strong>Fee:</strong> ₱{fee}</p>
+                    <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>
+                </div>
+                {/* Book Seminar Component */}
+                <BookSeminar />
             </div>
             { data.role === 'admin' &&
-                <div className="flex space-x-4 items-center">
+                <div className="flex space-x-4 items-center mt-6">
                     <Link to={`/seminar/${seminar._id}/edit`} className="text-blue-400 hover:text-blue-600 inline-flex items-center">
                         <FaEdit className="mr-1" /> Edit 
                     </Link>
@@ -81,7 +86,7 @@ const SeminarDetails = () => {
                     </Link>
                 </div>
             }
-            <button className="go-back-btn mt-6 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
+            <button className="go-back-btn mt-4 flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
                 <FaArrowLeft className="left-arrow mr-2" /> Go Back
             </button>
 

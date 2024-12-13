@@ -30,7 +30,7 @@ const LogOutButton = () => {
     };
 
     return (
-        <button onClick={handleClick} className="btn btn-danger mt-3">
+        <button onClick={handleClick} className="btn btn-danger">
             Log Out
         </button>
     );

@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 /**
 * DOCU: This function is used to create a payment intent with Stripe.
 * It requires the amount to be charged and creates a payment intent for that amount.
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 13, 2024 <br>
 * @function
 * @param {number} amount - the amount to be charged, in the smallest currency unit (e.g., cents for USD)
 * @returns {Promise<Object>} Resolves with the payment intent object if successful, or throws an error if failed
@@ -16,7 +16,7 @@ const createPaymentIntent = async (amount) => {
     try {
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
-            currency: 'usd',
+            currency: 'php',
             automatic_payment_methods: { enabled: true },
         });
         return paymentIntent;

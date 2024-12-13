@@ -2,9 +2,14 @@ import React, { createContext, useContext, useState } from "react";
 import Toast from "../components/Toast";
 import { useQuery } from "react-query";
 import * as apiClient from "../api-client";
+import { loadStripe } from '@stripe/stripe-js';
+
+const STRIPE_PUB_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
 
 /* Create the AppContext with an initial value of undefined */
 const AppContext = createContext(undefined);
+
+const stripePromise = loadStripe(STRIPE_PUB_KEY);
 
 export const AppContextProvider = ({ children }) => {
 
@@ -32,7 +37,8 @@ return (
             showToast,
             setLoginSuccess,
             data: data || {},
-            isLoggedIn: data?.userId ? true : false
+            isLoggedIn: data?.userId ? true : false,
+            stripePromise
         }}
     >
         {/* Render the toast component if a toast message is present */}
