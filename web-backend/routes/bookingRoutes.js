@@ -18,6 +18,7 @@ router.post('/', authMiddleware, upload.single('proofOfPayment'), createBooking)
 
 /* Route to fetch all bookings for the authenticated user. Requires authentication using authMiddleware */
 router.get('/', authMiddleware, getUserBookings);
+
 /* Route to update booking status. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
 router.put('/:id', authMiddleware, adminMiddleware, updateBookingStatus);
 

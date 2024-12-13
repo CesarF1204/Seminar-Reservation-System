@@ -21,8 +21,7 @@ const QRCodePayment = () => {
     const mutation = useMutation((formData)=>apiClient.createBooking(formData, data.token), {
         onSuccess: async () => {
             /* Show success toast */
-            showToast({ message: "Seminar Booked!", type: "SUCCESS" })
-
+            showToast({ message: "Uploaded Payment. Seminar Booked!", type: "SUCCESS" })
             /* Navigate to dashboard page */
             navigate("/dashboard");
         },
@@ -37,8 +36,9 @@ const QRCodePayment = () => {
         const formData = new FormData();
         /* Append fields */
         formData.append("proofOfPayment", data.proofOfPayment[0]);
-        formData.append("seminarId", data.seminar_id);
+        formData.append("seminarId", data.seminarId);
         
+        /* Trigger the mutation with the updated form data */
         mutation.mutate(formData);
     })
 
@@ -58,8 +58,7 @@ const QRCodePayment = () => {
                     className="w-full mb-4 px-4 py-2 border rounded-md cursor-pointer"
                     {...register("proofOfPayment")}
                 />
-                <input type="hidden" {...register("seminar_id", { value: seminar_id })} />
-
+                <input type="hidden" {...register("seminarId", { value: seminar_id })} />
                 <div className="flex justify-end space-x-2">
                     <button
                         type="submit"

@@ -1,11 +1,13 @@
 import Booking from '../models/Booking.js';
 import Seminar from '../models/Seminar.js';
-import cloudinary from 'cloudinary';
+import User from '../models/User.js';
+import { getUploadedImageUrl } from '../helpers/globalHelper.js';
+import createPaymentIntent from '../utils/stripe.js';
 
 /**
 * DOCU: This function is used to handle the booking of a seminar. <br>
 * This is being called when user wants to book a seminar. <br>
-* Last Updated Date: December 13, 2024 <br>
+* Last Updated Date: December 14, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -25,39 +27,45 @@ const createBooking = async (req, res) => {
         /* Check if the seminar has available slots */
         if (seminar.slotsAvailable <= 0) return res.status(400).json({ message: 'Seminar is full' });
 
-        /* Get image file from request file */
-        const image_file = req?.file;
+        let proofOfPayment = "";
+        let clientSecret = null;
 
-        /* Check if proof of payment image exist */
-        if(image_file){
-            /* Convert the image file buffer into a base64 encoded string */
-            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
+        /* Check if there is an uploaded proof of payment */
+        if (req.file) {
+            const image_url = await getUploadedImageUrl(req.file);
+            proofOfPayment = image_url;
+        } else {
+            /* Desctructure to get amount and title of the seminar */
+            const { fee: amount, title } = seminar;
+
+            /* Find the user by its ID */
+            const user = await User.findById(req.user.id).select('email');
+
+            /* Check if user exists */
+            if (!user) return res.status(404).json({ message: 'User not found' });
             
-            /* Construct the data URI for the image */
-            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
-
-            /* Upload the image to Cloudinary and get the image URL */
-            const { url: upload_result_url } = await cloudinary.v2.uploader.upload(dataURI);
-            
-            /* Check if the of image is uploaded to cloudinary and returned a url */
-            if(upload_result_url){
-                /* Create a booking record for to the database with proof of payment */
-                const booking = await Booking.create({ user: req.user.id, seminar: seminarId, proofOfPayment: upload_result_url });
-
-                /* Decrement the available slots for the seminar */
-                seminar.slotsAvailable -= 1;
-                /* Save to database */
-                await seminar.save();
-
-                res.status(201).json({ message: 'Booking created successfully', booking });
+            /* Contruct the payment data */
+            const payment_data = {
+                amount,
+                title,
+                email: user.email
             }
-            else {
-                res.status(400).json({ message: 'Error uploading proof of payment.' });
-            }
+
+            /* Call createPaymentIntentHandler for Credit Card Payment */
+            const response = await createPaymentIntentHandler(payment_data);
+            clientSecret = response.clientSecret;
         }
-        else {
-            res.status(400).json({ message: 'Proof of payment not exist. Please try again' });
-        }
+
+        /* Create a booking record in the database with proof of payment */
+        const booking = await Booking.create({ user: req.user.id, seminar: seminarId, proofOfPayment });
+
+        /* Decrement the available slots for the seminar */
+        seminar.slotsAvailable -= 1;
+
+        /* Save the seminar updates to the database */
+        await seminar.save();
+
+        res.status(201).json({ message: 'Booking created successfully', booking, clientSecret });
     } catch (error) {
         res.status(500).json({ message: 'Error creating booking', error });
     }
@@ -121,6 +129,32 @@ const updateBookingStatus = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ message: 'Error updating booking status', error });
+    }
+};
+
+/**
+* DOCU: This function is used for payment intent using stripe api. <br>
+* This is being called when user book a seminar using credit card. <br>
+* Last Updated Date: December 14, 2024 <br>
+* @function
+* @param {object} payment_data - { amount - seminar fee, title - seminar title, email - user email address }
+* @author Cesar
+*/
+const createPaymentIntentHandler = async (payment_data) => {
+    try {
+
+        /* Check if amount is provided, return error if not */
+        if (!payment_data.amount) {
+            throw new Error('Amount is required');
+        }
+
+        /* Call paymentIntent function to create the payment intent with amount and description */
+        const paymentIntent = await createPaymentIntent(payment_data);
+
+        /* Respond with the client secret for the payment intent */
+        return { clientSecret: paymentIntent.client_secret };
+    } catch (error) {
+        throw new Error('Error creating payment intent', error.message);
     }
 };
 

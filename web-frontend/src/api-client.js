@@ -488,7 +488,7 @@ const createBooking = async (formData, token) => {
         method: "POST",
         credentials: "include",
         headers: {
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${token}`,
         },
         body: formData,
     });
@@ -500,6 +500,8 @@ const createBooking = async (formData, token) => {
     if (!response.ok) {
         throw new Error(responseBody.message);
     }
+
+    return responseBody;
 };
 
 export {
