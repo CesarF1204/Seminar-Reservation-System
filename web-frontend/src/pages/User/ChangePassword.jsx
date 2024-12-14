@@ -45,9 +45,9 @@ const ChangePassword = () => {
 
     return (
         <div className="flex flex-col items-center mt-12">
-            <h1 className="text-2xl font-bold mb-6">Update Profile</h1>
+            <h1 className="text-2xl font-bold mb-6">Change Password</h1>
             <form className="flex flex-col w-full max-w-xs" onSubmit={onSubmit}>
-            <label htmlFor="password" className="mb-2 text-sm font-medium">Password:</label>
+            <label htmlFor="password" className="mb-2 text-sm font-medium">New Password:</label>
                 <input
                     type="password"
                     id="password"
@@ -64,7 +64,7 @@ const ChangePassword = () => {
                     <span className="text-red-500">{errors.password.message}</span>
                 )}
 
-                <label htmlFor="confirmPassword" className="mb-2 text-sm font-medium">Confirm Password:</label>
+                <label htmlFor="confirmPassword" className="mb-2 text-sm font-medium">Confirm New Password:</label>
                 <input
                     type="password"
                     id="confirmPassword"
