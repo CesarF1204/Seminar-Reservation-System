@@ -3,11 +3,12 @@ import Seminar from '../models/Seminar.js';
 import User from '../models/User.js';
 import { getUploadedImageUrl } from '../helpers/globalHelper.js';
 import createPaymentIntent from '../utils/stripe.js';
+import { sendEmail } from '../utils/email.js'; 
 
 /**
 * DOCU: This function is used to handle the booking of a seminar. <br>
 * This is being called when user wants to book a seminar. <br>
-* Last Updated Date: December 14, 2024 <br>
+* Last Updated Date: December 15, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -27,6 +28,12 @@ const createBooking = async (req, res) => {
         /* Check if the seminar has available slots */
         if (seminar.slotsAvailable <= 0) return res.status(400).json({ message: 'Seminar is full' });
 
+        /* Find the user by its ID */
+        const user = await User.findById(req.user.id).select('firstName lastName email');
+
+        /* Check if user exists */
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
         let proofOfPayment = "";
         let clientSecret = null;
 
@@ -38,12 +45,6 @@ const createBooking = async (req, res) => {
             /* Desctructure to get amount and title of the seminar */
             const { fee: amount, title } = seminar;
 
-            /* Find the user by its ID */
-            const user = await User.findById(req.user.id).select('email');
-
-            /* Check if user exists */
-            if (!user) return res.status(404).json({ message: 'User not found' });
-            
             /* Contruct the payment data */
             const payment_data = {
                 amount,
@@ -56,16 +57,21 @@ const createBooking = async (req, res) => {
             clientSecret = response.clientSecret;
         }
 
+        /* Call sendEmailBookingReservation to send an email automatically when booking a seminar */
+        await sendEmailBookingReservation(user, seminar);
+
         /* Create a booking record in the database with proof of payment */
         const booking = await Booking.create({ user: req.user.id, seminar: seminarId, proofOfPayment });
 
-        /* Decrement the available slots for the seminar */
-        seminar.slotsAvailable -= 1;
+        /* Check if booking is created successfully */
+        if(booking){
+            /* Decrement the available slots for the seminar */
+            seminar.slotsAvailable -= 1;
+            /* Save the seminar updates to the database */
+            await seminar.save();
 
-        /* Save the seminar updates to the database */
-        await seminar.save();
-
-        res.status(201).json({ message: 'Booking created successfully', booking, clientSecret });
+            res.status(201).json({ message: 'Booking created successfully', booking, clientSecret });
+        }
     } catch (error) {
         res.status(500).json({ message: 'Error creating booking', error });
     }
@@ -206,5 +212,90 @@ const createPaymentIntentHandler = async (payment_data) => {
         throw new Error('Error creating payment intent', error.message);
     }
 };
+
+/**
+* DOCU: This function is used sending an email when booking a seminar. <br>
+* This is being called when user book a seminar. <br>
+* Last Updated Date: December 15, 2024 <br>
+* @function
+* @param {object} user - user details
+* @param {object} seminar - seminar details
+* @author Cesar
+*/
+const sendEmailBookingReservation = async (user, seminar) => {
+    try{
+        /* Email Content */
+        const to = user.email;
+        const subject = 'Seminar Reservation - Pending Status';
+        const text = `
+            Dear ${user.firstName} ${user.lastName},
+            Thank you for booking your spot in our seminar, ${seminar.title}!
+            We're delighted to confirm your participation. Below are the details for your reference:
+            Topic: ${seminar.title}
+            Details: ${seminar.description}
+            Date: ${seminar.date}
+            Time: ${seminar.timeFrame.from} - ${seminar.timeFrame.to}
+            Venue: ${seminar.venue}
+            Speaker: ${seminar.speaker.name}
+
+            Your reservation is still pending. Please wait for a confirmation email to follow.
+            
+            If you have any questions or require additional information, please don't hesitate to reach out at seminar.reservation.system@gmail.com
+    
+            Best regards,
+            Admin - Seminar Reservation System
+        `;
+        const html = `
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
+                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Thank you for booking your spot in our seminar, <b>${seminar.title}</b>!</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">We're delighted to confirm your participation. Below are the details for your reference:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Topic:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.title}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Details:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.description}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Date:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.date}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Time:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.timeFrame.from} - ${seminar.timeFrame.to}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Venue:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.venue}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Speaker:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.speaker.name}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Your reservation is still pending. Please wait for a confirmation email to follow.</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">
+                        If you have any questions or require additional information, please don't hesitate to reach out at 
+                        <a href="mailto:seminar.reservation.system@gmail.com" style="color: #007bff; text-decoration: none;">seminar.reservation.system@gmail.com</a>.
+                    </p>
+                    <p style="font-size: 14px; font-weight: bold;">Best regards,</p>
+                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        /* Use sendEmail for sending email */
+        await sendEmail(to, subject, text, html);
+    }
+    catch(error){
+        throw new Error('Error sending email for booking reservation', error.message);
+    }
+}
 
 export { createBooking, getUserBookings, updateBookingStatus };
