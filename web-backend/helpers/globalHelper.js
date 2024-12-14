@@ -13,4 +13,15 @@ const getUploadedImageUrl = async (image_file) => {
     return uploadResult?.url
 }
 
-export { getUploadedImageUrl };
+const formatToLocaleDate = (dateToFormat) => {
+    const date = new Date(dateToFormat);
+    const formattedDate = date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    });
+
+    return formattedDate;
+}
+
+export { getUploadedImageUrl, formatToLocaleDate };

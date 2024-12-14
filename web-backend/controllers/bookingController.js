@@ -3,7 +3,12 @@ import Seminar from '../models/Seminar.js';
 import User from '../models/User.js';
 import { getUploadedImageUrl } from '../helpers/globalHelper.js';
 import createPaymentIntent from '../utils/stripe.js';
-import { sendEmail } from '../utils/email.js'; 
+import { 
+    sendEmailBookingReservation, 
+    sendEmailConfirmedReservation, 
+    sendEmailRejectedReservation,
+    sendEmailPendingReservation,
+} from '../helpers/emailTemplate.js';
 
 /**
 * DOCU: This function is used to handle the booking of a seminar. <br>
@@ -131,9 +136,31 @@ const updateBookingStatus = async (req, res) => {
             return res.status(404).json({ message: 'Seminar not found' });
         }
 
+        /* Get seminar details by seminar id found in booking */
+        const user = await User.findById(booking.user).select('firstName lastName email');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         /* Validate the paymentStatus to ensure it is one of the allowed values */
         if (!['pending', 'confirmed', 'rejected'].includes(paymentStatus)) {
             return res.status(400).json({ message: 'Invalid payment status' });
+        }
+
+        /* Check if the updated booking status is confirmed then call sendEmailConfirmedReservation to send confirmation email for booked seminar */
+        if(paymentStatus === 'confirmed'){
+            await sendEmailConfirmedReservation(user, seminar);
+        }
+        /* Else if the updated booking status is rejected then call sendEmailRejectedReservation to send cancellation/rejection email for booked seminar */
+        else if(paymentStatus === 'rejected'){
+            await sendEmailRejectedReservation(user, seminar);
+        }
+        /* Else if the updated booking status is pending then call sendEmailPendingReservation to send pending email for booked seminar */
+        else if(paymentStatus === 'pending'){
+            await sendEmailPendingReservation(user, seminar);
+        }
+        else{
+            return res.status(400).json({ message: 'Invalid status. Cannot send email.' });
         }
 
         /* Call updateSeminarSlots function to update seminar slots available */
@@ -213,89 +240,5 @@ const createPaymentIntentHandler = async (payment_data) => {
     }
 };
 
-/**
-* DOCU: This function is used sending an email when booking a seminar. <br>
-* This is being called when user book a seminar. <br>
-* Last Updated Date: December 15, 2024 <br>
-* @function
-* @param {object} user - user details
-* @param {object} seminar - seminar details
-* @author Cesar
-*/
-const sendEmailBookingReservation = async (user, seminar) => {
-    try{
-        /* Email Content */
-        const to = user.email;
-        const subject = 'Seminar Reservation - Pending Status';
-        const text = `
-            Dear ${user.firstName} ${user.lastName},
-            Thank you for booking your spot in our seminar, ${seminar.title}!
-            We're delighted to confirm your participation. Below are the details for your reference:
-            Topic: ${seminar.title}
-            Details: ${seminar.description}
-            Date: ${seminar.date}
-            Time: ${seminar.timeFrame.from} - ${seminar.timeFrame.to}
-            Venue: ${seminar.venue}
-            Speaker: ${seminar.speaker.name}
-
-            Your reservation is still pending. Please wait for a confirmation email to follow.
-            
-            If you have any questions or require additional information, please don't hesitate to reach out at seminar.reservation.system@gmail.com
-    
-            Best regards,
-            Admin - Seminar Reservation System
-        `;
-        const html = `
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
-                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
-                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">Thank you for booking your spot in our seminar, <b>${seminar.title}</b>!</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">We're delighted to confirm your participation. Below are the details for your reference:</p>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Topic:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.title}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Details:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.description}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Date:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.date}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Time:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.timeFrame.from} - ${seminar.timeFrame.to}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Venue:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.venue}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Speaker:</td>
-                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.speaker.name}</td>
-                        </tr>
-                    </table>
-                    <p style="font-size: 14px; margin-bottom: 20px;">Your reservation is still pending. Please wait for a confirmation email to follow.</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">
-                        If you have any questions or require additional information, please don't hesitate to reach out at 
-                        <a href="mailto:seminar.reservation.system@gmail.com" style="color: #007bff; text-decoration: none;">seminar.reservation.system@gmail.com</a>.
-                    </p>
-                    <p style="font-size: 14px; font-weight: bold;">Best regards,</p>
-                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
-                </div>
-            </body>
-            </html>
-        `;
-
-        /* Use sendEmail for sending email */
-        await sendEmail(to, subject, text, html);
-    }
-    catch(error){
-        throw new Error('Error sending email for booking reservation', error.message);
-    }
-}
 
 export { createBooking, getUserBookings, updateBookingStatus };
