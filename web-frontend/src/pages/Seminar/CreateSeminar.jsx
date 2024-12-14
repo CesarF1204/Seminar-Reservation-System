@@ -46,7 +46,7 @@ const CreateSeminar = () => {
         formData.append("timeFrame.to", convertToAmPm(data.timeFrame.to));
         formData.append("venue", data.venue);
         formData.append("speaker.name", data.speaker.name);
-        formData.append("speaker.image", data.speaker.image[0] || "");
+        formData.append("speaker.image", data.speaker.image[0] || "https://res.cloudinary.com/dyw3wg9sl/image/upload/v1733851951/blank-profile-picture-973460_1280_fh1318.png");
         formData.append("speaker.linkedin", data.speaker.linkedin || "");
         formData.append("fee", data.fee);
         formData.append("slotsAvailable", data.slotsAvailable);
@@ -73,7 +73,8 @@ const CreateSeminar = () => {
                 <textarea
                     id="description"
                     name="description"
-                    className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={5}
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
                     {...register("description", { required: "*This field is required" })}
                 />
                 {errors.description && (

@@ -17,7 +17,7 @@ const LogOutButton = () => {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken", { exact: true });
             showToast({ message: "Logged Out!", type: "ERROR" });
-            navigate("/");
+            navigate("/sign-in");
         },
             onError: (error) => {
             showToast({ message: error.message, type: "ERROR" });

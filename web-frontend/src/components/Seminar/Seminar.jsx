@@ -46,7 +46,7 @@ const Seminar = () => {
                                             ? seminar.description.substring(0, 100) + '...'
                                             : seminar.description}
                                     </td>
-                                    <td className="px-4 py-2 text-center">
+                                    <td className="px-4 py-2 whitespace-nowrap text-center">
                                         <Link
                                             to={`/seminar/${seminar._id}`}
                                             className="text-blue-400 hover:text-blue-600"

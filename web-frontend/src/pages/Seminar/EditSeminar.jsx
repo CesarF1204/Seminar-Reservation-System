@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
+import { convertTo24HourFormat } from '../../helpers/globalHelpers';
 
 const EditSeminar = () => {
     /* Navigate to different routes */
@@ -91,7 +92,8 @@ const EditSeminar = () => {
                 <textarea
                     id="description"
                     name="description"
-                    className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={5}
+                    className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
                     defaultValue={seminar.description}
                     {...register("description", { required: "*This field is required" })}
                 />
@@ -116,7 +118,7 @@ const EditSeminar = () => {
                     type="time"
                     id="from"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
-                    defaultValue={seminar.timeFrame.from}
+                    defaultValue={convertTo24HourFormat(seminar.timeFrame.from)}
                     {...register("timeFrame.from", { required: "*This field is required" })}
                 />
                 {errors.timeFrame?.from && (
@@ -128,7 +130,7 @@ const EditSeminar = () => {
                     type="time"
                     id="to"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
-                    defaultValue={seminar.timeFrame.to}
+                    defaultValue={convertTo24HourFormat(seminar.timeFrame.to)}
                     {...register("timeFrame.to", { required: "*This field is required" })}
                 />
                 {errors.timeFrame?.to && (

@@ -9,7 +9,7 @@ const Login = () => {
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
-    const { showToast, setLoginSuccess } = useAppContext();
+    const { showToast } = useAppContext();
     /* Initialize the React Query client to manage cache and query state */
     const queryClient = useQueryClient();
 
@@ -23,8 +23,6 @@ const Login = () => {
     /* Set up the mutation for sign-in API call */
     const mutation = useMutation(apiClient.signIn, {
         onSuccess: async () => {
-            setLoginSuccess(true);
-
             /* Show success toast */
             showToast({ message: "Sign in Successful", type: "SUCCESS" })
             await queryClient.invalidateQueries("validateToken", { exact: true });

@@ -3,8 +3,11 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 const AccountDisable = ({ user }) => {
+    /* Navigate to different routes */
+    const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
     const {showToast, data} = useAppContext();
     /* Initialize the React Query client to manage cache and query state */
@@ -19,16 +22,34 @@ const AccountDisable = ({ user }) => {
 
     /* Mutation for updating the user restriction */
     const mutation = useMutation((formData) => apiClient.updateRoleOrRestriction(user._id, formData, data.token), {
-        onSuccess: async () => {
-            /* Show success toast */
-            showToast({ message: "Role Updated", type: "SUCCESS" });
-            await queryClient.invalidateQueries("validateToken", { exact: true });
+        onSuccess: async (req, res) => {
+            /* Check if the authenticated user changed their own restriction */
+            if(data.userId === res.user_id){
+                logOutMutation.mutate();
+            }
+            else{
+                /* Show success toast */
+                showToast({ message: "Account Restriction Updated", type: "SUCCESS" });
+                await queryClient.invalidateQueries("validateToken", { exact: true });
+            }
         },
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"})
         }
     })
+
+    /* Mutation for logging out */
+    const logOutMutation = useMutation(apiClient.signOut, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken", { exact: true });
+            showToast({ message: "Your Account Has Been Disabled", type: "ERROR" });
+            navigate("/sign-in"); /* Redirect to sign-in page after logout */
+        },
+        onError: (error) => {
+            showToast({ message: error.message, type: "ERROR" });
+        },
+    });
 
     /* Handle form submission */
     const onChange = handleSubmit((formData)=>{
