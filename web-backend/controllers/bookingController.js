@@ -101,7 +101,7 @@ const getUserBookings = async (req, res) => {
 /**
 * DOCU: This function is used to update a booked seminar. <br>
 * This is being called when admin wants to update the status of a booked seminar. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 15, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -113,10 +113,25 @@ const updateBookingStatus = async (req, res) => {
         const { id } = req.params;
         const { paymentStatus } = req.body;
 
+        /* Get booking details by booking id */
+        const booking = await Booking.findById(id);
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        /* Get seminar details by seminar id found in booking */
+        const seminar = await Seminar.findById(booking.seminar);
+        if (!seminar) {
+            return res.status(404).json({ message: 'Seminar not found' });
+        }
+
         /* Validate the paymentStatus to ensure it is one of the allowed values */
         if (!['pending', 'confirmed', 'rejected'].includes(paymentStatus)) {
-        return res.status(400).json({ message: 'Invalid payment status' });
+            return res.status(400).json({ message: 'Invalid payment status' });
         }
+
+        /* Call updateSeminarSlots function to update seminar slots available */
+        await updateSeminarSlots(booking, seminar, paymentStatus);
 
         /* Find the booking by ID and update its payment status */
         const updatedBooking = await Booking.findByIdAndUpdate(
@@ -138,6 +153,32 @@ const updateBookingStatus = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error updating booking status', error });
     }
+};
+
+/**
+* DOCU: This function is used to validate and update seminar slots <br>
+* This is being called when admin wants to update the status of a booked seminar and the slots will be updated as well. <br>
+* This is triggered when admin updates booking status (pending, confirmed, or rejected)
+* Last Updated Date: December 15, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const updateSeminarSlots = async (booking, seminar, paymentStatus) => {
+    /* Get the current payment status */
+    const currentPaymentStatus = booking.paymentStatus;
+
+    /* If the new payment status is 'rejected', increment slotsAvailable only if the current payment status is 'pending' or 'confirmed'
+        else if the new payment status is 'pending' or 'confirmed' and the current payment status is 'rejected', decrement slotsAvailable */
+    if (paymentStatus === 'rejected' && (currentPaymentStatus === 'pending' || currentPaymentStatus === 'confirmed')) {
+        seminar.slotsAvailable += 1;
+    } else if ((paymentStatus === 'pending' || paymentStatus === 'confirmed') && currentPaymentStatus === 'rejected') {
+        seminar.slotsAvailable -= 1;
+    }
+
+    /* Save the updated seminar */
+    await seminar.save();
 };
 
 /**
