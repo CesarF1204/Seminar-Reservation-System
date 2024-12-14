@@ -74,7 +74,9 @@ const SeminarDetails = () => {
                     <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>
                 </div>
                 {/* Book Seminar Component */}
-                <BookSeminar />
+                { data.role !== 'admin' &&
+                    <BookSeminar />
+                }
             </div>
             { data.role === 'admin' &&
                 <div className="flex space-x-4 items-center mt-6">
