@@ -13,6 +13,7 @@ import ViewUsers from './pages/User/ViewUsers';
 import EditUser from './pages/User/EditUser';
 import ForgotPassword from './pages/ForgotPassword';
 import AccountRecoveryURL from './components/AccountRecoveryURL';
+import ViewBookedSeminars from './components/Seminar/ViewBookedSeminars';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -37,6 +38,7 @@ function App() {
         <Route path="/seminar/:id" element={isLoggedIn ? <SeminarDetails /> : <Navigate to="/sign_in" />} />
         <Route path="/edit_profile" element={isLoggedIn ? <EditProfile /> : <Navigate to="/sign_in" />} />
         <Route path="/change_password" element={isLoggedIn ? <ChangePassword /> : <Navigate to="/sign_in" />} />
+        <Route path="/bookings" element={isLoggedIn ? <ViewBookedSeminars /> : <Navigate to="/sign_in" />} />
 
         {/* Protected route: only accessible if logged in and admin */}
         {isLoggedIn && data.role === 'admin' && (

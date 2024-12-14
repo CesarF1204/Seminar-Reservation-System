@@ -29,9 +29,26 @@ function convertTo24HourFormat(time12hr) {
     return `${hours.toString().padStart(2, '0')}:${minutes}`;
 }
 
-/* Make first letter to be capitalized */
+/* Convert isoDate to MM/DD/YY for readability */
+const convertDateFormat = (isoDate) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const date = new Intl.DateTimeFormat("en-US", options).format(new Date(isoDate));
+    
+    return date;
+}
+
+/* Make first letter and other letter after space to be capitalized */
 const capitalizeFirstLetter = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    return str
+        .split(' ')  /* Split the string into words */
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))  /* Capitalize the first letter of each word */
+        .join(' ');
 };
 
-export { convertToAmPm, convertTo24HourFormat, capitalizeFirstLetter };
+/* Truncate long sentences */
+const truncateSentence = (str) => {
+    return str.length > 100 ? str.substring(0, 100) + '...' : str;
+}
+
+
+export { convertToAmPm, convertTo24HourFormat, capitalizeFirstLetter, truncateSentence, convertDateFormat };

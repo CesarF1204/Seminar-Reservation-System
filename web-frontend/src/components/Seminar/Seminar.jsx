@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
+import { truncateSentence } from '../../helpers/globalHelpers';
 
 const Seminar = () => {
     /* Extract showToast function from context for displaying notifications */
@@ -41,11 +42,7 @@ const Seminar = () => {
                             {seminars.map((seminar) => (
                                 <tr key={seminar._id} className="hover:bg-gray-700">
                                     <td className="px-4 py-2">{seminar.title}</td>
-                                    <td className="px-4 py-2">
-                                        {seminar.description.length > 100
-                                            ? seminar.description.substring(0, 100) + '...'
-                                            : seminar.description}
-                                    </td>
+                                    <td className="px-4 py-2">{truncateSentence(seminar.description)}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-center">
                                         <Link
                                             to={`/seminar/${seminar._id}`}

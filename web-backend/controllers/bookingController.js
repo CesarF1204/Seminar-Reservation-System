@@ -72,9 +72,9 @@ const createBooking = async (req, res) => {
 };
 
 /**
-* DOCU: This function is used to fetch all booked seminars. <br>
-* This is being called when user wants fetch booked seminars. <br>
-* Last Updated Date: December 6, 2024 <br>
+* DOCU: This function is used to fetch booked seminars. <br>
+* This is being called when admin or user wants fetch booked seminars. <br>
+* Last Updated Date: December 14, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -82,8 +82,16 @@ const createBooking = async (req, res) => {
 */
 const getUserBookings = async (req, res) => {
     try {
-        /* Find all bookings for the logged-in user and populate the seminar details */
-        const bookings = await Booking.find({ user: req.user.id }).populate('seminar');
+        const { id: user_id, role } = req.user;
+
+        /* If role is admin find all bookings, if not find all bookings for the logged-in user
+            then populate the user and seminar details */
+        const bookings = await Booking.find(role !== 'admin' ? {user: user_id} : {})
+            .populate({
+                path: 'user',
+                select: 'firstName lastName email',
+                })
+            .populate('seminar');
         res.status(200).json(bookings);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching bookings', error });

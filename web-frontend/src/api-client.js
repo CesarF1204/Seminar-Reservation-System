@@ -504,6 +504,60 @@ const createBooking = async (formData, token) => {
     return responseBody;
 };
 
+/*
+    fetchBookings function: 
+    Sends a GET request to the /api/bookings endpoint to fetch all booked seminar.
+*/
+const fetchBookings = async (token) => {
+    /* Sending a GET request to fetch all booked seminars */
+    const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    });
+
+    /* Parse the JSON response body */
+    const data = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(data.message);
+    }
+
+    /* Return the data (seminar information) if the request is successful */
+    return data;
+};
+
+/*
+    updateBookingStatus function: 
+    Sends a PUT request to the /api/bookings/:id endpoint to fetch all booked seminar.
+*/
+const updateBookingStatus = async (booking_id, formData, token) => {
+    /* Sending a PUT request to bookings API */
+    const response = await fetch(`${API_BASE_URL}/api/bookings/${booking_id}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+
+    return responseBody;
+};
+
 export {
     register,
     signIn,
@@ -526,4 +580,6 @@ export {
     resetPasswordLink,
     resetPassword,
     createBooking,
+    fetchBookings,
+    updateBookingStatus,
 };
