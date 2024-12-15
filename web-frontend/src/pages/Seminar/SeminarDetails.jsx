@@ -4,8 +4,8 @@ import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext'; 
 import { FaArrowLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
-import DeleteSeminarModal from './DeleteSeminarModal';
-import BookSeminar from './BookSeminar';
+import DeleteSeminarModal from '../../components/Seminar/DeleteSeminarModal';
+import BookSeminar from '../../components/Seminar/BookSeminar';
 
 const SeminarDetails = () => {
     /* Get the seminar ID from the URL parameters */

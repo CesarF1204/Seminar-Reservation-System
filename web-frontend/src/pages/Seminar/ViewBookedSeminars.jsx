@@ -5,8 +5,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import { capitalizeFirstLetter, convertDateFormat } from '../../helpers/globalHelpers';
-import ProofOfPaymentModal from './ProofOfPaymentModal';
-import BookingStatus from './BookingStatus';
+import ProofOfPaymentModal from '../../components/Seminar/ProofOfPaymentModal';
+import BookingStatus from '../../components/Seminar/BookingStatus';
 
 const ViewBookedSeminars = () => {
     /* Navigate to different routes */

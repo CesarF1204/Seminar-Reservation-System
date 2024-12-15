@@ -5,7 +5,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateSeminar from './pages/Seminar/CreateSeminar';
-import SeminarDetails from './components/Seminar/SeminarDetails';
+import SeminarDetails from './pages/Seminar/SeminarDetails';
 import EditSeminar from './pages/Seminar/EditSeminar';
 import EditProfile from './pages/User/EditProfile';
 import ChangePassword from './pages/User/ChangePassword';
@@ -13,7 +13,7 @@ import ViewUsers from './pages/User/ViewUsers';
 import EditUser from './pages/User/EditUser';
 import ForgotPassword from './pages/ForgotPassword';
 import AccountRecoveryURL from './components/AccountRecoveryURL';
-import ViewBookedSeminars from './components/Seminar/ViewBookedSeminars';
+import ViewBookedSeminars from './pages/Seminar/ViewBookedSeminars';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
