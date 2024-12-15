@@ -28,12 +28,13 @@ const Notification = () => {
     const reminder_msg = [];
 
     /* Loop through booked seminars and generate reminder messages */
-    booked_seminars.forEach(({ seminar }) => {
-        /* Check if the seminar is today */
-        if(convertDateFormat(seminar.date) === convertDateFormat(Date.now())) {
-            reminder_msg.push({
-                message: `Don't forget your seminar today, ${seminar.title} from ${seminar.timeFrame.from} - ${seminar.timeFrame.to}!`,
-            });
+    booked_seminars.forEach((booking) => {
+        /* Check if the seminar is today and it is a confirmed booking */
+        if(convertDateFormat(booking.seminar.date) === convertDateFormat(Date.now()) 
+            && booking.paymentStatus === 'confirmed') {
+                reminder_msg.push({
+                    message: `Don't forget your seminar today, ${booking.seminar.title} from ${booking.seminar.timeFrame.from} - ${booking.seminar.timeFrame.to}!`,
+                });
         }
     });
 
