@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import LogOutButton from './User/LogOutButton';
+import Notification from './Notification';
 
 const AppNavbar = ({ user }) => {
     return(
@@ -20,10 +21,14 @@ const AppNavbar = ({ user }) => {
                             </>
                         }
                     </Nav>
-                    {/* Logout Button */}
-                    <Nav.Link as={Link}>
-                        <LogOutButton className="btn-sm" />
-                    </Nav.Link>
+                    <Nav className="ms-auto align-items-center">
+                        {user.role !== 'admin' &&
+                            <Notification />
+                        }
+                        <Nav.Item className="ms-3">
+                            <LogOutButton className="btn-sm" />
+                        </Nav.Item>
+                    </Nav>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
