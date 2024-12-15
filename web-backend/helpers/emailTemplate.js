@@ -1,4 +1,4 @@
-import { sendEmail } from '../utils/email.js'; 
+import sendEmail from '../utils/email.js'; 
 import { formatToLocaleDate } from './globalHelper.js';
 
 /**
@@ -270,10 +270,60 @@ const sendEmailPendingReservation = async (user, seminar) => {
     }
 }
 
+/**
+* DOCU: This function is used to send an email for account recovery.
+* This is being called when the user forgot their password and want for an account recovery. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const sendEmailAccountRecovery = async (user, recoveryUrl) => {
+    try{
+        /* Email Content */
+        const to = user.email;
+        const subject = 'Account Recovery Request';
+        const text = `
+            Dear ${user.firstName} ${user.lastName},
+            We received a request to recover your account associated with this email address.
+            To reset your password and regain access to your account, please click the link below:
+            Account Recovery URL: ${recoveryUrl}
+            If you didn't request this, please ignore this message. Your account is still secure, and no changes have been made.
+            Best regards,
+            Admin - Seminar Reservation System
+        `;
+        const html = `
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                    <p style="font-size: 16px;">Dear <b>${user.firstName} ${user.lastName}</b>,</p>
+                    <p style="font-size: 14px;">We received a request to recover your account associated with this email address.</p>
+                    <p style="font-size: 14px;">To reset your password and regain access to your account, please click the link below:</p>
+                    <p style="font-size: 14px; text-align: center;">
+                        <a href="${recoveryUrl}" 
+                        style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Your Password</a>
+                    </p>
+                    <p style="font-size: 14px;">Link will expire in 1 hour. If you didn't request this, please ignore this message. Your account is still secure, and no changes have been made.</p>
+                    <p style="font-size: 14px;">Best regards,</p>
+                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        /* Use sendEmail for sending email */
+        await sendEmail(to, subject, text, html);
+    }
+    catch(error){
+        throw new Error('Error sending email for account recovery', error.message);
+    }
+}
 
 export {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
     sendEmailRejectedReservation, 
-    sendEmailPendingReservation
+    sendEmailPendingReservation,
+    sendEmailAccountRecovery,
 };

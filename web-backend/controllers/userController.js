@@ -1,7 +1,9 @@
 import User from '../models/User.js';
-import bcrypt from 'bcryptjs';
+import { sendEmailAccountRecovery } from '../helpers/emailTemplate.js';
 import { validationResult } from "express-validator";
+import bcrypt from 'bcryptjs';
 import cloudinary from 'cloudinary';
+import crypto from 'crypto';
 
 /**
 * DOCU: This function is used to fetch users. <br>
@@ -323,6 +325,48 @@ const resetPassword = async (req, res) => {
     }
 };
 
+/**
+* DOCU: This function is used to send an email for account recovery.
+* This is being called when the user forgot their password and want for an account recovery. <br>
+* Last Updated Date: December 12, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const accountRecovery = async (req, res) => {
+    try {
+        /* Extract the email from the request body */
+        const { email } = req.body;
+
+        /* Get the user details by using email address */
+        const user = await User.findOne({ email }).select('firstName lastName email');
+
+        /* Check if the user was not found */
+        if (!user) {
+            return res.status(400).send('User not found');
+        }
+
+        /* Generate a token and expiration time for password reset */
+        const token = crypto.randomBytes(20).toString('hex');
+        const expiration = Date.now() + 3600000;
+
+        /* Save the token and expiration time to the user's record in database */
+        user.passwordResetToken = token;
+        user.passwordResetExpires = expiration;
+        await user.save();
+
+        /* Create the password recovery URL to be sent in the email */
+        const recoveryUrl = `${process.env.FRONTEND_URL}/reset_password/${token}`;
+
+        await sendEmailAccountRecovery(user, recoveryUrl);
+
+        res.status(200).json({ message: 'Email Sent Successfully For Account Recovery' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending email for account recovery', error });
+    }
+};
+
 export { 
     getProfile, 
     updateProfile, 
@@ -334,4 +378,5 @@ export {
     updateUserById,
     resetPasswordLink,
     resetPassword,
+    accountRecovery,
 };

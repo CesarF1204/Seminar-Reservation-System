@@ -9,7 +9,8 @@ import {
     fetchUserById,
     updateUserById,
     resetPasswordLink,
-    resetPassword
+    resetPassword,
+    accountRecovery
 } from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
@@ -53,5 +54,8 @@ router.get('/reset_password/:token', resetPasswordLink);
 
 /* Route to handle updating of password in password reset link */
 router.put('/reset_password', resetPassword);
+
+/* Route to send mail for account recovery */
+router.post('/send_account_recovery', accountRecovery);
 
 export default router;

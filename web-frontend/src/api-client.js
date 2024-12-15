@@ -410,11 +410,11 @@ const deleteAccount = async (user_id, token) => {
 
 /*
     sendEmail function: 
-    Sends a POST request to the /email/send endpoint to send an email.
+    Sends a POST request to the /users/send_account_recovery endpoint to send an email.
 */
 const sendEmailAccountRecovery = async (formData) => {
-    /* Sending a POST request to email API */
-    const response = await fetch(`${API_BASE_URL}/api/email/send-account-recovery`, {
+    /* Sending a POST request to users API */
+    const response = await fetch(`${API_BASE_URL}/api/users/send_account_recovery`, {
         method: "POST",
         credentials: "include",
         headers: {
