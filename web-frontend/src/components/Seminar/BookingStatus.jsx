@@ -4,11 +4,8 @@ import { useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
-import { useNavigate } from 'react-router-dom';
 
 const BookingStatus = ({ booking }) => {
-    /* Navigate to different routes */
-    const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
     const {showToast, data} = useAppContext();
     /* Initialize the React Query client to manage cache and query state */

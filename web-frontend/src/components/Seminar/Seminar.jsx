@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
-import { truncateSentence } from '../../helpers/globalHelpers';
+import { truncateSentence, convertDateFormat, sortByKey } from '../../helpers/globalHelpers';
+import { FaSortUp, FaSortDown, FaSort } from 'react-icons/fa';
 
 const Seminar = () => {
+    const [ sortKey, setSortKey ] = useState('');
+    const [ sortDirection, setSortDirection ] = useState('asc');
+
     /* Extract showToast function from context for displaying notifications */
     const {showToast} = useAppContext();
 
@@ -20,10 +24,32 @@ const Seminar = () => {
         }
     );
 
-    /* Error state: show error toast if there is an issue loading data */
+    /* Check if there are errors */
     if (isError) {
-        showToast({ message: "Failed to load seminars. Please try again later.", type: "ERROR" })
+        showToast({ message: "Failed to load seminars. Please try again later.", type: "ERROR" });
     }
+    
+    /* Handle sorting */
+    const handleSort = (key) => {
+        if (sortKey === key) {
+            /* Toggle direction if the same column is clicked */
+            setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            /* Set a new sort key and default to ascending order */
+            setSortKey(key);
+            setSortDirection('asc');
+        }
+    };
+    /* Sort the seminars list based on the selected key and direction */
+    const sortedSeminars = sortByKey([...seminars], sortKey, sortDirection);
+
+    /* Display the appropriate sort icon based on the current sort direction */
+    const renderSortIcon = (key) => {
+        if (sortKey === key) {
+            return sortDirection === 'asc' ? <FaSortUp /> : <FaSortDown />;
+        }
+        return <FaSort />;
+    };
 
     return (
         <div className="flex items-center justify-center bg-gray-100">
@@ -32,17 +58,43 @@ const Seminar = () => {
                 {seminars.length > 0 ? (
                     <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
                         <thead>
-                            <tr className="bg-gray-700">
-                                <th className="px-4 py-2 text-center">Title</th>
-                                <th className="px-4 py-2 text-center">Description</th>
+                            <tr className="bg-gray-700 whitespace-nowrap">
+                                <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('title')}>
+                                    <div className="flex items-center justify-center">
+                                        Title {renderSortIcon('title')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 text-center cursor-pointer">
+                                    <div className="flex items-center justify-center">
+                                        Description
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('date')}>
+                                    <div className="flex items-center justify-center">
+                                        Date {renderSortIcon('date')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('speaker.name')}>
+                                    <div className="flex items-center justify-center">
+                                        Speaker {renderSortIcon('speaker.name')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('fee')}>
+                                    <div className="flex items-center justify-center">
+                                        Price {renderSortIcon('fee')}
+                                    </div>
+                                </th>
                                 <th className="px-4 py-2 text-center">Details</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {seminars.map((seminar) => (
+                            {sortedSeminars.map((seminar) => (
                                 <tr key={seminar._id} className="hover:bg-gray-700">
-                                    <td className="px-4 py-2">{seminar.title}</td>
+                                    <td className="px-4 py-2 ">{seminar.title}</td>
                                     <td className="px-4 py-2">{truncateSentence(seminar.description)}</td>
+                                    <td className="px-4 py-2">{convertDateFormat(seminar.date)}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap">{seminar.speaker.name}</td>
+                                    <td className="px-4 py-2">₱{seminar.fee}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-center">
                                         <Link
                                             to={`/seminar/${seminar._id}`}

@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from "react-icons/fa";
-import { capitalizeFirstLetter, convertDateFormat } from '../../helpers/globalHelpers';
+import { FaArrowLeft, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
+import { capitalizeFirstLetter, convertDateFormat, sortByKey } from '../../helpers/globalHelpers';
 import ProofOfPaymentModal from '../../components/Seminar/ProofOfPaymentModal';
 import BookingStatus from '../../components/Seminar/BookingStatus';
 
@@ -15,7 +15,9 @@ const ViewBookedSeminars = () => {
     const {showToast, data} = useAppContext();
 
     const [ showProofOfPayment, setShowProofOfPayment ] = useState(false);
-    const [paymentProofImage, setPaymentProofImage] = useState('');
+    const [ paymentProofImage, setPaymentProofImage ] = useState('');
+    const [ sortKey, setSortKey ] = useState('');
+    const [ sortDirection, setSortDirection ] = useState('asc');
 
     /* Fetch booked seminars data using react-query's useQuery hook */
     const { data: booked_seminars = [], isError, refetch } = useQuery(
@@ -33,13 +35,38 @@ const ViewBookedSeminars = () => {
         showToast({ message: "Failed to load users details. Please try again later.", type: "ERROR" })
     }
 
+    /* Handle displaying the proof of payment modal */
     const handleShowProof = (proofImage) => {
         setPaymentProofImage(proofImage);
         setShowProofOfPayment(true);
     };
 
+    /* Handle closing proof of payment modal */
     const handleCloseModal = () => {
         setShowProofOfPayment(false);
+    };
+
+    /* Handle sorting */
+    const handleSort = (key) => {
+        if(sortKey === key) {
+            /* Toggle direction if the same column is clicked */
+            setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+        } else {
+            /* Set a new sort key and default to ascending order */
+            setSortKey(key);
+            setSortDirection('asc');
+        }
+    };
+
+    /* Sort the booked seminars list based on the selected key and direction */
+    const sortedBookedSeminars = sortByKey([...booked_seminars], sortKey, sortDirection);
+
+    /* Display the appropriate sort icon based on the current sort direction */
+    const renderSortIcon = (key) => {
+        if(sortKey === key) {
+            return sortDirection === 'asc' ? <FaSortUp /> : <FaSortDown />;
+        }
+        return <FaSort />;
     };
 
     return (
@@ -50,16 +77,40 @@ const ViewBookedSeminars = () => {
                     <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
                         <thead className="whitespace-nowrap">
                             <tr className="bg-gray-700">
-                                <th className="px-4 py-2">Title</th>
-                                <th className="px-4 py-2">Price</th>
-                                <th className="px-4 py-2">Booked By</th>
-                                <th className="px-4 py-2">Booked Date</th>
-                                <th className="px-4 py-2">Proof of Payment</th>
-                                <th className="px-4 py-2">Status</th>
+                                <th className="px-4 py-2" onClick={() => handleSort('seminar.title')}>
+                                    <div className="flex items-center justify-start">
+                                        Title {renderSortIcon('seminar.title')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2" onClick={() => handleSort('seminar.fee')}>
+                                    <div className="flex items-center justify-start">
+                                        Price {renderSortIcon('seminar.fee')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2" onClick={() => handleSort('user.firstName')}>
+                                    <div className="flex items-center justify-start">
+                                        Booked By {renderSortIcon('user.firstName')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2" onClick={() => handleSort('seminar.createdAt')}>
+                                    <div className="flex items-center justify-start">
+                                        Booked Date {renderSortIcon('seminar.createdAt')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2" onClick={() => handleSort('proofOfPayment')}>
+                                    <div className="flex items-center justify-start">
+                                        Proof of Payment {renderSortIcon('proofOfPayment')}
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2" onClick={() => handleSort('paymentStatus')}>
+                                <div className="flex items-center justify-start">
+                                        Status {renderSortIcon('paymentStatus')}
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {booked_seminars.map((booking) => (
+                            {sortedBookedSeminars.map((booking) => (
                                 <tr key={booking._id} className="hover:bg-gray-700">
                                     <td className="px-4 py-2">{booking.seminar.title}</td>
                                     <td className="px-4 py-2">₱{booking.seminar.fee}</td>
