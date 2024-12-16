@@ -30,7 +30,7 @@ const LogOutButton = () => {
     };
 
     return (
-        <button onClick={handleClick} className="btn btn-danger">
+        <button onClick={handleClick} className="btn btn-danger whitespace-nowrap">
             Log Out
         </button>
     );

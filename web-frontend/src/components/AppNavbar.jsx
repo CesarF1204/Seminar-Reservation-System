@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import LogOutButton from './User/LogOutButton';
 import Notification from './Notification';
@@ -13,34 +13,146 @@ const AppNavbar = ({ user }) => {
         setIsNavbarCollapsed(prevState => !prevState);
     };
 
-    return(
-        <Navbar className="sticky top-0" bg="dark" variant="dark" expand="lg">
-            <Container className="p-1">
-                <Navbar.Brand as={Link} to="/">Seminar Reservation System</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={handleNavbarToggle} />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/dashboard" state={{ isNavbarCollapsed }}>Home</Nav.Link>
-                        <Nav.Link as={Link} to="/bookings">View Bookings</Nav.Link>
+    const location = useLocation();
+
+    const isActive = (path) => location.pathname === path;
+
+    return (
+        <nav className="bg-gray-900 p-4 shadow-md sticky top-0">
+            <div className="container mx-auto flex justify-between items-center">
+                {/* Left Section: Header and Links */}
+                <div className="flex items-center space-x-4">
+                    <Link to="/" className="text-white text-2xl font-bold">
+                        Seminar Reservation System
+                    </Link>
+                    <div className="hidden lg:flex space-x-4">
+                        <Link 
+                            to="/dashboard" 
+                            className={`px-4 py-2 rounded whitespace-nowrap ${
+                                isActive('/dashboard') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
+                            }`}
+                        >
+                            Home
+                        </Link>
+                        <Link 
+                            to="/bookings" 
+                            className={`px-4 py-2 rounded whitespace-nowrap ${
+                                isActive('/bookings') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
+                            }`}
+                        >
+                            View Bookings
+                        </Link>
                         {user.role === 'admin' &&
-                            <>
-                                <Nav.Link as={Link} to="/view_users">View Users</Nav.Link>
-                                <Nav.Link as={Link} to="/create_seminar">Create Seminar</Nav.Link>
-                            </>
+                        <>
+                            <Link 
+                                to="/view_users" 
+                                className={`px-4 py-2 rounded whitespace-nowrap ${
+                                    isActive('/view_users') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                View Users
+                            </Link>
+                            <Link 
+                                to="/create_seminar" 
+                                className={`px-4 py-2 rounded whitespace-nowrap ${
+                                    isActive('/create_seminar') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                Create Seminar
+                            </Link>
+                        </>
                         }
-                    </Nav>
-                    <Nav className="ms-auto align-items-start">
-                        {user.role !== 'admin' &&
-                            <Notification isNavbarCollapsed={isNavbarCollapsed} />
-                        }
-                        <Nav.Item className="mt-1">
-                            <LogOutButton className="btn-sm" />
-                        </Nav.Item>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
-    )
+                    </div>
+                </div>
+                
+                {/* Right Section: Notifications and Burger Icon */}
+                <div className="flex items-center space-x-4 lg:hidden">
+                {user.role !== 'admin' &&
+                    <Notification />
+                }
+                    <button 
+                        className="text-white" 
+                        onClick={() => setIsNavbarCollapsed(!isNavbarCollapsed)}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Right Section: Notifications and Logout for large screens */}
+                <div className="hidden lg:flex items-center space-x-4">
+                {user.role !== 'admin' &&
+                    <Notification />
+                }
+                    <LogOutButton />
+                </div>
+            </div>
+
+            {/* Sidebar (Mobile) */}
+            <div 
+                className={`fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg transform ${
+                    isNavbarCollapsed ? 'translate-x-0' : 'translate-x-full'
+                } transition-transform duration-300 ease-in-out`}
+            >
+                <button 
+                    className="text-white absolute top-4 right-4" 
+                    onClick={() => setIsNavbarCollapsed(false)}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div className="mt-16 flex flex-col space-y-4 px-6">
+                    <Link 
+                        to="/dashboard" 
+                        className={`px-4 py-2 rounded ${
+                            isActive('/dashboard') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
+                        }`}
+                        onClick={() => setIsNavbarCollapsed(false)}
+                    >
+                        Home
+                    </Link>
+                    <Link 
+                        to="/bookings" 
+                        className={`px-4 py-2 rounded ${
+                            isActive('/bookings') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
+                        }`}
+                        onClick={() => setIsNavbarCollapsed(false)}
+                    >
+                        View Bookings
+                    </Link>
+                    {user.role === 'admin' &&
+                    <>
+                        <Link 
+                            to="/view_users" 
+                            className={`px-4 py-2 rounded ${
+                                isActive('/view_users') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
+                            }`}
+                            onClick={() => setIsNavbarCollapsed(false)}
+                        >
+                            View Users
+                        </Link>
+                        <Link 
+                            to="/create_seminar" 
+                            className={`px-4 py-2 rounded ${
+                                isActive('/create_seminar') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
+                            }`}
+                            onClick={() => setIsNavbarCollapsed(false)}
+                        >
+                            Create Seminar
+                        </Link>
+                    </>
+                    }
+                    <LogOutButton 
+                        className="px-4 py-2 rounded text-white hover:bg-gray-700"
+                        onClick={() => setIsNavbarCollapsed(false)}
+                    />
+                </div>
+            </div>
+        </nav> 
+    );
+    
 }
 
 export default AppNavbar
