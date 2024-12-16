@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
-import { capitalizeFirstLetter, sortByKey } from '../../helpers/globalHelpers';
+import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 import UpdateUserRole from '../../components/User/UpdateUserRole';
 import AccountDisable from '../../components/User/AccountDisable';
 import UserAction from '../../components/User/UserAction';
 
 const ViewUsers = () => {
-    const [ sortKey, setSortKey ] = useState('');
+    /* Default page, limit, sortKey, and sortDirection */
+    const [ page, setPage ] = useState(1);
+    const [ limit, setLimit ] = useState(5);
+    const [ sortKey, setSortKey ] = useState('firstName');
     const [ sortDirection, setSortDirection ] = useState('asc');
     
     /* Navigate to different routes */
@@ -19,13 +22,14 @@ const ViewUsers = () => {
     const {showToast, data} = useAppContext();
 
     /* Fetch users data using react-query's useQuery hook */
-    const { data: users = [], isError, refetch } = useQuery(
-        "fetchUsers",
-        ()=>apiClient.fetchUsers(data.token),
+    const { data: users_data = [], isError, refetch } = useQuery(
+        ["fetchUsers", page, limit, sortKey, sortDirection],
+        ()=>apiClient.fetchUsers(data.token, { page, limit, sortKey, sortDirection }),
         {
             suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
             refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */
             retry: 1, /* Optional: Number of retry attempts */
+            keepPreviousData: true, /* Ensures that the previous data is kept while new data is loading, preventing UI flickers. */
         }
     );
 
@@ -46,9 +50,6 @@ const ViewUsers = () => {
         }
     };
 
-    /* Sort the booked seminars list based on the selected key and direction */
-    const sortedUsers = sortByKey([...users], sortKey, sortDirection);
-
     /* Display the appropriate sort icon based on the current sort direction */
     const renderSortIcon = (key) => {
         if(sortKey === key) {
@@ -57,55 +58,95 @@ const ViewUsers = () => {
         return <FaSort />;
     };
 
+    /* Reset the page to 1 when the limit, sortKey, and sortDirection changes */
+    useEffect(() => {
+        setPage(1);
+    }, [limit, sortKey, sortDirection]);
+
     return (
         <div className="flex items-center justify-center bg-gray-100">
             <div className="mt-4 max-w-6xl w-full">
-                <h2 className="text-2xl font-semibold text-center">Registered Users</h2>
-                {users.length > 0 ? (
-                    <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
-                        <thead>
-                            <tr className="bg-gray-700">
-                                <th className="px-4 py-2" onClick={() => handleSort('firstName')}>
-                                    <div className="flex items-center justify-start">
-                                        Name {renderSortIcon('firstName')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('email')}>
-                                    <div className="flex items-center justify-start">
-                                        Email Address {renderSortIcon('email')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('role')}>
-                                    <div className="flex items-center justify-start">
-                                        Role {renderSortIcon('role')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('isDisabled')}>
-                                    <div className="flex items-center justify-start">
-                                        Restriction {renderSortIcon('isDisabled')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sortedUsers.map((user) => (
-                                <tr key={user._id} className="hover:bg-gray-700">
-                                    <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
-                                    <td className="px-4 py-2">{user.email}</td>
-                                    <td className="px-4 py-2">
-                                        <UpdateUserRole user={user} />
-                                    </td>
-                                    <td className="px-4 py-2">
-                                        <AccountDisable user={user} />
-                                    </td>
-                                    <td>
-                                        <UserAction user={user} refetch={refetch} />
-                                    </td>
+                <div className="flex items-center justify-between">
+                    {/* Title */}
+                    <h2 className="text-2xl font-semibold text-center">Registered Users</h2>
+                    {/* Dropdown for selecting limit */}
+                    <div>
+                        <select
+                            value={limit}
+                            onChange={(e) => setLimit(Number(e.target.value))}
+                            className="px-4 py-2 bg-gray-700 text-white rounded-md"
+                        >
+                            <option value={5}>5 per page</option>
+                            <option value={10}>10 per page</option>
+                            <option value={15}>15 per page</option>
+                        </select>
+                    </div>
+                </div>
+                {users_data.users && users_data.users.length > 0 ? (
+                    <div>
+                        <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
+                            <thead>
+                                <tr className="bg-gray-700">
+                                    <th className="px-4 py-2" onClick={() => handleSort('firstName')}>
+                                        <div className="flex items-center justify-start">
+                                            Name {renderSortIcon('firstName')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('email')}>
+                                        <div className="flex items-center justify-start">
+                                            Email Address {renderSortIcon('email')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('role')}>
+                                        <div className="flex items-center justify-start">
+                                            Role {renderSortIcon('role')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('isDisabled')}>
+                                        <div className="flex items-center justify-start">
+                                            Restriction {renderSortIcon('isDisabled')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2">Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {users_data.users.map((user) => (
+                                    <tr key={user._id} className="hover:bg-gray-700">
+                                        <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
+                                        <td className="px-4 py-2">{user.email}</td>
+                                        <td className="px-4 py-2">
+                                            <UpdateUserRole user={user} />
+                                        </td>
+                                        <td className="px-4 py-2">
+                                            <AccountDisable user={user} />
+                                        </td>
+                                        <td>
+                                            <UserAction user={user} refetch={refetch} />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {/* Pagination */}
+                        <div className="flex justify-center mt-1">
+                            <button
+                                disabled={page === 1}
+                                onClick={() => setPage((prev) => prev - 1)}
+                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                            >
+                                Previous
+                            </button>
+                            <span className="px-4 py-2">{`Page ${page} of ${users_data?.totalPages || 1}`}</span>
+                            <button
+                                disabled={users_data?.currentPage === users_data?.totalPages}
+                                onClick={() => setPage((prev) => prev + 1)}
+                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
                 ) : (
                     <p className="mt-3 text-gray-500 text-center">No users registered.</p>
                 )}

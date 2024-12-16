@@ -1,10 +1,11 @@
 import Seminar from '../models/Seminar.js';
 import cloudinary from 'cloudinary';
+import { paginationAndSorting } from '../helpers/globalHelper.js';
 
 /**
 * DOCU: This function is used to fetch all seminars. <br>
 * This is being called when user wants fetch all seminars. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 16, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -12,9 +13,31 @@ import cloudinary from 'cloudinary';
 */
 const getSeminars = async (req, res) => {
     try {
-        /* Fetch all seminars from the database */
-        const seminars = await Seminar.find();
-        res.status(200).json(seminars);
+        /* Get needed data from query request */
+        const { page, limit, sortKey, sortDirection} = req.query;
+
+        /* Call paginationAndSorting helper function to implement pagination and sorting */
+        const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* This will be pass to the query handle case sensitive data */
+        const collation = { locale: 'en', strength: 2 };
+        
+        /* Query to Seminars DB implementing pagination and sorting with per page limitation */
+        const seminars = await Seminar.find()
+            .collation(collation) /* use collation to handle case sensitive data */
+            .sort(sort)
+            .skip(skip)
+            .limit(limitNumber);
+
+        /* Get the total count of documents for pagination */
+        const totalCount = await Seminar.countDocuments();
+
+        res.status(200).json({
+            seminars,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limitNumber),
+            currentPage: pageNumber,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching seminars', error });
     }

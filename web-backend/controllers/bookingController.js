@@ -1,7 +1,8 @@
 import Booking from '../models/Booking.js';
 import Seminar from '../models/Seminar.js';
 import User from '../models/User.js';
-import { getUploadedImageUrl } from '../helpers/globalHelper.js';
+import { getUploadedImageUrl, paginationAndSorting } from '../helpers/globalHelper.js';
+import mongoose from 'mongoose';
 import createPaymentIntent from '../utils/stripe.js';
 import { 
     sendEmailBookingReservation, 
@@ -9,6 +10,7 @@ import {
     sendEmailRejectedReservation,
     sendEmailPendingReservation,
 } from '../helpers/emailTemplate.js';
+
 
 /**
 * DOCU: This function is used to handle the booking of a seminar. <br>
@@ -85,13 +87,100 @@ const createBooking = async (req, res) => {
 /**
 * DOCU: This function is used to fetch booked seminars. <br>
 * This is being called when admin or user wants fetch booked seminars. <br>
-* Last Updated Date: December 14, 2024 <br>
+* Last Updated Date: December 16, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
 * @author Cesar
 */
 const getUserBookings = async (req, res) => {
+    try {
+        /* Get needed data from user request */
+        const { id: user_id , role } = req.user;
+
+        /* Get needed data from query request */
+        const { page, limit, sortKey, sortDirection } = req.query;
+
+        /* Call paginationAndSorting helper function to implement pagination and sorting */
+        const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* If role is admin find all bookings, if not find all bookings for the logged-in user
+            then populate the user and seminar details */
+        const matchUserIdBasedOnRole = role !== 'admin' ? { 'user._id':  new mongoose.Types.ObjectId(user_id) } : {};
+
+        /* Query to Bookings DB implementing pagination and sorting with per page limitation */
+        const bookings = await Booking.aggregate([
+            {
+                $lookup: {
+                    from: 'seminars',
+                    localField: 'seminar',
+                    foreignField: '_id',
+                    as: 'seminar'
+                }
+            },
+            {
+                $unwind: '$seminar'
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $match: matchUserIdBasedOnRole
+            },
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limitNumber
+            },
+            {
+                $project: {
+                    'user._id': 1,
+                    'user.firstName': 1,
+                    'user.lastName': 1,
+                    'user.email': 1,
+                    'seminar': 1,
+                    paymentStatus: 1,
+                    proofOfPayment: 1,
+                },
+            },
+        ]);
+
+        /* Get the total count of documents for pagination */
+        const totalCount = await Booking.countDocuments(role !== 'admin' ? {user: user_id} : {});
+
+        res.status(200).json({
+            bookings,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limitNumber),
+            currentPage: pageNumber,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching bookings', error });
+    }
+};
+
+/**
+* DOCU: This function is used to fetch booked seminars for notification/reminder purpose. <br>
+* This is being called to fetch booked seminars for notification/reminder. <br>
+* Last Updated Date: December 16, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const getBookingsForNotification = async(req, res) => {
     try {
         const { id: user_id, role } = req.user;
 
@@ -241,4 +330,4 @@ const createPaymentIntentHandler = async (payment_data) => {
 };
 
 
-export { createBooking, getUserBookings, updateBookingStatus };
+export { createBooking, getUserBookings, getBookingsForNotification, updateBookingStatus };

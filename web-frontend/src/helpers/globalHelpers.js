@@ -50,22 +50,4 @@ const truncateSentence = (str) => {
     return str.length > 100 ? str.substring(0, 100) + '...' : str;
 }
 
-const sortByKey = (array, key, direction = 'asc') => {
-    const sorted_data = array.sort((a, b) => {
-        const aValue = key.split('.').reduce((obj, k) => obj[k], a);
-        const bValue = key.split('.').reduce((obj, k) => obj[k], b);
-    
-        if (aValue < bValue) {
-            return direction === 'asc' ? -1 : 1;
-        }
-        if (aValue > bValue) {
-            return direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-    });
-
-    return sorted_data;
-};
-
-
-export { convertToAmPm, convertTo24HourFormat, capitalizeFirstLetter, truncateSentence, convertDateFormat, sortByKey };
+export { convertToAmPm, convertTo24HourFormat, capitalizeFirstLetter, truncateSentence, convertDateFormat };

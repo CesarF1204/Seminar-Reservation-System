@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { sendEmailAccountRecovery } from '../helpers/emailTemplate.js';
+import { paginationAndSorting } from '../helpers/globalHelper.js';
 import { validationResult } from "express-validator";
 import bcrypt from 'bcryptjs';
 import cloudinary from 'cloudinary';
@@ -8,7 +9,7 @@ import crypto from 'crypto';
 /**
 * DOCU: This function is used to fetch users. <br>
 * This is being called when admin wants to fetch users. <br>
-* Last Updated Date: December 11, 2024 <br>
+* Last Updated Date: December 16, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -16,13 +17,35 @@ import crypto from 'crypto';
 */
 const fetchUsers = async (req, res) => {
     try {
+        /* Get needed data from query request */
+        const { page, limit, sortKey, sortDirection } = req.query;
+
+        /* Call paginationAndSorting helper function to implement pagination and sorting */
+        const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* This will be pass to the query handle case sensitive data */
+        const collation = { locale: 'en', strength: 2 };
+
         /* Fetch all the registered users, excluding the password field for security purposes */
-        const users = await User.find().select('-password');
+        const users = await User.find()
+            .select('-password')
+            .collation(collation) /* use collation to handle case sensitive data */
+            .sort(sort)
+            .skip(skip)
+            .limit(limitNumber);
         
         /* Check if there are registered user found */
         if (!users) return res.status(404).json({ message: 'No registered user found' });
 
-        res.status(200).json(users);
+        /* Get the total count of documents for pagination */
+        const totalCount = await User.countDocuments();
+
+        res.status(200).json({
+            users,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limitNumber),
+            currentPage: pageNumber,
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error });
     }

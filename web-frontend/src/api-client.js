@@ -90,8 +90,8 @@ const signOut = async () => {
     Fetch All Seminars function:
     Sends a GET request to the /seminars endpoint to retrieve a list of all available seminars.
 */
-const fetchAllSeminar = async () => {
-    const response = await fetch(`${API_BASE_URL}/api/seminars`, {
+const fetchAllSeminar = async ({ page, limit, sortKey, sortDirection}) => {
+    const response = await fetch(`${API_BASE_URL}/api/seminars?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -285,9 +285,9 @@ const updateProfile = async (formData, token) => {
     fetchUsers function: 
     Sends a GET request to the /users/profile endpoint to get the user's profile details.
 */
-const fetchUsers = async (token) => {
+const fetchUsers = async (token, { page, limit, sortKey, sortDirection}) => {
     /* Sending a GET request to users API */
-    const response = await fetch(`${API_BASE_URL}/api/users`, {
+    const response = await fetch(`${API_BASE_URL}/api/users?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -508,9 +508,32 @@ const createBooking = async (formData, token) => {
     fetchBookings function: 
     Sends a GET request to the /api/bookings endpoint to fetch all booked seminar.
 */
-const fetchBookings = async (token) => {
+const fetchBookings = async (token, { page, limit, sortKey, sortDirection}) => {
     /* Sending a GET request to fetch all booked seminars */
-    const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+    const response = await fetch(`${API_BASE_URL}/api/bookings?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        }
+    });
+
+    /* Parse the JSON response body */
+    const data = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(data.message);
+    }
+
+    /* Return the data (seminar information) if the request is successful */
+    return data;
+};
+
+const getBookingsForNotification = async (token) => {
+    /* Sending a GET request to fetch all booked seminars */
+    const response = await fetch(`${API_BASE_URL}/api/bookings/get_bookings`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -581,5 +604,6 @@ export {
     resetPassword,
     createBooking,
     fetchBookings,
+    getBookingsForNotification,
     updateBookingStatus,
 };

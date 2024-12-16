@@ -15,8 +15,8 @@ const Notification = () => {
 
     /* Fetching booked seminars using react-query */
     const { data: booked_seminars = [] } = useQuery(
-        "fetchBookings",
-        () => apiClient.fetchBookings(data.token),
+        "getBookingsForNotification",
+        () => apiClient.getBookingsForNotification(data.token),
         {
             suspense: true,
             refetchOnWindowFocus: false,

@@ -24,4 +24,21 @@ const formatToLocaleDate = (dateToFormat) => {
     return formattedDate;
 }
 
-export { getUploadedImageUrl, formatToLocaleDate };
+const paginationAndSorting = ({ page, limit, sortKey, sortDirection }) => {
+    /* Convert to numbers and determine sort order */
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    const sortOrder = sortDirection === 'asc' ? 1 : -1;
+
+    /* Calculate the skip value for pagination */
+    const skip = (pageNumber - 1) * limitNumber;
+
+    return {
+        pageNumber,
+        limitNumber,
+        skip,
+        sort: { [sortKey]: sortOrder },
+    };
+};
+
+export { getUploadedImageUrl, formatToLocaleDate, paginationAndSorting };
