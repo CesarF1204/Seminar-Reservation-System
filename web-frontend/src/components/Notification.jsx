@@ -5,7 +5,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { convertDateFormat } from '../helpers/globalHelpers';
 import { FaBell } from 'react-icons/fa';
 
-const Notification = () => {
+const Notification = ({ isNavbarCollapsed }) => {
     /* Accessing the context data */
     const { data } = useAppContext();
     /* State for controlling the visibility of the notification dropdown */
@@ -56,7 +56,7 @@ const Notification = () => {
     }, []);
 
     return (
-        <div className="relative" ref={notificationRef}>
+        <div className="relative mr-6 mt-2 mb-2" ref={notificationRef}>
             <FaBell
                 size={24}
                 className={`text-white cursor-pointer ${isBellActive ? 'animate-wiggle' : ''}`} // Add wiggle if there are reminders
@@ -70,7 +70,7 @@ const Notification = () => {
 
             {isNotificationVisible && (
                 <div
-                    className="absolute right-0 mt-2 w-64 bg-white border border-blue-200 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto scrollbar-hide"
+                className={`absolute ${isNavbarCollapsed ? 'left-0' : 'right-0'} mt-2 w-64 bg-white border border-blue-200 rounded-md shadow-lg z-10 max-h-48 overflow-y-auto scrollbar-hide`}
                 >
                     {reminder_msg.length > 0 ? (
                         reminder_msg.map((msg, index) => (
