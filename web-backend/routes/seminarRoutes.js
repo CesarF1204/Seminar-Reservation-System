@@ -13,11 +13,11 @@ const upload = multer({
     }
 });
 
-/* Route to fetch all seminars */
-router.get('/', getSeminars);
+/* Route to fetch all seminars. Requires authentication and admin privileges using authMiddleware */
+router.get('/', authMiddleware, getSeminars);
 
-/* Route to fetch details of a specific seminar by ID */
-router.get('/:id', getSeminarDetails);
+/* Route to fetch details of a specific seminar by ID. Requires authentication and admin privileges using authMiddleware */
+router.get('/:id', authMiddleware, getSeminarDetails);
 
 /* Route to create a new seminar. Requires authentication and admin privileges using authMiddleware and admin Middleware */
 router.post('/', authMiddleware, adminMiddleware, upload.single('speaker.image'), createSeminar);

@@ -22,7 +22,7 @@ const SeminarDetails = () => {
     /* Fetch seminar details using react-query's useQuery hook */
     const { data: seminar = [], isError } = useQuery(
         "fetchSeminarById",
-        () => apiClient.fetchSeminarById(id),
+        () => apiClient.fetchSeminarById(id, data.token),
         {
             suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
             refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */

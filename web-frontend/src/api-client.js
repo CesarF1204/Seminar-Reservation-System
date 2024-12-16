@@ -90,11 +90,12 @@ const signOut = async () => {
     Fetch All Seminars function:
     Sends a GET request to the /seminars endpoint to retrieve a list of all available seminars.
 */
-const fetchAllSeminar = async ({ page, limit, sortKey, sortDirection}) => {
+const fetchAllSeminar = async (token, { page, limit, sortKey, sortDirection}) => {
     const response = await fetch(`${API_BASE_URL}/api/seminars?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
         method: "GET",
         credentials: "include",
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
         }
     });
@@ -112,12 +113,13 @@ const fetchAllSeminar = async ({ page, limit, sortKey, sortDirection}) => {
     Fetch Specific Seminar:
     Sends a GET request to the /seminars/:id endpoint to retrieve an specific seminar and to fetch its details.
 */
-const fetchSeminarById = async (id) => {
+const fetchSeminarById = async (id, token) => {
     /* Sending a GET request to fetch specific seminar */
     const response = await fetch(`${API_BASE_URL}/api/seminars/${id}`, {
         method: "GET",
         credentials: "include",
         headers: {
+            "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
         }
     });

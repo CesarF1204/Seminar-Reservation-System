@@ -24,7 +24,7 @@ const EditSeminar = () => {
 
     const { data: seminar = [], isError } = useQuery(
         "fetchSeminarById",
-        () => apiClient.fetchSeminarById(seminar_id),
+        () => apiClient.fetchSeminarById(seminar_id, data.token),
         {
             suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
             refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */

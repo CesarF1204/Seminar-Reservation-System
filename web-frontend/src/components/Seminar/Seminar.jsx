@@ -14,12 +14,12 @@ const Seminar = () => {
     const [ sortDirection, setSortDirection ] = useState('asc');
 
     /* Extract showToast function from context for displaying notifications */
-    const { showToast } = useAppContext();
+    const { showToast, data } = useAppContext();
 
     /* Fetch seminars data using react-query's useQuery hook */
     const { data: seminar_data = {}, isError } = useQuery(
         ["fetchSeminars", page, limit, sortKey, sortDirection],
-        () => apiClient.fetchAllSeminar({ page, limit, sortKey, sortDirection }),
+        () => apiClient.fetchAllSeminar(data.token, { page, limit, sortKey, sortDirection }),
         {
             suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
             refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */
