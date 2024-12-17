@@ -44,7 +44,7 @@ const UpdateUserRole = ({ user }) => {
     const logOutMutation = useMutation(apiClient.signOut, {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken", { exact: true });
-            showToast({ message: "Your Role Changed. Log-in again", type: "SUCCESS" });
+            showToast({ message: "Your Role Changed. Log-in again", type: "ERROR" });
             navigate("/sign-in"); /* Redirect to sign-in page after logout */
         },
         onError: (error) => {

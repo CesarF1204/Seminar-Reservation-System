@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { useQueryClient, useMutation } from 'react-query';
+import * as apiClient from '../api-client';
+import { useAppContext } from '../contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 import LogOutButton from './User/LogOutButton';
 import Notification from './Notification';
 
@@ -8,14 +12,41 @@ const AppNavbar = ({ user }) => {
     /* State to check if Navbar collapse */
     const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
 
-    /* Handle the navbar collapse */
-    const handleNavbarToggle = () => {
-        setIsNavbarCollapsed(prevState => !prevState);
-    };
-
     const location = useLocation();
 
     const isActive = (path) => location.pathname === path;
+
+    /* Navigate to different routes */
+    const navigate = useNavigate();
+
+    /* Extract showToast function from context for displaying notifications */
+    const { showToast } = useAppContext();
+    /* Initialize the React Query client to manage cache and query state */
+    const queryClient = useQueryClient();
+
+    /* Mutation for logging out */
+    const logOutMutation = useMutation(apiClient.signOut, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken", { exact: true });
+            showToast({ message: "You're not an admin. Log-in again", type: "ERROR" });
+            navigate("/sign-in"); /* Redirect to sign-in page after logout */
+        },
+        onError: (error) => {
+            showToast({ message: error.message, type: "ERROR" });
+        },
+    });
+
+    /* Handle log out mutation */
+    const handleLogout = () => {
+        logOutMutation.mutate();
+    };
+
+    /* Auto logout if user is not admin */
+    useEffect(() => {
+        if (user.role !== 'admin') {
+            handleLogout();
+        }
+    }, [user.role]);
 
     return (
         <nav className="bg-gray-900 p-4 shadow-md sticky top-0 z-10">
@@ -49,6 +80,10 @@ const AppNavbar = ({ user }) => {
                                 className={`px-4 py-2 rounded whitespace-nowrap ${
                                     isActive('/view_users') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
                                 }`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogout();
+                                }}
                             >
                                 View Users
                             </Link>
@@ -57,6 +92,10 @@ const AppNavbar = ({ user }) => {
                                 className={`px-4 py-2 rounded whitespace-nowrap ${
                                     isActive('/create_seminar') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
                                 }`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleLogout();
+                                }}
                             >
                                 Create Seminar
                             </Link>
