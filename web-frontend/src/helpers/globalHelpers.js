@@ -50,4 +50,20 @@ const truncateSentence = (str) => {
     return str.length > 100 ? str.substring(0, 100) + '...' : str;
 }
 
-export { convertToAmPm, convertTo24HourFormat, capitalizeFirstLetter, truncateSentence, convertDateFormat };
+/* Use in search functionality for delays */
+const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => func(...args), delay);
+    };
+};
+
+export { 
+    convertToAmPm, 
+    convertTo24HourFormat, 
+    capitalizeFirstLetter, 
+    truncateSentence, 
+    convertDateFormat,
+    debounce 
+};

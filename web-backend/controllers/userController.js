@@ -9,7 +9,7 @@ import crypto from 'crypto';
 /**
 * DOCU: This function is used to fetch users. <br>
 * This is being called when admin wants to fetch users. <br>
-* Last Updated Date: December 16, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -18,16 +18,27 @@ import crypto from 'crypto';
 const fetchUsers = async (req, res) => {
     try {
         /* Get needed data from query request */
-        const { page, limit, sortKey, sortDirection } = req.query;
+        const { page, limit, sortKey, sortDirection, search } = req.query;
 
         /* Call paginationAndSorting helper function to implement pagination and sorting */
         const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* Initialize an empty filter object */
+        const filter = {};
+        /* Check if a search term is provided */
+        if(search){
+            filter.$or = [
+                { firstName: { $regex: search, $options: 'i' } }, // Case-insensitive search on firstName
+                { lastName: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } }    // Case-insensitive search on lastName
+            ];        
+        }
 
         /* This will be pass to the query handle case sensitive data */
         const collation = { locale: 'en', strength: 2 };
 
         /* Fetch all the registered users, excluding the password field for security purposes */
-        const users = await User.find()
+        const users = await User.find(filter)
             .select('-password')
             .collation(collation) /* use collation to handle case sensitive data */
             .sort(sort)
@@ -38,7 +49,7 @@ const fetchUsers = async (req, res) => {
         if (!users) return res.status(404).json({ message: 'No registered user found' });
 
         /* Get the total count of documents for pagination */
-        const totalCount = await User.countDocuments();
+        const totalCount = await User.countDocuments(filter);
 
         res.status(200).json({
             users,

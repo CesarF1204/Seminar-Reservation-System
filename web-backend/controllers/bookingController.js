@@ -87,7 +87,7 @@ const createBooking = async (req, res) => {
 /**
 * DOCU: This function is used to fetch booked seminars. <br>
 * This is being called when admin or user wants fetch booked seminars. <br>
-* Last Updated Date: December 16, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -99,10 +99,22 @@ const getUserBookings = async (req, res) => {
         const { id: user_id , role } = req.user;
 
         /* Get needed data from query request */
-        const { page, limit, sortKey, sortDirection } = req.query;
+        const { page, limit, sortKey, sortDirection, search } = req.query;
 
         /* Call paginationAndSorting helper function to implement pagination and sorting */
         const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* Initialize an empty filter object */
+        const filter = {};
+        /* Check if a search term is provided */
+        if(search){
+            filter.$or = [
+                { 'seminar.title': { $regex: search, $options: 'i' } },
+                { 'user.firstName': { $regex: search, $options: 'i' } },
+                { 'user.lastName': { $regex: search, $options: 'i' } },
+                { 'user.email': { $regex: search, $options: 'i' } },
+            ];        
+        }
 
         /* If role is admin find all bookings, if not find all bookings for the logged-in user
             then populate the user and seminar details */
@@ -133,7 +145,10 @@ const getUserBookings = async (req, res) => {
                 $unwind: '$user'
             },
             {
-                $match: matchUserIdBasedOnRole
+                $match: {
+                    ...matchUserIdBasedOnRole, 
+                    ...filter
+                }
             },
             {
                 $sort: sort

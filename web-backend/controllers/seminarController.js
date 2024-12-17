@@ -5,7 +5,7 @@ import { paginationAndSorting } from '../helpers/globalHelper.js';
 /**
 * DOCU: This function is used to fetch all seminars. <br>
 * This is being called when user wants fetch all seminars. <br>
-* Last Updated Date: December 16, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -14,23 +14,30 @@ import { paginationAndSorting } from '../helpers/globalHelper.js';
 const getSeminars = async (req, res) => {
     try {
         /* Get needed data from query request */
-        const { page, limit, sortKey, sortDirection} = req.query;
+        const { page, limit, sortKey, sortDirection, search } = req.query;
 
         /* Call paginationAndSorting helper function to implement pagination and sorting */
         const { pageNumber, limitNumber, skip, sort } = paginationAndSorting({ page, limit, sortKey, sortDirection });
+
+        /* Initialize an empty filter object */
+        const filter = {};
+        /* Check if a search term is provided */
+        if(search){
+            filter.title = { $regex: search, $options: 'i' }; // Case-insensitive search on title
+        }
 
         /* This will be pass to the query handle case sensitive data */
         const collation = { locale: 'en', strength: 2 };
         
         /* Query to Seminars DB implementing pagination and sorting with per page limitation */
-        const seminars = await Seminar.find()
+        const seminars = await Seminar.find(filter)
             .collation(collation) /* use collation to handle case sensitive data */
             .sort(sort)
             .skip(skip)
             .limit(limitNumber);
 
         /* Get the total count of documents for pagination */
-        const totalCount = await Seminar.countDocuments();
+        const totalCount = await Seminar.countDocuments(filter);
 
         res.status(200).json({
             seminars,

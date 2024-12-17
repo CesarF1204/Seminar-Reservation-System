@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
-import { FaEdit, FaKey } from "react-icons/fa";
+import { FaCamera, FaEdit, FaKey } from "react-icons/fa";
 
 const Profile = ({ user, newProfileDetails }) => {
     /* Navigate to different routes */
@@ -66,12 +66,17 @@ const Profile = ({ user, newProfileDetails }) => {
     return (
         <div className="flex items-center justify-center">
             <form encType="multipart/form-data" onChange={onChange} className="mr-4">
-                <label htmlFor="profile-pic-upload">
-                    <img
-                        src={newProfilePicture || profilePicture}
-                        alt={`${firstName} ${lastName}'s profile`}
-                        className="w-24 h-24 rounded-full shadow-lg border-4 border-blue-500 cursor-pointer"
-                    />
+                <label htmlFor="profile-pic-upload" className="cursor-pointer">
+                    <div className="relative w-24 h-24 group">
+                        {/* Profile Picture */}
+                        <img
+                            src={newProfilePicture || profilePicture}
+                            alt={`${firstName} ${lastName}'s profile`}
+                            className="w-24 h-24 rounded-full shadow-lg border-4 border-blue-500"
+                        />
+                        {/* Camera Icon */}
+                        <FaCamera className="text-2xl absolute bottom-0 right-0 left-15 rounded-full"/>
+                    </div>
                 </label>
                 <input
                     id="profile-pic-upload"
@@ -106,7 +111,7 @@ const Profile = ({ user, newProfileDetails }) => {
                 </div>
             </div>
         </div>
-    );    
+    );
 }
 
 export default Profile

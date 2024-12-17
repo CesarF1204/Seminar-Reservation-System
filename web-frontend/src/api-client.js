@@ -87,11 +87,20 @@ const signOut = async () => {
 };
 
 /* 
-    Fetch All Seminars function:
+    getSeminars function:
     Sends a GET request to the /seminars endpoint to retrieve a list of all available seminars.
 */
-const fetchAllSeminar = async (token, { page, limit, sortKey, sortDirection}) => {
-    const response = await fetch(`${API_BASE_URL}/api/seminars?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
+const getSeminars = async (token, { page, limit, sortKey, sortDirection, search}) => {
+    /* Params for filtering */
+    const queryParams = new URLSearchParams({
+        page,
+        limit,
+        sortKey,
+        sortDirection,
+        search
+    }).toString();
+    
+    const response = await fetch(`${API_BASE_URL}/api/seminars?${queryParams}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -287,9 +296,18 @@ const updateProfile = async (formData, token) => {
     fetchUsers function: 
     Sends a GET request to the /users/profile endpoint to get the user's profile details.
 */
-const fetchUsers = async (token, { page, limit, sortKey, sortDirection}) => {
+const fetchUsers = async (token, { page, limit, sortKey, sortDirection, search}) => {
+    /* Params for filtering */
+    const queryParams = new URLSearchParams({
+        page,
+        limit,
+        sortKey,
+        sortDirection,
+        search
+    }).toString();
+    
     /* Sending a GET request to users API */
-    const response = await fetch(`${API_BASE_URL}/api/users?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
+    const response = await fetch(`${API_BASE_URL}/api/users?${queryParams}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -507,12 +525,21 @@ const createBooking = async (formData, token) => {
 };
 
 /*
-    fetchBookings function: 
+    getUserBookings function: 
     Sends a GET request to the /api/bookings endpoint to fetch all booked seminar.
 */
-const fetchBookings = async (token, { page, limit, sortKey, sortDirection}) => {
+const getUserBookings = async (token, { page, limit, sortKey, sortDirection, search}) => {
+    /* Params for filtering */
+    const queryParams = new URLSearchParams({
+        page,
+        limit,
+        sortKey,
+        sortDirection,
+        search
+    }).toString();
+    
     /* Sending a GET request to fetch all booked seminars */
-    const response = await fetch(`${API_BASE_URL}/api/bookings?page=${page}&limit=${limit}&sortKey=${sortKey}&sortDirection=${sortDirection}`, {
+    const response = await fetch(`${API_BASE_URL}/api/bookings?${queryParams}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -588,7 +615,7 @@ export {
     signIn,
     signOut,
     validateToken,
-    fetchAllSeminar,
+    getSeminars,
     fetchSeminarById,
     createSeminar,
     updateSeminar,
@@ -605,7 +632,7 @@ export {
     resetPasswordLink,
     resetPassword,
     createBooking,
-    fetchBookings,
+    getUserBookings,
     getBookingsForNotification,
     updateBookingStatus,
 };

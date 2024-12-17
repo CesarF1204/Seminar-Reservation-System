@@ -1,5 +1,13 @@
 import cloudinary from 'cloudinary';
 
+/**
+* DOCU: This function is used to get the image url uploaded using cloudinary. <br>
+* This is being called when there's an uploading of images. <br>
+* Last Updated Date: December 17, 2024 <br>
+* @function
+* @param {object} image_file - the uploaded image
+* @author Cesar
+*/
 const getUploadedImageUrl = async (image_file) => {
     /* Convert the image file buffer into a base64 encoded string */
     const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
@@ -13,6 +21,14 @@ const getUploadedImageUrl = async (image_file) => {
     return uploadResult?.url
 }
 
+/**
+* DOCU: This function is used to format date to locale date for readibility. <br>
+* This is being called to format date. <br>
+* Last Updated Date: December 17, 2024 <br>
+* @function
+* @param {string} dateToFormat - date to be formatted
+* @author Cesar
+*/
 const formatToLocaleDate = (dateToFormat) => {
     const date = new Date(dateToFormat);
     const formattedDate = date.toLocaleDateString('en-US', {
@@ -24,6 +40,17 @@ const formatToLocaleDate = (dateToFormat) => {
     return formattedDate;
 }
 
+/**
+* DOCU: This function is used to format date to locale date for readibility. <br>
+* This is being called to format date. <br>
+* Last Updated Date: December 17, 2024 <br>
+* @function
+* @param {number} page - page number
+* @param {number} limit - data limitation per page
+* @param {string} sortKey - key for sorting
+* @param {string} sortDirection - sort direction (ascending or descending)
+* @author Cesar
+*/
 const paginationAndSorting = ({ page, limit, sortKey, sortDirection }) => {
     /* Convert to numbers and determine sort order */
     const pageNumber = parseInt(page, 10);
