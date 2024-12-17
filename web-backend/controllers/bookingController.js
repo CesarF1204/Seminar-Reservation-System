@@ -352,5 +352,29 @@ const createPaymentIntentHandler = async (payment_data) => {
     }
 };
 
+/**
+* DOCU: This function is used to delete booked seminar. <br>
+* This is being called when admin wants to delete a booked seminar. <br>
+* Last Updated Date: December 17, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const deleteBookedSeminar = async (req, res) => {
+    try {
+        /* Delete the seminar by ID */
+        await Booking.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Booked Seminar deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting booked seminar', error });
+    }
+};
 
-export { createBooking, getUserBookings, getBookingsForNotification, updateBookingStatus };
+export { 
+    createBooking, 
+    getUserBookings, 
+    getBookingsForNotification, 
+    updateBookingStatus, 
+    deleteBookedSeminar 
+};

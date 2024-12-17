@@ -1,5 +1,11 @@
 import express from 'express';
-import { createBooking, getUserBookings, getBookingsForNotification, updateBookingStatus } from '../controllers/bookingController.js';
+import { 
+    createBooking, 
+    getUserBookings, 
+    getBookingsForNotification, 
+    updateBookingStatus,
+    deleteBookedSeminar
+} from '../controllers/bookingController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
 import multer from 'multer';
@@ -33,5 +39,8 @@ router.put('/:id',
     ],
     updateBookingStatus
 );
+
+/* Route to delete booked seminar by ID. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
+router.delete('/:id', authMiddleware, adminMiddleware, deleteBookedSeminar);
 
 export default router;

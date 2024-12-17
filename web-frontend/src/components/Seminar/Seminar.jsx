@@ -163,24 +163,28 @@ const Seminar = () => {
                             <p className="mt-3 text-gray-500 text-center">No seminars available at the moment.</p>
                         )}
                     </div>
-                    {/* Pagination */}
-                    <div className="flex justify-center mt-1">
-                        <button
-                            disabled={page === 1 || seminar_data.seminars?.length === 0}
-                            onClick={() => setPage((prev) => prev - 1)}
-                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                        >
-                            Previous
-                        </button>
-                        <span className="px-4 py-2">{`Page ${page} of ${seminar_data?.totalPages || 1}`}</span>
-                        <button
-                            disabled={seminar_data?.currentPage === seminar_data?.totalPages || seminar_data.seminars?.length === 0}
-                            onClick={() => setPage((prev) => prev + 1)}
-                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                        >
-                            Next
-                        </button>
-                    </div>
+                    { seminar_data.seminars?.length !== 0 &&
+                        <>
+                        {/* Pagination */}
+                        <div className="flex justify-center mt-1">
+                            <button
+                                disabled={page === 1 || seminar_data.seminars?.length === 0}
+                                onClick={() => setPage((prev) => prev - 1)}
+                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                            >
+                                Previous
+                            </button>
+                            <span className="px-4 py-2">{`Page ${page} of ${seminar_data?.totalPages || 1}`}</span>
+                            <button
+                                disabled={seminar_data?.currentPage === seminar_data?.totalPages || seminar_data.seminars?.length === 0}
+                                onClick={() => setPage((prev) => prev + 1)}
+                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                            >
+                                Next
+                            </button>
+                        </div>
+                        </>
+                    }
                 </div>
             </div>
         </>

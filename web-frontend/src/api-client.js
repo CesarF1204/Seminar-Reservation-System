@@ -610,6 +610,29 @@ const updateBookingStatus = async (booking_id, formData, token) => {
     return responseBody;
 };
 
+/*
+    deleteBookedSeminar function: 
+    Sends a DELETE request to the api/bookings/:id endpoint to delete a booked seminar.
+*/
+const deleteBookedSeminar = async (booking_id, token) => {
+    /* Sending a DELETE request to bookings API */
+    const response = await fetch(`${API_BASE_URL}/api/bookings/${booking_id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        }
+    });
+
+    /* Parse the JSON response body */
+    const responseBody = await response.json();
+
+    /* Check if the response is not OK, throw an error with the message from the response body */
+    if (!response.ok) {
+        throw new Error(responseBody.message);
+    }
+};
+
 export {
     register,
     signIn,
@@ -635,4 +658,5 @@ export {
     getUserBookings,
     getBookingsForNotification,
     updateBookingStatus,
+    deleteBookedSeminar,
 };

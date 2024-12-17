@@ -163,24 +163,28 @@ const ViewUsers = () => {
                                     ))}
                                 </tbody>
                             </table>
-                            {/* Pagination */}
-                            <div className="flex justify-center mt-1">
-                                <button
-                                    disabled={page === 1}
-                                    onClick={() => setPage((prev) => prev - 1)}
-                                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                                >
-                                    Previous
-                                </button>
-                                <span className="px-4 py-2">{`Page ${page} of ${users_data?.totalPages || 1}`}</span>
-                                <button
-                                    disabled={users_data?.currentPage === users_data?.totalPages}
-                                    onClick={() => setPage((prev) => prev + 1)}
-                                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                                >
-                                    Next
-                                </button>
-                            </div>
+                            { users_data.users?.length !== 0 &&
+                                <>
+                                {/* Pagination */}
+                                <div className="flex justify-center mt-1">
+                                    <button
+                                        disabled={page === 1 || users_data.users?.length === 0}
+                                        onClick={() => setPage((prev) => prev - 1)}
+                                        className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                                    >
+                                        Previous
+                                    </button>
+                                    <span className="px-4 py-2">{`Page ${page} of ${users_data?.totalPages || 1}`}</span>
+                                    <button
+                                        disabled={users_data?.currentPage === users_data?.totalPages || users_data.users?.length === 0}
+                                        onClick={() => setPage((prev) => prev + 1)}
+                                        className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                </>
+                            }
                         </div>
                     ) : (
                         <p className="mt-3 text-gray-500 text-center">No users registered.</p>

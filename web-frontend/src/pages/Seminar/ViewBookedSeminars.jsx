@@ -3,10 +3,11 @@ import { useQuery } from 'react-query';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
+import { FaArrowLeft, FaSortUp, FaSortDown, FaSort, FaTrashAlt } from "react-icons/fa";
 import { convertDateFormat, debounce } from '../../helpers/globalHelpers';
 import ProofOfPaymentModal from '../../components/Seminar/ProofOfPaymentModal';
 import BookingStatus from '../../components/Seminar/BookingStatus';
+import DeleteBookedSeminarModal from '../../components/Seminar/DeleteBookedSeminarModal';
 
 const ViewBookedSeminars = () => {
     /* Default state for page, limit, sortKey, sortDirection, search, and debouncedSearch  */
@@ -17,6 +18,10 @@ const ViewBookedSeminars = () => {
     const [ search, setSearch ] = useState('');
     const [ debouncedSearch, setDebouncedSearch ] = useState('');
 
+    /* State for showing delete modal */
+    const [ showDeleteModal, setShowDeleteModal ] = useState(false);
+    const [ bookingData, setBookingData ] = useState({});
+
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -26,7 +31,7 @@ const ViewBookedSeminars = () => {
     const [ paymentProofImage, setPaymentProofImage ] = useState('');
     
     /* Fetch booked seminars data using react-query's useQuery hook */
-    const { data: booked_seminars = [], isError, isFetching } = useQuery(
+    const { data: booked_seminars = [], isError, isFetching, refetch } = useQuery(
         ["getUserBookings" , page, limit, sortKey, sortDirection, debouncedSearch],
         ()=>apiClient.getUserBookings(data.token, { page, limit, sortKey, sortDirection, search: debouncedSearch }),
         {
@@ -41,6 +46,12 @@ const ViewBookedSeminars = () => {
     if (isError) {
         showToast({ message: "Failed to load users details. Please try again later.", type: "ERROR" })
     }
+
+    /* Handle displaying the delete modal for booked seminar */
+    const handleBookingData = (booked_seminar) => {
+        setBookingData(booked_seminar);
+        setShowDeleteModal(true);
+    };
 
     /* Handle displaying the proof of payment modal */
     const handleShowProof = (proofImage) => {
@@ -144,11 +155,13 @@ const ViewBookedSeminars = () => {
                                             Price {renderSortIcon('seminar.fee')}
                                         </div>
                                     </th>
-                                    <th className="px-4 py-2" onClick={() => handleSort('user.firstName')}>
-                                        <div className="flex items-center justify-start">
-                                            Booked By {renderSortIcon('user.firstName')}
-                                        </div>
-                                    </th>
+                                    { data.role === 'admin' &&
+                                        <th className="px-4 py-2" onClick={() => handleSort('user.firstName')}>
+                                            <div className="flex items-center justify-start">
+                                                Booked By {renderSortIcon('user.firstName')}
+                                            </div>
+                                        </th>
+                                    }
                                     <th className="px-4 py-2" onClick={() => handleSort('createdAt')}>
                                         <div className="flex items-center justify-start">
                                             Booked Date {renderSortIcon('createdAt')}
@@ -165,10 +178,18 @@ const ViewBookedSeminars = () => {
                                         </div>
                                     </th>
                                     <th className="px-4 py-2" onClick={() => handleSort('paymentStatus')}>
-                                    <div className="flex items-center justify-start">
+                                        <div className="flex items-center justify-start">
                                             Status {renderSortIcon('paymentStatus')}
                                         </div>
                                     </th>
+                                    { data.role === 'admin' &&
+                                        <th className="px-4 py-2">
+                                            <div className="flex items-center justify-start">
+                                                Action
+                                            </div>
+                                        </th>
+                                    }
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -176,10 +197,12 @@ const ViewBookedSeminars = () => {
                                     <tr key={booking._id} className="hover:bg-gray-700">
                                         <td className="px-4 py-2">{booking.seminar.title}</td>
                                         <td className="px-4 py-2">₱{booking.seminar.fee}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">
-                                            {booking.user.firstName} {booking.user.lastName}
-                                            <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
-                                        </td>
+                                        { data.role === 'admin' &&
+                                            <td className="px-4 py-2 whitespace-nowrap">
+                                                {booking.user.firstName} {booking.user.lastName}
+                                                <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
+                                            </td>
+                                        }
                                         <td className="px-4 py-2">{convertDateFormat(booking.createdAt)}</td>
                                         <td className="px-4 py-2">{convertDateFormat(booking.seminar.date)}</td>
                                         <td className="px-4 py-2">
@@ -198,6 +221,13 @@ const ViewBookedSeminars = () => {
                                         <td className="px-4 py-2">
                                             <BookingStatus booking={booking} />
                                         </td>
+                                        { data.role === 'admin' &&
+                                            <td className="px-4 py-2">
+                                                <Link className="text-red-400 hover:text-red-600 inline-flex items-center" onClick={() => handleBookingData(booking)}>
+                                                    <FaTrashAlt className="mr-1" /> Delete 
+                                                </Link>
+                                            </td>
+                                        }
                                     </tr>
                                 ))}
                             </tbody>
@@ -206,24 +236,30 @@ const ViewBookedSeminars = () => {
                         <p className="mt-3 text-gray-500 text-center">No bookings available.</p>
                     )}
                 </div>
-                {/* Pagination */}
-                <div className="flex justify-center mt-1">
-                    <button
-                        disabled={page === 1}
-                        onClick={() => setPage((prev) => prev - 1)}
-                        className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                    >
-                        Previous
-                    </button>
-                    <span className="px-4 py-2">{`Page ${page} of ${booked_seminars?.totalPages || 1}`}</span>
-                    <button
-                        disabled={booked_seminars?.currentPage === booked_seminars?.totalPages}
-                        onClick={() => setPage((prev) => prev + 1)}
-                        className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                    >
-                        Next
-                    </button>
-                </div>
+                {
+                    booked_seminars.bookings?.length !== 0 &&
+                    <>
+                    {/* Pagination */}
+                    <div className="flex justify-center mt-1">
+                        <button
+                            disabled={page === 1 || booked_seminars.bookings?.length === 0}
+                            onClick={() => setPage((prev) => prev - 1)}
+                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                        >
+                            Previous
+                        </button>
+                        <span className="px-4 py-2">{`Page ${page} of ${booked_seminars?.totalPages || 1}`}</span>
+                        <button
+                            disabled={booked_seminars?.currentPage === booked_seminars?.totalPages || booked_seminars.bookings?.length === 0}
+                            onClick={() => setPage((prev) => prev + 1)}
+                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                        >
+                            Next
+                        </button>
+                    </div>
+                    </>
+                }
+                
                 {/* Go back button */}
                 <button className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
                     <FaArrowLeft className="mr-2" /> Go Back
@@ -232,6 +268,10 @@ const ViewBookedSeminars = () => {
             {/* Modal for showing proof of payment */}
             {showProofOfPayment && (
                 <ProofOfPaymentModal paymentProofImage={paymentProofImage} handleCloseModal={handleCloseModal}/>
+            )}
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <DeleteBookedSeminarModal setShowDeleteModal={setShowDeleteModal} booking={bookingData} refetch={refetch} setPage={setPage} />
             )}
         </div>
     );
