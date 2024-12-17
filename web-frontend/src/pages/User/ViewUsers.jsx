@@ -81,11 +81,11 @@ const ViewUsers = () => {
 
     return (
         <div className="flex items-center justify-center bg-gray-100">
-            <div className="mt-4 max-w-6xl w-full">
+            <div className="mt-4 max-w-6xl w-full px-4">
                 <div className="flex items-center justify-between">
                     {/* Title */}
-                    <h2 className="text-2xl font-semibold text-center">Registered Users</h2>
-                    <div className="flex items-center justify-end mr-4">
+                    <h2 className="text-2xl font-semibold text-center hidden sm:block">Registered Users</h2>
+                    <div className="flex flex-row sm:flex-row items-center sm:mt-0">
                         {/* Search Bar */}
                         <div className="flex px-4 py-2 rounded-md border-2 border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px" className="fill-gray-600 mr-3 rotate-90">
@@ -116,75 +116,77 @@ const ViewUsers = () => {
                         </div>
                     </div>
                 </div>
-                {users_data.users && users_data.users.length > 0 ? (
-                    <div>
-                        <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
-                            <thead>
-                                <tr className="bg-gray-700">
-                                    <th className="px-4 py-2" onClick={() => handleSort('firstName')}>
-                                        <div className="flex items-center justify-start">
-                                            Name {renderSortIcon('firstName')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2" onClick={() => handleSort('email')}>
-                                        <div className="flex items-center justify-start">
-                                            Email Address {renderSortIcon('email')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2" onClick={() => handleSort('role')}>
-                                        <div className="flex items-center justify-start">
-                                            Role {renderSortIcon('role')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2" onClick={() => handleSort('isDisabled')}>
-                                        <div className="flex items-center justify-start">
-                                            Restriction {renderSortIcon('isDisabled')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users_data.users.map((user) => (
-                                    <tr key={user._id} className="hover:bg-gray-700">
-                                        <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
-                                        <td className="px-4 py-2">{user.email}</td>
-                                        <td className="px-4 py-2">
-                                            <UpdateUserRole user={user} />
-                                        </td>
-                                        <td className="px-4 py-2">
-                                            <AccountDisable user={user} />
-                                        </td>
-                                        <td>
-                                            <UserAction user={user} refetch={refetch} />
-                                        </td>
+                <div className="overflow-x-auto mt-1">
+                    {users_data.users && users_data.users.length > 0 ? (
+                        <div>
+                            <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
+                                <thead>
+                                    <tr className="bg-gray-700">
+                                        <th className="px-4 py-2" onClick={() => handleSort('firstName')}>
+                                            <div className="flex items-center justify-start">
+                                                Name {renderSortIcon('firstName')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2" onClick={() => handleSort('email')}>
+                                            <div className="flex items-center justify-start">
+                                                Email Address {renderSortIcon('email')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2" onClick={() => handleSort('role')}>
+                                            <div className="flex items-center justify-start">
+                                                Role {renderSortIcon('role')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2" onClick={() => handleSort('isDisabled')}>
+                                            <div className="flex items-center justify-start">
+                                                Restriction {renderSortIcon('isDisabled')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {/* Pagination */}
-                        <div className="flex justify-center mt-1">
-                            <button
-                                disabled={page === 1}
-                                onClick={() => setPage((prev) => prev - 1)}
-                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                            >
-                                Previous
-                            </button>
-                            <span className="px-4 py-2">{`Page ${page} of ${users_data?.totalPages || 1}`}</span>
-                            <button
-                                disabled={users_data?.currentPage === users_data?.totalPages}
-                                onClick={() => setPage((prev) => prev + 1)}
-                                className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                            >
-                                Next
-                            </button>
+                                </thead>
+                                <tbody>
+                                    {users_data.users.map((user) => (
+                                        <tr key={user._id} className="hover:bg-gray-700">
+                                            <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
+                                            <td className="px-4 py-2">{user.email}</td>
+                                            <td className="px-4 py-2">
+                                                <UpdateUserRole user={user} />
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                <AccountDisable user={user} />
+                                            </td>
+                                            <td>
+                                                <UserAction user={user} refetch={refetch} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {/* Pagination */}
+                            <div className="flex justify-center mt-1">
+                                <button
+                                    disabled={page === 1}
+                                    onClick={() => setPage((prev) => prev - 1)}
+                                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                                >
+                                    Previous
+                                </button>
+                                <span className="px-4 py-2">{`Page ${page} of ${users_data?.totalPages || 1}`}</span>
+                                <button
+                                    disabled={users_data?.currentPage === users_data?.totalPages}
+                                    onClick={() => setPage((prev) => prev + 1)}
+                                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                                >
+                                    Next
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ) : (
-                    <p className="mt-3 text-gray-500 text-center">No users registered.</p>
-                )}
-                <button className="flex items-center px-4 py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
+                    ) : (
+                        <p className="mt-3 text-gray-500 text-center">No users registered.</p>
+                    )}
+                </div>
+                <button className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
                     <FaArrowLeft className="mr-2" /> Go Back
                 </button>
             </div>

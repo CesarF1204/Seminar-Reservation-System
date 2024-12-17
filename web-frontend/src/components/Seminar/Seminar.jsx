@@ -77,24 +77,22 @@ const Seminar = () => {
     return (
         <>
             <div className="flex items-center justify-center bg-gray-100">
-                <div className="mt-4 max-w-6xl w-full">
-                    <div className="flex items-center justify-between ml-4">
+                <div className="mt-4 max-w-6xl w-full px-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-between">
                         {/* Title */}
-                        <h2 className="text-2xl font-semibold">Available Seminars</h2>
-                        <div className="flex items-center justify-end mr-4">
+                        <h2 className="text-2xl font-semibold whitespace-nowrap hidden sm:block">Available Seminars</h2>
+                        <div className="flex flex-row sm:flex-row items-center sm:mt-0">
                             {/* Search Bar */}
-                            <div className="flex px-4 py-2 rounded-md border-2 border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
+                            <div className="flex px-4 py-2 rounded-md border-2 border-blue-500 overflow-hidden max-w-full sm:max-w-md font-[sans-serif]">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px" className="fill-gray-600 mr-3 rotate-90">
-                                    <path
-                                        d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
-                                    </path>
+                                    <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
                                 </svg>
-                                <input 
+                                <input
                                     type="text"
                                     placeholder="Search title"
                                     value={search}
-                                    onChange={onSearchChange} 
-                                    className="w-full outline-none bg-transparent text-gray-600 text-sm" 
+                                    onChange={onSearchChange}
+                                    className="w-full outline-none bg-transparent text-gray-600 text-sm"
                                 />
                                 {isFetching && <div className="ml-2 animate-spin border-t-2 border-blue-500 rounded-full w-4 h-4"></div>}
                             </div>
@@ -112,80 +110,78 @@ const Seminar = () => {
                             </div>
                         </div>
                     </div>
-                    {seminar_data.seminars && seminar_data.seminars.length > 0 ? (
-                        <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
-                            <thead>
-                                <tr className="bg-gray-700 whitespace-nowrap">
-                                    <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('title')}>
-                                        <div className="flex items-center justify-center">
-                                            Title {renderSortIcon('title')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2 text-center cursor-pointer">
-                                        <div className="flex items-center justify-center">
-                                            Description
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('date')}>
-                                        <div className="flex items-center justify-center">
-                                            Date {renderSortIcon('date')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('speaker.name')}>
-                                        <div className="flex items-center justify-center">
-                                            Speaker {renderSortIcon('speaker.name')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('fee')}>
-                                        <div className="flex items-center justify-center">
-                                            Price {renderSortIcon('fee')}
-                                        </div>
-                                    </th>
-                                    <th className="px-4 py-2 text-center">Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {seminar_data.seminars.map((seminar) => (
-                                    <tr key={seminar._id} className="hover:bg-gray-700">
-                                        <td className="px-4 py-2">{seminar.title}</td>
-                                        <td className="px-4 py-2">{truncateSentence(seminar.description)}</td>
-                                        <td className="px-4 py-2">{convertDateFormat(seminar.date)}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap">{seminar.speaker.name}</td>
-                                        <td className="px-4 py-2">₱{seminar.fee}</td>
-                                        <td className="px-4 py-2 whitespace-nowrap text-center">
-                                            <Link
-                                                to={`/seminar/${seminar._id}`}
-                                                className="text-blue-400 hover:text-blue-600"
-                                            >
-                                                View Details
-                                            </Link>
-                                        </td>
+                    <div className="overflow-x-auto mt-1">
+                        {seminar_data.seminars && seminar_data.seminars.length > 0 ? (
+                            <table className="table-auto w-full bg-gray-800 text-white shadow-lg">
+                                <thead>
+                                    <tr className="bg-gray-700 whitespace-nowrap">
+                                        <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('title')}>
+                                            <div className="flex items-center justify-center">
+                                                Title {renderSortIcon('title')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2 text-center">Description</th>
+                                        <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('date')}>
+                                            <div className="flex items-center justify-center">
+                                                Date {renderSortIcon('date')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('speaker.name')}>
+                                            <div className="flex items-center justify-center">
+                                                Speaker {renderSortIcon('speaker.name')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2 text-center cursor-pointer" onClick={() => handleSort('fee')}>
+                                            <div className="flex items-center justify-center">
+                                                Price {renderSortIcon('fee')}
+                                            </div>
+                                        </th>
+                                        <th className="px-4 py-2 text-center">Details</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="mt-3 text-gray-500 text-center">No seminars available at the moment.</p>
-                    )}
+                                </thead>
+                                <tbody>
+                                    {seminar_data.seminars.map((seminar) => (
+                                        <tr key={seminar._id} className="hover:bg-gray-700">
+                                            <td className="px-4 py-2">{seminar.title}</td>
+                                            <td className="px-4 py-2">{truncateSentence(seminar.description)}</td>
+                                            <td className="px-4 py-2">{convertDateFormat(seminar.date)}</td>
+                                            <td className="px-4 py-2 whitespace-nowrap">{seminar.speaker.name}</td>
+                                            <td className="px-4 py-2">₱{seminar.fee}</td>
+                                            <td className="px-4 py-2 whitespace-nowrap text-center">
+                                                <Link
+                                                    to={`/seminar/${seminar._id}`}
+                                                    className="text-blue-400 hover:text-blue-600"
+                                                >
+                                                    View Details
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p className="mt-3 text-gray-500 text-center">No seminars available at the moment.</p>
+                        )}
+                    </div>
+                    {/* Pagination */}
+                    <div className="flex justify-center mt-1">
+                        <button
+                            disabled={page === 1 || seminar_data.seminars?.length === 0}
+                            onClick={() => setPage((prev) => prev - 1)}
+                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                        >
+                            Previous
+                        </button>
+                        <span className="px-4 py-2">{`Page ${page} of ${seminar_data?.totalPages || 1}`}</span>
+                        <button
+                            disabled={seminar_data?.currentPage === seminar_data?.totalPages || seminar_data.seminars?.length === 0}
+                            onClick={() => setPage((prev) => prev + 1)}
+                            className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
-            </div>
-            {/* Pagination */}
-            <div className="flex justify-center mt-1">
-                <button
-                    disabled={page === 1 || seminar_data.seminars?.length === 0}
-                    onClick={() => setPage((prev) => prev - 1)}
-                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                >
-                    Previous
-                </button>
-                <span className="px-4 py-2">{`Page ${page} of ${seminar_data?.totalPages || 1}`}</span>
-                <button
-                    disabled={seminar_data?.currentPage === seminar_data?.totalPages || seminar_data.seminars?.length === 0}
-                    onClick={() => setPage((prev) => prev + 1)}
-                    className="px-4 py-2 bg-gray-700 text-white disabled:bg-gray-400"
-                >
-                    Next
-                </button>
             </div>
         </>
     );

@@ -94,11 +94,11 @@ const ViewBookedSeminars = () => {
     
     return (
         <div className="flex items-center justify-center bg-gray-100">
-            <div className="mt-4 max-w-6xl w-full">
+            <div className="mt-4 max-w-6xl w-full px-4">
                 <div className="flex items-center justify-between">
                     {/* Title */}
-                    <h2 className="text-2xl font-semibold text-center">Booked Seminars</h2>
-                    <div className="flex items-center justify-end mr-4">
+                    <h2 className="text-2xl font-semibold text-center hidden sm:block">Booked Seminars</h2>
+                    <div className="flex flex-row sm:flex-row items-center sm:mt-0">
                         {/* Search Bar */}
                         <div className="flex px-4 py-2 rounded-md border-2 border-blue-500 overflow-hidden max-w-md mx-auto font-[sans-serif]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px" className="fill-gray-600 mr-3 rotate-90">
@@ -129,75 +129,77 @@ const ViewBookedSeminars = () => {
                         </div>
                     </div>
                 </div>
-                {booked_seminars.bookings && booked_seminars.bookings.length > 0 ? (
-                    <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
-                        <thead className="whitespace-nowrap">
-                            <tr className="bg-gray-700">
-                                <th className="px-4 py-2" onClick={() => handleSort('seminar.title')}>
+                <div className="overflow-x-auto mt-1">
+                    {booked_seminars.bookings && booked_seminars.bookings.length > 0 ? (
+                        <table className="table-auto w-full mt-1 bg-gray-800 text-white shadow-lg">
+                            <thead className="whitespace-nowrap">
+                                <tr className="bg-gray-700">
+                                    <th className="px-4 py-2" onClick={() => handleSort('seminar.title')}>
+                                        <div className="flex items-center justify-start">
+                                            Title {renderSortIcon('seminar.title')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('seminar.fee')}>
+                                        <div className="flex items-center justify-start">
+                                            Price {renderSortIcon('seminar.fee')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('user.firstName')}>
+                                        <div className="flex items-center justify-start">
+                                            Booked By {renderSortIcon('user.firstName')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('seminar.createdAt')}>
+                                        <div className="flex items-center justify-start">
+                                            Booked Date {renderSortIcon('seminar.createdAt')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('proofOfPayment')}>
+                                        <div className="flex items-center justify-start">
+                                            Proof of Payment {renderSortIcon('proofOfPayment')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('paymentStatus')}>
                                     <div className="flex items-center justify-start">
-                                        Title {renderSortIcon('seminar.title')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('seminar.fee')}>
-                                    <div className="flex items-center justify-start">
-                                        Price {renderSortIcon('seminar.fee')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('user.firstName')}>
-                                    <div className="flex items-center justify-start">
-                                        Booked By {renderSortIcon('user.firstName')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('seminar.createdAt')}>
-                                    <div className="flex items-center justify-start">
-                                        Booked Date {renderSortIcon('seminar.createdAt')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('proofOfPayment')}>
-                                    <div className="flex items-center justify-start">
-                                        Proof of Payment {renderSortIcon('proofOfPayment')}
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2" onClick={() => handleSort('paymentStatus')}>
-                                <div className="flex items-center justify-start">
-                                        Status {renderSortIcon('paymentStatus')}
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {booked_seminars.bookings.map((booking) => (
-                                <tr key={booking._id} className="hover:bg-gray-700">
-                                    <td className="px-4 py-2">{booking.seminar.title}</td>
-                                    <td className="px-4 py-2">₱{booking.seminar.fee}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap">
-                                        {capitalizeFirstLetter(booking.user.firstName)} {capitalizeFirstLetter(booking.user.lastName)}
-                                        <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
-                                    </td>
-                                    <td className="px-4 py-2">{convertDateFormat(booking.seminar.createdAt)}</td>
-                                    <td className="px-4 py-2">
-                                        {booking.proofOfPayment
-                                        ? 
-                                            <Link
-                                            className="text-blue-400 hover:text-blue-600"
-                                            onClick={() => handleShowProof(booking.proofOfPayment)}
-                                            >
-                                                Show Payment
-                                            </Link>
-                                        : 
-                                            'Paid Online'
-                                        }
-                                    </td>
-                                    <td className="px-4 py-2">
-                                        <BookingStatus booking={booking} />
-                                    </td>
+                                            Status {renderSortIcon('paymentStatus')}
+                                        </div>
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p className="mt-3 text-gray-500 text-center">No bookings available.</p>
-                )}
+                            </thead>
+                            <tbody>
+                                {booked_seminars.bookings.map((booking) => (
+                                    <tr key={booking._id} className="hover:bg-gray-700">
+                                        <td className="px-4 py-2">{booking.seminar.title}</td>
+                                        <td className="px-4 py-2">₱{booking.seminar.fee}</td>
+                                        <td className="px-4 py-2 whitespace-nowrap">
+                                            {capitalizeFirstLetter(booking.user.firstName)} {capitalizeFirstLetter(booking.user.lastName)}
+                                            <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
+                                        </td>
+                                        <td className="px-4 py-2">{convertDateFormat(booking.seminar.createdAt)}</td>
+                                        <td className="px-4 py-2">
+                                            {booking.proofOfPayment
+                                            ? 
+                                                <Link
+                                                className="text-blue-400 hover:text-blue-600"
+                                                onClick={() => handleShowProof(booking.proofOfPayment)}
+                                                >
+                                                    Show Payment
+                                                </Link>
+                                            : 
+                                                'Paid Online'
+                                            }
+                                        </td>
+                                        <td className="px-4 py-2">
+                                            <BookingStatus booking={booking} />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p className="mt-3 text-gray-500 text-center">No bookings available.</p>
+                    )}
+                </div>
                 {/* Pagination */}
                 <div className="flex justify-center mt-1">
                     <button
@@ -217,7 +219,7 @@ const ViewBookedSeminars = () => {
                     </button>
                 </div>
                 {/* Go back button */}
-                <button className="flex items-center px-4 py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" onClick={() => navigate(-1)}>
+                <button className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
                     <FaArrowLeft className="mr-2" /> Go Back
                 </button>
             </div>

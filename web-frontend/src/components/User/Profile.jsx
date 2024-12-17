@@ -61,7 +61,7 @@ const Profile = ({ user, newProfileDetails }) => {
         mutation.mutate(formData);
     })
 
-    const {firstName, lastName, profilePicture, role} = user;
+    const {firstName, lastName, profilePicture, email} = user;
 
     return (
         <div className="flex items-center justify-center">
@@ -92,7 +92,7 @@ const Profile = ({ user, newProfileDetails }) => {
                         ? `${capitalizeFirstLetter(newProfileDetails.firstName)} ${capitalizeFirstLetter(newProfileDetails.lastName)}`
                         : `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`}
                 </h1>
-                <p className="text-gray-500 italic">{capitalizeFirstLetter(role)}</p>
+                <p className="text-gray-500 italic">{email}</p>
                 <div className="mt-2">
                     <Link
                         to={`/edit_profile`}

@@ -119,7 +119,7 @@ const EditUser = () => {
                 </button>
             </form>
             <button 
-                className="flex items-center px-4 py-2 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition" 
+                className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" 
                 onClick={() => navigate(-1)}
             >
                 <FaArrowLeft className="mr-2" /> Go Back

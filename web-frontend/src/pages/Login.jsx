@@ -41,7 +41,7 @@ const Login = () => {
     })
     
     return (
-        <div className="flex flex-col items-center mt-12">
+        <div className="flex flex-col items-center mt-14 px-4">
             <h1 className="text-2xl font-bold">Login</h1>
             <form className="flex flex-col max-w-sm w-full" onSubmit={onSubmit}>
                 <label htmlFor="email" className="mb-2 font-medium">Email:</label>
@@ -85,7 +85,7 @@ const Login = () => {
                         Forgot Password?{' '}
                         <Link
                         to="/forgot_password"
-                        className="text-blue-500 cursor-pointer underline"
+                        className="text-blue-500 cursor-pointer underline whitespace-nowrap"
                         >
                             Reset Password
                         </Link>
