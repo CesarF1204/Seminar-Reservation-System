@@ -30,7 +30,14 @@ const upload = multer({
 router.get('/', authMiddleware, adminMiddleware, fetchUsers);
 
 /* Route to update the user's role or restriction. Requires authentication using authMiddleware and adminMiddleware */
-router.put('/update_role_restriction/:id', authMiddleware, adminMiddleware, updateRoleOrRestriction);
+router.put('/update_role_restriction/:id', 
+    authMiddleware, 
+    adminMiddleware, 
+    (req, res) => {
+        req.io = req.app.get('io'); /* Attach io instance to req */
+        updateRoleOrRestriction(req, res);
+    }
+);
 
 /* Route to delete the user's account. Requires authentication using authMiddleware and adminMiddleware */
 router.delete('/:id', authMiddleware, adminMiddleware, deleteAccount);

@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useQueryClient, useMutation } from 'react-query';
-import * as apiClient from '../api-client';
+import io from 'socket.io-client';
 import { useAppContext } from '../contexts/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from 'react-query';
+import * as apiClient from '../api-client';
 import LogOutButton from './User/LogOutButton';
 import Notification from './Notification';
 
 const AppNavbar = ({ user }) => {
     /* State to check if Navbar collapse */
     const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
-
     const location = useLocation();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { showToast } = useAppContext();
 
     const isActive = (path) => location.pathname === path;
-
-    /* Navigate to different routes */
-    const navigate = useNavigate();
-
-    /* Extract showToast function from context for displaying notifications */
-    const { showToast } = useAppContext();
-    /* Initialize the React Query client to manage cache and query state */
-    const queryClient = useQueryClient();
 
     /* Mutation for logging out */
     const logOutMutation = useMutation(apiClient.signOut, {
@@ -36,17 +30,23 @@ const AppNavbar = ({ user }) => {
         },
     });
 
-    /* Handle log out mutation */
-    const handleLogout = () => {
-        logOutMutation.mutate();
-    };
-
-    /* Auto logout if user is not admin */
     useEffect(() => {
-        if (user.role !== 'admin') {
-            handleLogout();
-        }
-    }, [user.role]);
+        /* Connect to the Socket.io server */
+        const socket = io('http://localhost:5000', {
+          withCredentials: true, // Allow credentials (cookies)
+        });
+    
+        /* Listen for the 'updatedUser' event */
+        socket.on('updatedUser', ({ _id: user_id, role }) => {
+            if(user.userId === user_id && role !== 'admin'){
+                logOutMutation.mutate();
+            }
+        });
+    
+        return () => {
+        socket.disconnect();
+        };
+    }, [user.userId, logOutMutation]);
 
     return (
         <nav className="bg-gray-900 p-4 shadow-md sticky top-0 z-10">
@@ -80,10 +80,6 @@ const AppNavbar = ({ user }) => {
                                 className={`px-4 py-2 rounded whitespace-nowrap ${
                                     isActive('/view_users') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
                                 }`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogout();
-                                }}
                             >
                                 View Users
                             </Link>
@@ -92,10 +88,6 @@ const AppNavbar = ({ user }) => {
                                 className={`px-4 py-2 rounded whitespace-nowrap ${
                                     isActive('/create_seminar') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
                                 }`}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleLogout();
-                                }}
                             >
                                 Create Seminar
                             </Link>

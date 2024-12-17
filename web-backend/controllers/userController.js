@@ -227,7 +227,7 @@ const updateProfilePicture = async (req, res) => {
 /**
 * DOCU: This function is used to update role or restriction of a registered user. <br>
 * This is being called when admin wants to update the role or restriction of an specific user. <br>
-* Last Updated Date: December 12, 2024 <br>
+* Last Updated Date: December 18, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -256,6 +256,9 @@ const updateRoleOrRestriction = async (req, res) => {
             updatedData, /* Data to update */
             { new: true, runValidators: true } /* Options: return updated document and run validators */
         );
+
+        /* Broadcast to socket the updatedUser after the admin changed the role of a user */
+        req.io.emit('updatedUser', updatedUser);
 
         res.status(200).json({ message: 'User Updated Successfully', user: updatedUser });
     } catch (error) {

@@ -8,6 +8,8 @@ import seminarRoutes from './routes/seminarRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import cookieParser from 'cookie-parser';
 import { v2 as cloudinary } from 'cloudinary'; 
+import http from 'http';
+import { Server } from 'socket.io';
 
 /* Load environment variables from .env file */
 dotenv.config();
@@ -22,6 +24,19 @@ cloudinary.config({
 });
 
 const app = express();
+
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL,  /* Allow requests from the frontend */
+        methods: ['GET', 'POST', 'PUT'],
+        credentials: true,  /* Allow credentials (cookies, etc.) */
+    },
+    transports: ['websocket', 'polling'],  /* Ensure fallback transport options */
+});
+
+/* Attach io instance to the app for global access */
+app.set('io', io);
 
 /* Enable CORS with specific frontend URL and credentials */
 app.use(cors({
@@ -41,4 +56,4 @@ app.use('/api/seminars', seminarRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
