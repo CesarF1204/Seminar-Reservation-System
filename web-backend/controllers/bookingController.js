@@ -229,7 +229,7 @@ const updateBookingStatus = async (req, res) => {
         /* Handle validation errors */
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: errors.array() });
+            return res.status(400).json({ message: errors.array().map(error => error.msg) });
         }
 
         /* Extract the booking ID from the request parameters and paymentStatus from the body */

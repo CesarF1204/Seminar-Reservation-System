@@ -65,7 +65,7 @@ const createSeminar = async (req, res) => {
         /* Handle validation errors */
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: errors.array() });
+            return res.status(400).json({ message: errors.array().map(error => error.msg) });
         }
 
         /* Create a new seminar using the data from the request body */
@@ -110,7 +110,7 @@ const updateSeminar = async (req, res) => {
         /* Handle validation errors */
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: errors.array() });
+            return res.status(400).json({ message: errors.array().map(error => error.msg) });
         }
 
         /* Get the updated seminar details from the request */

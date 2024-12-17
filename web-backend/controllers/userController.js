@@ -3,7 +3,6 @@ import { sendEmailAccountRecovery } from '../helpers/emailTemplate.js';
 import { paginationAndSorting, getUploadedImageUrl } from '../helpers/globalHelper.js';
 import { validationResult } from "express-validator";
 import bcrypt from 'bcryptjs';
-import cloudinary from 'cloudinary';
 import crypto from 'crypto';
 
 /**
@@ -365,7 +364,7 @@ const accountRecovery = async (req, res) => {
         /* Handle validation errors */
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: errors.array() });
+            return res.status(400).json({ message: errors.array().map(error => error.msg) });
         }
 
         /* Extract the email from the request body */
