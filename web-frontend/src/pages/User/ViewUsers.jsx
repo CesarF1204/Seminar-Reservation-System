@@ -100,7 +100,7 @@ const ViewUsers = () => {
                                 onChange={onSearchChange} 
                                 className="w-full outline-none bg-transparent text-gray-600 text-sm" 
                             />
-                            {isFetching && <div className="ml-2 animate-spin border-t-2 border-blue-500 rounded-full w-4 h-4"></div>}
+                            {debouncedSearch && isFetching && <div className="ml-2 animate-spin border-t-2 border-blue-500 rounded-full w-4 h-4"></div>}
                         </div>
                         {/* Dropdown for selecting limit */}
                         <div className="ml-4">
