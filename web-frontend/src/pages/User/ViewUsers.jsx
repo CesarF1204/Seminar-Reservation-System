@@ -4,7 +4,7 @@ import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
-import { capitalizeFirstLetter, debounce } from '../../helpers/globalHelpers';
+import { debounce } from '../../helpers/globalHelpers';
 import UpdateUserRole from '../../components/User/UpdateUserRole';
 import AccountDisable from '../../components/User/AccountDisable';
 import UserAction from '../../components/User/UserAction';
@@ -148,7 +148,7 @@ const ViewUsers = () => {
                                 <tbody>
                                     {users_data.users.map((user) => (
                                         <tr key={user._id} className="hover:bg-gray-700">
-                                            <td className="px-4 py-2">{capitalizeFirstLetter(user.firstName)} {capitalizeFirstLetter(user.lastName)}</td>
+                                            <td className="px-4 py-2">{user.firstName} {user.lastName}</td>
                                             <td className="px-4 py-2">{user.email}</td>
                                             <td className="px-4 py-2">
                                                 <UpdateUserRole user={user} />

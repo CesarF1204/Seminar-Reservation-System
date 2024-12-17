@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useNavigate, Link } from 'react-router-dom';
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
-import { capitalizeFirstLetter } from '../../helpers/globalHelpers';
 import { FaCamera, FaEdit, FaKey } from "react-icons/fa";
 
 const Profile = ({ user, newProfileDetails }) => {
@@ -89,8 +88,9 @@ const Profile = ({ user, newProfileDetails }) => {
             <div className="flex flex-col">
                 <h1 className="text-2xl font-bold">
                     {newProfileDetails && newProfileDetails.firstName && newProfileDetails.lastName
-                        ? `${capitalizeFirstLetter(newProfileDetails.firstName)} ${capitalizeFirstLetter(newProfileDetails.lastName)}`
-                        : `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`}
+                        ? `${newProfileDetails.firstName} ${newProfileDetails.lastName}`
+                        : `${firstName} ${lastName}`
+                    }
                 </h1>
                 <p className="text-gray-500 italic">
                     {newProfileDetails && newProfileDetails.email

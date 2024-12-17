@@ -9,11 +9,11 @@ router.post('/register',
     [
         check('firstName')
             .isLength({ min: 1 }).withMessage('First Name is required')
-            .isAlpha().withMessage('First Name should only contain letters'),
+            .matches(/^[A-Za-z\s]+$/).withMessage('Last Name should only contain letters and spaces'),
 
         check('lastName')
             .isLength({ min: 1 }).withMessage('Last Name is required')
-            .isAlpha().withMessage('Last Name should only contain letters'),
+            .matches(/^[A-Za-z\s]+$/).withMessage('Last Name should only contain letters and spaces'),
 
         check('email')
             .isEmail().withMessage('Invalid email address'),

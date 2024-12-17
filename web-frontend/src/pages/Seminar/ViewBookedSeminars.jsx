@@ -4,7 +4,7 @@ import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
-import { capitalizeFirstLetter, convertDateFormat, debounce } from '../../helpers/globalHelpers';
+import { convertDateFormat, debounce } from '../../helpers/globalHelpers';
 import ProofOfPaymentModal from '../../components/Seminar/ProofOfPaymentModal';
 import BookingStatus from '../../components/Seminar/BookingStatus';
 
@@ -177,7 +177,7 @@ const ViewBookedSeminars = () => {
                                         <td className="px-4 py-2">{booking.seminar.title}</td>
                                         <td className="px-4 py-2">₱{booking.seminar.fee}</td>
                                         <td className="px-4 py-2 whitespace-nowrap">
-                                            {capitalizeFirstLetter(booking.user.firstName)} {capitalizeFirstLetter(booking.user.lastName)}
+                                            {booking.user.firstName} {booking.user.lastName}
                                             <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
                                         </td>
                                         <td className="px-4 py-2">{convertDateFormat(booking.createdAt)}</td>
