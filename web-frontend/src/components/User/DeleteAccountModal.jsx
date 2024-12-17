@@ -3,7 +3,7 @@ import * as apiClient from '../../api-client';
 import { useMutation, useQueryClient } from 'react-query';
 import { useAppContext } from '../../contexts/AppContext';
 
-const DeleteAccountModal = ({ user, setShowDeleteModal, refetch }) => {
+const DeleteAccountModal = ({ user, setShowDeleteModal, refetch, setPage }) => {
         /* Initialize query client to manage cache invalidation */
         const queryClient = useQueryClient();
 
@@ -16,7 +16,12 @@ const DeleteAccountModal = ({ user, setShowDeleteModal, refetch }) => {
             onSuccess: async () => {
                 await queryClient.invalidateQueries("validateToken", { exact: true });
                 showToast({ message: "Account Deleted!", type: "ERROR" });
-                refetch();
+                /* Refetch to get the updated data */
+                const updatedData = await refetch();
+                /* Reset to page 1 if table is empty after deletion */
+                if (updatedData?.data?.users?.length === 0) {
+                    setPage(1);
+                }
             },
                 onError: (error) => {
                 showToast({ message: error.message, type: "ERROR" });

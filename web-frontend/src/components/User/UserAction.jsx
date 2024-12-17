@@ -3,7 +3,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import DeleteAccountModal from './DeleteAccountModal';
 
-const UserAction = ({ user, refetch}) => {
+const UserAction = ({ user, refetch, setPage }) => {
 
     /* State for showing delete modal */
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -20,7 +20,7 @@ const UserAction = ({ user, refetch}) => {
         </div>
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
-                <DeleteAccountModal setShowDeleteModal={setShowDeleteModal} user={user} refetch={refetch} />
+                <DeleteAccountModal setShowDeleteModal={setShowDeleteModal} user={user} refetch={refetch} setPage={setPage} />
             )}
         </>
     )

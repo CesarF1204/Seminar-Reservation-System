@@ -157,7 +157,7 @@ const ViewUsers = () => {
                                                 <AccountDisable user={user} />
                                             </td>
                                             <td>
-                                                <UserAction user={user} refetch={refetch} />
+                                                <UserAction user={user} refetch={refetch} setPage={setPage} />
                                             </td>
                                         </tr>
                                     ))}

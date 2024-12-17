@@ -66,7 +66,6 @@ const login = async (req, res) => {
         }
 
         const { email, password } = req.body;
-        console.log('email :>> ', email);
         
         /* Check if the user exists with the given email */
         const user = await User.findOne({ email });
