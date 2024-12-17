@@ -23,34 +23,16 @@ const UpdateUserRole = ({ user }) => {
 
     /* Mutation for updating the user role */
     const mutation = useMutation((formData) => apiClient.updateRoleOrRestriction(user._id, formData, data.token), {
-        onSuccess: async (req, res) => {
-            /* Check if the authenticated user changed their own role */
-            if(data.userId === res.user_id){
-                logOutMutation.mutate();
-            }
-            else{
-                /* Show success toast */
-                showToast({ message: "Role Updated", type: "SUCCESS" });
-                await queryClient.invalidateQueries("validateToken", { exact: true });
-            }
+        onSuccess: async () => {
+            /* Show success toast */
+            showToast({ message: "Role Updated", type: "SUCCESS" });
+            await queryClient.invalidateQueries("validateToken", { exact: true });
         },
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"})
         }
     })
-
-    /* Mutation for logging out */
-    const logOutMutation = useMutation(apiClient.signOut, {
-        onSuccess: async () => {
-            await queryClient.invalidateQueries("validateToken", { exact: true });
-            showToast({ message: "Your Role Changed. Log-in again", type: "ERROR" });
-            navigate("/sign-in"); /* Redirect to sign-in page after logout */
-        },
-        onError: (error) => {
-            showToast({ message: error.message, type: "ERROR" });
-        },
-    });
 
     /* Handle form submission */
     const onChange = handleSubmit((formData)=>{

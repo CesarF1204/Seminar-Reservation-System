@@ -22,7 +22,7 @@ const AppNavbar = ({ user }) => {
     const logOutMutation = useMutation(apiClient.signOut, {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken", { exact: true });
-            showToast({ message: "You're not an admin. Log-in again", type: "ERROR" });
+            showToast({ message: "You're not an admin or your account is restricted. Log-in again", type: "ERROR" });
             navigate("/sign-in"); /* Redirect to sign-in page after logout */
         },
         onError: (error) => {
@@ -32,7 +32,7 @@ const AppNavbar = ({ user }) => {
 
     useEffect(() => {
         /* Connect to the Socket.io server */
-        const socket = io('http://localhost:5000', {
+        const socket = io(`${import.meta.env.VITE_API_BASE_URL}`, {
           withCredentials: true, // Allow credentials (cookies)
         });
     
