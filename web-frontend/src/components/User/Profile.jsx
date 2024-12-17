@@ -92,7 +92,12 @@ const Profile = ({ user, newProfileDetails }) => {
                         ? `${capitalizeFirstLetter(newProfileDetails.firstName)} ${capitalizeFirstLetter(newProfileDetails.lastName)}`
                         : `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`}
                 </h1>
-                <p className="text-gray-500 italic">{email}</p>
+                <p className="text-gray-500 italic">
+                    {newProfileDetails && newProfileDetails.email
+                            ? newProfileDetails.email
+                            : email
+                    }
+                </p>
                 <div className="mt-2">
                     <Link
                         to={`/edit_profile`}

@@ -149,9 +149,14 @@ const ViewBookedSeminars = () => {
                                             Booked By {renderSortIcon('user.firstName')}
                                         </div>
                                     </th>
-                                    <th className="px-4 py-2" onClick={() => handleSort('seminar.createdAt')}>
+                                    <th className="px-4 py-2" onClick={() => handleSort('createdAt')}>
                                         <div className="flex items-center justify-start">
-                                            Booked Date {renderSortIcon('seminar.createdAt')}
+                                            Booked Date {renderSortIcon('createdAt')}
+                                        </div>
+                                    </th>
+                                    <th className="px-4 py-2" onClick={() => handleSort('seminar.date')}>
+                                        <div className="flex items-center justify-start">
+                                            Seminar Date {renderSortIcon('seminar.date')}
                                         </div>
                                     </th>
                                     <th className="px-4 py-2" onClick={() => handleSort('proofOfPayment')}>
@@ -175,7 +180,8 @@ const ViewBookedSeminars = () => {
                                             {capitalizeFirstLetter(booking.user.firstName)} {capitalizeFirstLetter(booking.user.lastName)}
                                             <p className="text-sm text-gray-500 italic">{booking.user.email}</p>
                                         </td>
-                                        <td className="px-4 py-2">{convertDateFormat(booking.seminar.createdAt)}</td>
+                                        <td className="px-4 py-2">{convertDateFormat(booking.createdAt)}</td>
+                                        <td className="px-4 py-2">{convertDateFormat(booking.seminar.date)}</td>
                                         <td className="px-4 py-2">
                                             {booking.proofOfPayment
                                             ? 

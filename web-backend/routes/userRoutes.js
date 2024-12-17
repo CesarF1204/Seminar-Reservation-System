@@ -15,6 +15,7 @@ import {
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
 import multer from 'multer';
+import { check } from "express-validator";
 
 const router = express.Router();
 
@@ -53,9 +54,22 @@ router.put('/id/:id', authMiddleware, adminMiddleware, updateUserById);
 router.get('/reset_password/:token', resetPasswordLink);
 
 /* Route to handle updating of password in password reset link */
-router.put('/reset_password', resetPassword);
+router.put('/reset_password',
+    [
+        check('password')
+            .isLength({ min: 6 }).withMessage('Password should be at least 6 characters long')
+            .matches(/[A-Za-z0-9]/).withMessage('Password should contain letters and numbers'),
+    ],
+    resetPassword
+);
 
 /* Route to send mail for account recovery */
-router.post('/send_account_recovery', accountRecovery);
+router.post('/send_account_recovery', 
+    [
+        check('email')
+            .isEmail().withMessage('Invalid email address'),
+    ],
+    accountRecovery
+);
 
 export default router;

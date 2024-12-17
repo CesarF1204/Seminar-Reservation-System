@@ -6,7 +6,7 @@ import { validationResult } from "express-validator";
 /**
 * DOCU: This function is used to handle the user's registration. <br>
 * This is being called when registering a new account. <br>
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -14,6 +14,12 @@ import { validationResult } from "express-validator";
 */
 const register = async (req, res) => {
     try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
         const { firstName, lastName, email, password } = req.body;
 
         /* Find user using email */

@@ -238,7 +238,7 @@ const sendEmailPendingReservation = async (user, seminar) => {
         const subject = 'Seminar Reservation - Pending Status';
         const text = `
             Dear ${user.firstName} ${user.lastName},
-            We are pleased to inform you that your seminar booking for ${seminar.title} for ${formatToLocaleDate(seminar.date)} is currently in pending status.
+            We are pleased to inform you that your seminar booking for ${seminar.title} for ${formatToLocaleDate(seminar.date)} is set to pending status.
             We are actively working to finalize the details and will notify you as soon as the booking is confirmed.
 
             We appreciate your patience during this process.

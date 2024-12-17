@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import { sendEmailAccountRecovery } from '../helpers/emailTemplate.js';
-import { paginationAndSorting } from '../helpers/globalHelper.js';
+import { paginationAndSorting, getUploadedImageUrl } from '../helpers/globalHelper.js';
 import { validationResult } from "express-validator";
 import bcrypt from 'bcryptjs';
 import cloudinary from 'cloudinary';
@@ -197,8 +197,8 @@ const updateProfile = async (req, res) => {
 
 /**
 * DOCU: This function is used to update profile of a user. <br>
-* This is being called when admin wants to update the details for an specific user. <br>
-* Last Updated Date: December 11, 2024 <br>
+* This is being called when user wants to change/update their profile picture. <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -206,23 +206,15 @@ const updateProfile = async (req, res) => {
 */
 const updateProfilePicture = async (req, res) => {
     try {
-        /* Get the uploaded image file from the request */
-        const image_file = req?.file;
-
-        if(image_file){
-            /* Convert the image file buffer into a base64 encoded string */
-            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
-            
-            /* Construct the data URI for the image */
-            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
-
-            /* Upload the image to Cloudinary and get the image URL */
-            const upload_result = await cloudinary.v2.uploader.upload(dataURI);
+        /* Check if there is an uploaded image file */
+        if(req.file){
+            /* Call getUploadedImageUrl helper to get the image url uploaded */
+            const image_url = await getUploadedImageUrl(req.file);
 
             /* Update the user's profile and return the updated document */
             const updatedProfilePicture = await User.findByIdAndUpdate(
                 req.user.id, /* ID of the user to update */
-                { profilePicture: upload_result.url }, /* Data to update */
+                { profilePicture: image_url }, /* Data to update */
                 { new: true, runValidators: true } /* Options: return updated document and run validators */
             );
 
@@ -362,7 +354,7 @@ const resetPassword = async (req, res) => {
 /**
 * DOCU: This function is used to send an email for account recovery.
 * This is being called when the user forgot their password and want for an account recovery. <br>
-* Last Updated Date: December 12, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -370,6 +362,12 @@ const resetPassword = async (req, res) => {
 */
 const accountRecovery = async (req, res) => {
     try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
         /* Extract the email from the request body */
         const { email } = req.body;
 

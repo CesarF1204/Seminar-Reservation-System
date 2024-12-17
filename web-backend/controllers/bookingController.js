@@ -1,6 +1,7 @@
 import Booking from '../models/Booking.js';
 import Seminar from '../models/Seminar.js';
 import User from '../models/User.js';
+import { validationResult } from "express-validator";
 import { getUploadedImageUrl, paginationAndSorting } from '../helpers/globalHelper.js';
 import mongoose from 'mongoose';
 import createPaymentIntent from '../utils/stripe.js';
@@ -168,6 +169,7 @@ const getUserBookings = async (req, res) => {
                     'seminar': 1,
                     paymentStatus: 1,
                     proofOfPayment: 1,
+                    createdAt: 1,
                 },
             },
         ]);
@@ -224,6 +226,12 @@ const getBookingsForNotification = async(req, res) => {
 */
 const updateBookingStatus = async (req, res) => {
     try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
         /* Extract the booking ID from the request parameters and paymentStatus from the body */
         const { id } = req.params;
         const { paymentStatus } = req.body;

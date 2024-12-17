@@ -1,5 +1,6 @@
 import Seminar from '../models/Seminar.js';
 import cloudinary from 'cloudinary';
+import { validationResult } from "express-validator";
 import { paginationAndSorting } from '../helpers/globalHelper.js';
 
 /**
@@ -53,7 +54,7 @@ const getSeminars = async (req, res) => {
 /**
 * DOCU: This function is used to create a seminar. <br>
 * This is being called when admin wants to create a seminar. <br>
-* Last Updated Date: December 10, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -61,6 +62,12 @@ const getSeminars = async (req, res) => {
 */
 const createSeminar = async (req, res) => {
     try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
         /* Create a new seminar using the data from the request body */
         const seminar = await Seminar.create(req.body);
         
@@ -92,7 +99,7 @@ const createSeminar = async (req, res) => {
 /**
 * DOCU: This function is used to update a seminar. <br>
 * This is being called when admin wants to update a seminar. <br>
-* Last Updated Date: December 10, 2024 <br>
+* Last Updated Date: December 17, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -100,6 +107,12 @@ const createSeminar = async (req, res) => {
 */
 const updateSeminar = async (req, res) => {
     try {
+        /* Handle validation errors */
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: errors.array() });
+        }
+
         /* Get the updated seminar details from the request */
         const seminar_to_update = req.body;
 

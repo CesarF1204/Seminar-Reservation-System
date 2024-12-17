@@ -5,16 +5,35 @@ import { check } from "express-validator";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 /* Route for user registration */
-router.post('/register', register);
+router.post('/register',
+    [
+        check('firstName')
+            .isLength({ min: 1 }).withMessage('First Name is required')
+            .isAlpha().withMessage('First Name should only contain letters'),
+
+        check('lastName')
+            .isLength({ min: 1 }).withMessage('Last Name is required')
+            .isAlpha().withMessage('Last Name should only contain letters'),
+
+        check('email')
+            .isEmail().withMessage('Invalid email address'),
+
+        check('password')
+            .isLength({ min: 6 }).withMessage('Password should be at least 6 characters long')
+            .matches(/[A-Za-z0-9]/).withMessage('Password should contain letters and numbers'),
+    ], 
+    register
+);
 
 /* Route for user login with validation for email and password */
 router.post('/login',
     [
-        // Validate email and password fields
-        check("email", "Email is required").isEmail(),
-        check("password", "Password with 6 or more characters required").isLength({
-        min: 6,
-        }),
+        /* Validate email and password fields */
+        check('email')
+            .isEmail().withMessage('Invalid email address'),
+        check('password')
+            .isLength({ min: 6 }).withMessage('Password should be at least 6 characters long')
+            .matches(/[A-Za-z0-9]/).withMessage('Password should contain letters and numbers'),
     ],
     login
 );

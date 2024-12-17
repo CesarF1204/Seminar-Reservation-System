@@ -3,6 +3,7 @@ import { createBooking, getUserBookings, getBookingsForNotification, updateBooki
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
 import multer from 'multer';
+import { check } from "express-validator";
 
 const router = express.Router();
 
@@ -23,6 +24,14 @@ router.get('/', authMiddleware, getUserBookings);
 router.get('/get_bookings', authMiddleware, getBookingsForNotification);
 
 /* Route to update booking status. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
-router.put('/:id', authMiddleware, adminMiddleware, updateBookingStatus);
+router.put('/:id', 
+    authMiddleware, 
+    adminMiddleware,
+    [
+        check('paymentStatus')
+            .isLength({ min: 1 }).withMessage('Payment Status is required'),
+    ],
+    updateBookingStatus
+);
 
 export default router;
