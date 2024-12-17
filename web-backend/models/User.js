@@ -23,7 +23,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    profilePicture: { type: String, default: "https://res.cloudinary.com/dyw3wg9sl/image/upload/v1733851951/blank-profile-picture-973460_1280_fh1318.png"},
+    profilePicture: { type: String, default: "https://i.imgur.com/aKGKRzJ.png"},
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },

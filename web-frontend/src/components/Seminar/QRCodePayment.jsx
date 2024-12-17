@@ -46,7 +46,7 @@ const QRCodePayment = () => {
         <div className="flex flex-col items-center">
             <p className="text-center text-gray-700">Scan QR Code</p>
             <img 
-                src="https://res.cloudinary.com/dyw3wg9sl/image/upload/v1734076902/gcash_payment_aipqnh.jpg" 
+                src="https://i.imgur.com/a4QTWaE.jpeg" 
                 alt="QR Code for Payment" 
                 className="mb-4 w-40 h-auto rounded-md"
             />

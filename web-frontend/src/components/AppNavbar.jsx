@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
@@ -15,6 +15,7 @@ const AppNavbar = ({ user }) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { showToast } = useAppContext();
+    const sidebarRef = useRef(null);
 
     const isActive = (path) => location.pathname === path;
 
@@ -47,6 +48,21 @@ const AppNavbar = ({ user }) => {
         socket.disconnect();
         };
     }, [user.userId, logOutMutation]);
+
+    /* Close sidebar automatically when clicking outside the sidebar */
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target) && isNavbarCollapsed) {
+                setIsNavbarCollapsed(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isNavbarCollapsed]);
 
     return (
         <nav className="bg-gray-900 p-4 shadow-md sticky top-0 z-10">
@@ -122,6 +138,7 @@ const AppNavbar = ({ user }) => {
 
             {/* Sidebar (Mobile) */}
             <div 
+                ref={sidebarRef}
                 className={`fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg transform ${
                     isNavbarCollapsed ? 'translate-x-0' : 'translate-x-full'
                 } transition-transform duration-300 ease-in-out`}
@@ -183,7 +200,6 @@ const AppNavbar = ({ user }) => {
             </div>
         </nav> 
     );
-    
 }
 
 export default AppNavbar

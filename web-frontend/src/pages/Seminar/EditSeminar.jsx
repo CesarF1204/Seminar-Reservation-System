@@ -72,6 +72,9 @@ const EditSeminar = () => {
         mutation.mutate(formData);
     })
 
+    /* Get today's date in "YYYY-MM-DD" format */
+    const today = new Date().toISOString().split("T")[0];
+
     return (
         <div className="flex flex-col items-center mt-12">
             <h1 className="text-2xl font-bold">Edit Seminar</h1>
@@ -106,6 +109,7 @@ const EditSeminar = () => {
                     type="date"
                     id="date"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    min={today}
                     defaultValue={seminar.date ? seminar.date.split("T")[0] : ""}
                     {...register("date", { required: "*This field is required" })}
                 />

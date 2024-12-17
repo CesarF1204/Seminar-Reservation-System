@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import * as apiClient from '../../api-client';
@@ -46,13 +46,16 @@ const CreateSeminar = () => {
         formData.append("timeFrame.to", convertToAmPm(data.timeFrame.to));
         formData.append("venue", data.venue);
         formData.append("speaker.name", data.speaker.name);
-        formData.append("speaker.image", data.speaker.image[0] || "https://res.cloudinary.com/dyw3wg9sl/image/upload/v1733851951/blank-profile-picture-973460_1280_fh1318.png");
+        formData.append("speaker.image", data.speaker.image[0] || "https://i.imgur.com/aKGKRzJ.png");
         formData.append("speaker.linkedin", data.speaker.linkedin || "");
         formData.append("fee", data.fee);
         formData.append("slotsAvailable", data.slotsAvailable);
 
         mutation.mutate(formData);
     })
+
+    /* Get today's date in "YYYY-MM-DD" format */
+    const today = new Date().toISOString().split("T")[0];
 
     return (
         <div className="flex flex-col items-center mt-4">
@@ -86,6 +89,7 @@ const CreateSeminar = () => {
                     type="date"
                     id="date"
                     className="p-2 rounded border border-gray-300 ring-2 ring-black-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-red-500"
+                    min={today}
                     {...register("date", { required: "*This field is required" })}
                 />
                 {errors.date && (

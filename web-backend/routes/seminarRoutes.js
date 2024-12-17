@@ -22,7 +22,16 @@ const seminarValidationRules = [
         .isLength({ min: 1 }).withMessage('Description is required'),
     check('date')
         .isLength({ min: 1 }).withMessage('Date is required')
-        .isDate().withMessage('Invalid Date'),
+        .isDate().withMessage('Invalid Date')
+        .custom((date_value) => {
+            const inputDate = new Date(date_value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset time to start of the day
+            if (inputDate < today) {
+                throw new Error('Date must not be in the past');
+            }
+            return true;
+        }),
     check('timeFrame.from')
         .isLength({ min: 1 }).withMessage('Timeframe From is required'),
     check('timeFrame.to')
