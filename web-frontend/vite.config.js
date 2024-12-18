@@ -8,6 +8,6 @@ export default defineConfig({
   //     '/api': `${import.meta.env.VITE_API_BASE_URL}`, // Backend URL
   //   }
   // },
-  base: './',
+  // base: './',
   plugins: [react()],
 })
