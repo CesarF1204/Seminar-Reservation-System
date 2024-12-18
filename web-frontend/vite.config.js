@@ -10,4 +10,7 @@ export default defineConfig({
   // },
   // base: './',
   plugins: [react()],
+  build: {
+    cssCodeSplit: true,
+  },
 })
