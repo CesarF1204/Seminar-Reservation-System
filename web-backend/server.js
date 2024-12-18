@@ -29,7 +29,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: process.env.FRONTEND_URL,  /* Allow requests from the frontend */
-        methods: ['GET', 'POST', 'PUT'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
         credentials: true,  /* Allow credentials (cookies, etc.) */
     },
     transports: ['websocket', 'polling'],  /* Ensure fallback transport options */
@@ -41,6 +41,7 @@ app.set('io', io);
 /* Enable CORS with specific frontend URL and credentials */
 app.use(cors({
     origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
 
