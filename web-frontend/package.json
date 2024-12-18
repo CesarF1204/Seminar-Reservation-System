@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "deploy": "npm run build && netlify deploy --prod"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.0",
