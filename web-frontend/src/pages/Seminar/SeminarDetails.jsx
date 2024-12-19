@@ -36,6 +36,31 @@ const SeminarDetails = () => {
 
     const {title, description, date, timeFrame, venue, speaker, fee, slotsAvailable } = seminar;
 
+    /* Fetch booked seminar details using react-query's useQuery hook */
+    const { data: bookings = [] } = useQuery(
+        "getUserBookings",
+        () => apiClient.getBookingsForNotification(data.token),
+        {
+            suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
+            refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */
+            retry: 1, /* Optional: Number of retry attempts */
+        }
+    );
+
+    /* Filter through bookings to get users booked seminars */
+    const booking = bookings.filter(booked_seminar => {
+        /* Check if user has the same as the selected seminar, then return the details of the booked seminar  */
+        if(booked_seminar.seminar._id === id){
+            return booked_seminar.seminar
+        }
+    });
+    
+    /* Get the latest booked seminar of the selected seminar */
+    const latestBookedSeminar = booking[booking.length - 1];
+
+    /* Get the paymentStatus of the latest booked seminar */
+    const paymentStatus = latestBookedSeminar?.paymentStatus;
+
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <h1 className="text-3xl font-semibold text-gray-800">{title}</h1>
@@ -75,7 +100,7 @@ const SeminarDetails = () => {
                 </div>
                 {/* Book Seminar Component */}
                 { data.role !== 'admin' &&
-                    <BookSeminar />
+                    <BookSeminar paymentStatus={paymentStatus} />
                 }
             </div>
             { data.role === 'admin' &&
