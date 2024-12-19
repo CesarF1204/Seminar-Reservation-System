@@ -44,9 +44,12 @@ A comprehensive seminar reservation system with user authentication, seminar man
 - **Booking Notifications**: Users will receive email notifications regarding booking status changes (e.g., pending, confirmed, rejected).
 - **Reminders**: Users will receive reminders about upcoming seminars through a notification bell when logged in.
 
+### 8. Reporting:
+- **Analytics**: Viewing of analytics for accounts, seminars, bookings, and sales. It can also be exported through an image.
+
 ## Technology Stack
 
-- **Frontend**: React.js
+- **Frontend**: React.js, Tailwind CSS
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: JSON Web Tokens (JWT), bcrypt, crypto
@@ -55,7 +58,8 @@ A comprehensive seminar reservation system with user authentication, seminar man
 - **Cloud Storage**: Cloudinary (for image uploading)
 - **File Handling**: Multer (for file uploads)
 - **Real-Time Communication**: Socket.IO (for real-time notifications/reminders)
-  
+- **Data Visualization**: Chart.js (for interactive charts and graphs)
+
 ## Setup and Installation
 
 ### Prerequisites

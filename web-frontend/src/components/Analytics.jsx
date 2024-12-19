@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useQuery } from 'react-query';
 import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext';
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import html2canvas from 'html2canvas';
 
 /* Register the required components for Chart.js */
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const Analytics = () => {
+    const dashboardRef = useRef(null);
     /* Get the data.token from the authenticated user */
     const { data } = useAppContext();
 
@@ -128,8 +130,24 @@ const Analytics = () => {
         }]
     };
 
+    /* This function handles the exporting of the content of the analytics page as a PNG image */
+    const handleExportAll = async () => {
+        const element = dashboardRef.current;
+        if (element) {
+            const canvas = await html2canvas(element, {
+                backgroundColor: '#fff',
+                useCORS: true,
+                scale: 2,
+            });
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'dashboard.png';
+            link.click();
+        }
+    };
+
     return (
-        <div className="p-4 space-y-8">
+        <div className="p-4 space-y-8" ref={dashboardRef}>
             <h2 className="text-2xl font-semibold text-center">Analytics</h2>
     
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -182,6 +200,9 @@ const Analytics = () => {
                     }} 
                     className="w-full h-64 sm:h-48 mx-auto" 
                 />
+            </div>
+            <div className="flex justify-center">
+                <button onClick={handleExportAll} className="p-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition mb-4">Export Analytics</button>
             </div>
         </div>
     );
