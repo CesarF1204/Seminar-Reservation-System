@@ -48,7 +48,7 @@ router.post("/logout", (req, res) => {
         res.cookie("auth_token", "", {
         expires: new Date(0),
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "None",
+        sameSite: "none",
     });
     res.send();
 });
