@@ -109,5 +109,7 @@ VITE_STRIPE_PUB_KEY=
 npm install
 npm run dev
 ```
+### You may also test it at:
+https://seminar-reservation-system.netlify.app/
 
 Enjoy working with the Seminar Reservation System!
