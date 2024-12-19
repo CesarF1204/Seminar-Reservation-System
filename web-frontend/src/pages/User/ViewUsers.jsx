@@ -197,7 +197,7 @@ const ViewUsers = () => {
                         <p className="mt-3 text-gray-500 text-center">No users registered.</p>
                     )}
                 </div>
-                <button className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
+                <button className="flex items-center px-4 py-2 mt-4 mb-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
                     <FaArrowLeft className="mr-2" /> Go Back
                 </button>
             </div>

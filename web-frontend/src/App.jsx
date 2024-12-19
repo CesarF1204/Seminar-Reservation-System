@@ -14,13 +14,14 @@ import EditUser from './pages/User/EditUser';
 import ForgotPassword from './pages/ForgotPassword';
 import AccountRecoveryURL from './components/AccountRecoveryURL';
 import ViewBookedSeminars from './pages/Seminar/ViewBookedSeminars';
+import Layout from './layouts/Layout';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
 
   return (
     <Router>
-      {isLoggedIn && <AppNavbar user={data} />}
+      {/* {isLoggedIn && <AppNavbar user={data} />} */}
       <Routes>
         <Route path="/reset_password/:token" element={<AccountRecoveryURL />} />
         
@@ -34,19 +35,34 @@ function App() {
         <Route path="/forgot_password" element={isLoggedIn ? <Navigate to="/dashboard" /> : <ForgotPassword />} />
 
         {/* Protected routes */}
-        <Route path="/dashboard" element={isLoggedIn ? <Dashboard user={data} /> : <Navigate to="/sign_in" />} />
-        <Route path="/seminar/:id" element={isLoggedIn ? <SeminarDetails /> : <Navigate to="/sign_in" />} />
-        <Route path="/edit_profile" element={isLoggedIn ? <EditProfile /> : <Navigate to="/sign_in" />} />
-        <Route path="/change_password" element={isLoggedIn ? <ChangePassword /> : <Navigate to="/sign_in" />} />
-        <Route path="/bookings" element={isLoggedIn ? <ViewBookedSeminars /> : <Navigate to="/sign_in" />} />
+        <Route path="/dashboard" element={isLoggedIn 
+          ? <Layout> <Dashboard user={data} /> </Layout> 
+          : <Navigate to="/sign_in" />} 
+        />
+        <Route path="/seminar/:id" element={isLoggedIn 
+          ? <Layout> <SeminarDetails /> </Layout> 
+          : <Navigate to="/sign_in" />} 
+        />
+        <Route path="/edit_profile" element={isLoggedIn 
+          ? <Layout> <EditProfile /> </Layout> 
+          : <Navigate to="/sign_in" />} 
+        />
+        <Route path="/change_password" element={isLoggedIn 
+          ? <Layout> <ChangePassword /> </Layout> 
+          : <Navigate to="/sign_in" />} 
+        />
+        <Route path="/bookings" element={isLoggedIn 
+          ? <Layout> <ViewBookedSeminars /> </Layout> 
+          : <Navigate to="/sign_in" />} 
+        />
 
         {/* Protected route: only accessible if logged in and admin */}
         {isLoggedIn && data.role === 'admin' && (
           <>
-            <Route path="/create_seminar" element={<CreateSeminar />} />
-            <Route path="/seminar/:id/edit" element={<EditSeminar />} />
-            <Route path="/view_users" element={<ViewUsers />} />
-            <Route path="/edit_user/:id" element={<EditUser />} />
+            <Route path="/create_seminar" element={<Layout> <CreateSeminar /> </Layout>} />
+            <Route path="/seminar/:id/edit" element={<Layout> <EditSeminar /> </Layout>} />
+            <Route path="/view_users" element={<Layout> <ViewUsers /> </Layout>} />
+            <Route path="/edit_user/:id" element={<Layout> <EditUser /> </Layout>} />
           </>
         )}
 

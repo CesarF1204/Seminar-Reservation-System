@@ -166,7 +166,7 @@ const Seminar = () => {
                     { seminar_data.seminars?.length !== 0 &&
                         <>
                         {/* Pagination */}
-                        <div className="flex justify-center mt-1">
+                        <div className="flex justify-center mt-1 mb-4">
                             <button
                                 disabled={page === 1 || seminar_data.seminars?.length === 0}
                                 onClick={() => setPage((prev) => prev - 1)}
