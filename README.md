@@ -32,6 +32,9 @@ A comprehensive seminar reservation system with user authentication, seminar man
 - **Seminar Booking**: Users can select a seminar from the list and book it by providing necessary payment details.
 - **Proof of Payment**: Users can upload proof of payment (e.g., receipt or bank deposit slip).
 - **Booking Status**: Track booking status (pending, confirmed, or rejected), with email notifications sent to the user.
+  - **Pending**: Default status when a user books a seminar. The available slots will decrement by 1, and the "Book Now" button will be disabled until rejected.
+  - **Confirmed**: Admin can change the status to confirmed once payment is validated and the booking is accepted.
+  - **Rejected**: Admin can change the status to rejected. When rejected, the available slots will increment by 1, and the "Book Now" button will be re-enabled for the user.
   
 ### 6. Payment Processing
 - **Stripe Integration**: Online payments are processed using Stripe for payment intent generation.
@@ -51,7 +54,7 @@ A comprehensive seminar reservation system with user authentication, seminar man
 - **Email Service**: NodeMailer for sending emails
 - **Cloud Storage**: Cloudinary (for image uploading)
 - **File Handling**: Multer (for file uploads)
-- **Real-Time Communication**: Socket.IO (for real-time notifications)
+- **Real-Time Communication**: Socket.IO (for real-time notifications/reminders)
   
 ## Setup and Installation
 
