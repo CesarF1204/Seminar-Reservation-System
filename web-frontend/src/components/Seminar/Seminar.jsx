@@ -144,7 +144,11 @@ const Seminar = () => {
                                         <tr key={seminar._id} className="hover:bg-gray-700">
                                             <td className="px-4 py-2">{seminar.title}</td>
                                             <td className="px-4 py-2">{truncateSentence(seminar.description)}</td>
-                                            <td className="px-4 py-2">{convertDateFormat(seminar.date)}</td>
+                                            <td 
+                                                className={`px-4 py-2 ${new Date(seminar.date) < new Date() ? 'text-red-500' : '' }`}
+                                                title={`${new Date(seminar.date) < new Date() ? 'Seminar Expired. You can now delete it.' : '' }` }
+                                            >
+                                                {convertDateFormat(seminar.date)}</td>
                                             <td className="px-4 py-2 whitespace-nowrap">{seminar.speaker.name}</td>
                                             <td className="px-4 py-2">₱{seminar.fee}</td>
                                             <td className="px-4 py-2 whitespace-nowrap text-center">

@@ -6,7 +6,7 @@ import { paginationAndSorting } from '../helpers/globalHelper.js';
 /**
 * DOCU: This function is used to fetch all seminars. <br>
 * This is being called when user wants fetch all seminars. <br>
-* Last Updated Date: December 17, 2024 <br>
+* Last Updated Date: December 19, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -25,6 +25,14 @@ const getSeminars = async (req, res) => {
         /* Check if a search term is provided */
         if(search){
             filter.title = { $regex: search, $options: 'i' }; // Case-insensitive search on title
+        }
+
+        /* Check if the authenticated user is not an admin */
+        if(req.user.role !== 'admin'){
+            /* Get the date today */
+            const today = new Date();
+            /* Filter the seminar date, dont show the expired seminars or the date is less than today. */
+            filter.date = { $gte: today };
         }
 
         /* This will be pass to the query handle case sensitive data */
