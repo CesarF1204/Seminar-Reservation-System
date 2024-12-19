@@ -96,7 +96,7 @@ const login = async (req, res) => {
         /* Set the token as a cookie in the response */
         res.cookie("auth_token", token, {
             httpOnly: true, /* Prevent JavaScript from accessing the cookie */
-            secure: process.env.NODE_ENV === "production", /* Use secure flag in production */
+            secure: false, /* Use secure flag in production */
             maxAge: 86400000, /* Cookie expires in 1 day */
             sameSite: "none",
         });
