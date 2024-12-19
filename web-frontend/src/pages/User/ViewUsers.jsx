@@ -148,7 +148,14 @@ const ViewUsers = () => {
                                 <tbody>
                                     {users_data.users.map((user) => (
                                         <tr key={user._id} className="hover:bg-gray-700">
-                                            <td className="px-4 py-2">{user.firstName} {user.lastName}</td>
+                                            <td className="px-4 py-2 flex items-center">
+                                                <img 
+                                                    src={user.profilePicture} 
+                                                    alt={`${user.firstName} ${user.lastName}`} 
+                                                    className="w-8 h-8 rounded-full mr-2"
+                                                />
+                                                <span className="text-gray-200">{user.firstName} {user.lastName}</span>
+                                            </td>
                                             <td className="px-4 py-2">{user.email}</td>
                                             <td className="px-4 py-2">
                                                 <UpdateUserRole user={user} />
