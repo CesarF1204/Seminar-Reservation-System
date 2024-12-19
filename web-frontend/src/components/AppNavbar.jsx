@@ -194,6 +194,15 @@ const AppNavbar = ({ user }) => {
                             View Users
                         </Link>
                         <Link 
+                            to="/view_analytics" 
+                            className={`px-4 py-2 rounded ${
+                                isActive('/view_analytics') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
+                            }`}
+                            onClick={() => setIsNavbarCollapsed(false)}
+                        >
+                            View Analytics
+                        </Link>
+                        <Link 
                             to="/create_seminar" 
                             className={`px-4 py-2 rounded ${
                                 isActive('/create_seminar') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-700'
