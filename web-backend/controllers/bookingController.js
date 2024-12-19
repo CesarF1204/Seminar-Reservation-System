@@ -9,7 +9,6 @@ import {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
     sendEmailRejectedReservation,
-    sendEmailPendingReservation,
 } from '../helpers/emailTemplate.js';
 
 
@@ -266,10 +265,6 @@ const updateBookingStatus = async (req, res) => {
         /* Else if the updated booking status is rejected then call sendEmailRejectedReservation to send cancellation/rejection email for booked seminar */
         else if(paymentStatus === 'rejected'){
             await sendEmailRejectedReservation(user, seminar);
-        }
-        /* Else if the updated booking status is pending then call sendEmailPendingReservation to send pending email for booked seminar */
-        else if(paymentStatus === 'pending'){
-            await sendEmailPendingReservation(user, seminar);
         }
         else{
             return res.status(400).json({ message: 'Invalid status. Cannot send email.' });

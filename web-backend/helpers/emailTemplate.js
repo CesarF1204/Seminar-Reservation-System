@@ -223,54 +223,6 @@ const sendEmailRejectedReservation = async (user, seminar) => {
 }
 
 /**
-* DOCU: This function is used sending an email for seminar booking in pending status. <br>
-* This is being called when admin update the status to pending. <br>
-* Last Updated Date: December 15, 2024 <br>
-* @function
-* @param {object} user - user details
-* @param {object} seminar - seminar details
-* @author Cesar
-*/
-const sendEmailPendingReservation = async (user, seminar) => {
-    try{
-        /* Email Content */
-        const to = user.email;
-        const subject = 'Seminar Reservation - Pending Status';
-        const text = `
-            Dear ${user.firstName} ${user.lastName},
-            We are pleased to inform you that your seminar booking for ${seminar.title} for ${formatToLocaleDate(seminar.date)} is set to pending status.
-            We are actively working to finalize the details and will notify you as soon as the booking is confirmed.
-
-            We appreciate your patience during this process.
-            If you have any questions or need further assistance, please feel free to reach out.
-            
-            Best regards,
-            Admin - Seminar Reservation System
-        `;
-        const html = `
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
-                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
-                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">We are pleased to inform you that your seminar booking for <b>${seminar.title}</b> on ${formatToLocaleDate(seminar.date)} is currently in pending status.</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">We are actively working to finalize the details and will notify you as soon as the booking is confirmed.</p>
-                    <p style="font-size: 14px; margin-bottom: 20px;">We appreciate your patience during this process. If you have any questions or need further assistance, please feel free to reach out.</p>
-                    <p style="font-size: 14px; font-weight: bold; margin-bottom: 20px;">Best regards,</p>
-                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
-                </div>
-            </body>
-            </html>
-        `;
-
-        /* Use sendEmail for sending email */
-        await sendEmail(to, subject, text, html);
-    }
-    catch(error){
-        throw new Error('Error sending email for pending seminar reservation', error.message);
-    }
-}
-
-/**
 * DOCU: This function is used to send an email for account recovery.
 * This is being called when the user forgot their password and want for an account recovery. <br>
 * Last Updated Date: December 12, 2024 <br>
@@ -323,7 +275,6 @@ const sendEmailAccountRecovery = async (user, recoveryUrl) => {
 export {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
-    sendEmailRejectedReservation, 
-    sendEmailPendingReservation,
+    sendEmailRejectedReservation,
     sendEmailAccountRecovery,
 };
