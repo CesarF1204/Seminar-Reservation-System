@@ -98,7 +98,7 @@ const login = async (req, res) => {
             httpOnly: true, /* Prevent JavaScript from accessing the cookie */
             secure: false, /* Use secure flag in production */
             maxAge: 86400000, /* Cookie expires in 1 day */
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "Strict" : "None",
         });
 
         /* Send a success response with the token and user's details */
