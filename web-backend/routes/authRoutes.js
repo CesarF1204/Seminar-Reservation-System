@@ -33,7 +33,7 @@ router.post('/login',
             .isEmail().withMessage('Invalid email address'),
         check('password')
             .isLength({ min: 6 }).withMessage('Password should be at least 6 characters long')
-            // .matches(/[A-Za-z0-9]/).withMessage('Password should contain letters and numbers'),
+            .matches(/[A-Za-z0-9]/).withMessage('Password should contain letters and numbers'),
     ],
     login
 );
