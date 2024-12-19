@@ -38,8 +38,8 @@ const SeminarDetails = () => {
 
     /* Fetch booked seminar details using react-query's useQuery hook */
     const { data: bookings = [] } = useQuery(
-        "getUserBookings",
-        () => apiClient.getBookingsForNotification(data.token),
+        "fetchAllBookings",
+        () => apiClient.fetchAllBookings(data.token),
         {
             suspense: true, /* Enables React's Suspense mode, allowing the component to wait for data to load before rendering. */
             refetchOnWindowFocus: false, /* Optional: Disable refetching on window focus */

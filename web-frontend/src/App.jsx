@@ -15,6 +15,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import AccountRecoveryURL from './components/AccountRecoveryURL';
 import ViewBookedSeminars from './pages/Seminar/ViewBookedSeminars';
 import Layout from './layouts/Layout';
+import Analytics from './components/Analytics';
 
 function App() {
   const { isLoggedIn, data } =  useAppContext();
@@ -63,6 +64,7 @@ function App() {
             <Route path="/seminar/:id/edit" element={<Layout> <EditSeminar /> </Layout>} />
             <Route path="/view_users" element={<Layout> <ViewUsers /> </Layout>} />
             <Route path="/edit_user/:id" element={<Layout> <EditUser /> </Layout>} />
+            <Route path="/view_analytics" element={<Layout> <Analytics /> </Layout>} />
           </>
         )}
 

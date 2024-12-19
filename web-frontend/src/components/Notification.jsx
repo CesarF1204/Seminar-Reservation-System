@@ -15,8 +15,8 @@ const Notification = ({ isNavbarCollapsed }) => {
 
     /* Fetching booked seminars using react-query */
     const { data: booked_seminars = [] } = useQuery(
-        "getBookingsForNotification",
-        () => apiClient.getBookingsForNotification(data.token),
+        "fetchAllBookings",
+        () => apiClient.fetchAllBookings(data.token),
         {
             suspense: true,
             refetchOnWindowFocus: false,

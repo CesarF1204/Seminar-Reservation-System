@@ -69,9 +69,13 @@ const AppNavbar = ({ user }) => {
             <div className="container mx-auto flex justify-between items-center">
                 {/* Left Section: Header and Links */}
                 <div className="flex items-center space-x-4">
-                    <Link to="/" className="text-white text-2xl font-bold">
-                        Seminar Reservation System
-                    </Link>
+                <Link to="/" className="text-white text-2xl font-bold flex items-center">
+                    <img 
+                        src="https://i.imgur.com/q7j6bk9.png" 
+                        alt="Website Logo" 
+                        className="h-10 w-auto"  // Controls the height and width of the logo
+                    />
+                </Link>
                     <div className="hidden lg:flex space-x-4">
                         <Link 
                             to="/dashboard" 
@@ -98,6 +102,14 @@ const AppNavbar = ({ user }) => {
                                 }`}
                             >
                                 View Users
+                            </Link>
+                            <Link 
+                                to="/view_analytics" 
+                                className={`px-4 py-2 rounded whitespace-nowrap ${
+                                    isActive('/view_analytics') ? 'bg-gray-700 text-gray-300' : 'text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                View Analytics
                             </Link>
                             <Link 
                                 to="/create_seminar" 

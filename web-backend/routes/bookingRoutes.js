@@ -2,7 +2,7 @@ import express from 'express';
 import { 
     createBooking, 
     getUserBookings, 
-    getBookingsForNotification, 
+    fetchAllBookings, 
     updateBookingStatus,
     deleteBookedSeminar
 } from '../controllers/bookingController.js';
@@ -27,7 +27,7 @@ router.post('/', authMiddleware, upload.single('proofOfPayment'), createBooking)
 router.get('/', authMiddleware, getUserBookings);
 
 /* Route to get all bookings for notification/reminder. Requires authentication using authMiddleware */
-router.get('/get_bookings', authMiddleware, getBookingsForNotification);
+router.get('/get_bookings', authMiddleware, fetchAllBookings);
 
 /* Route to update booking status. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
 router.put('/:id', 

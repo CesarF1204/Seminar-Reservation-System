@@ -196,7 +196,7 @@ const getUserBookings = async (req, res) => {
 * @param {object} res - response
 * @author Cesar
 */
-const getBookingsForNotification = async(req, res) => {
+const fetchAllBookings = async(req, res) => {
     try {
         const { id: user_id, role } = req.user;
 
@@ -369,7 +369,7 @@ const deleteBookedSeminar = async (req, res) => {
 export { 
     createBooking, 
     getUserBookings, 
-    getBookingsForNotification, 
+    fetchAllBookings, 
     updateBookingStatus, 
     deleteBookedSeminar 
 };

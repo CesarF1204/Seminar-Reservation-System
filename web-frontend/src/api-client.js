@@ -560,7 +560,7 @@ const getUserBookings = async (token, { page, limit, sortKey, sortDirection, sea
     return data;
 };
 
-const getBookingsForNotification = async (token) => {
+const fetchAllBookings = async (token) => {
     /* Sending a GET request to fetch all booked seminars */
     const response = await fetch(`${API_BASE_URL}/api/bookings/get_bookings`, {
         method: "GET",
@@ -656,7 +656,7 @@ export {
     resetPassword,
     createBooking,
     getUserBookings,
-    getBookingsForNotification,
+    fetchAllBookings,
     updateBookingStatus,
     deleteBookedSeminar,
 };
