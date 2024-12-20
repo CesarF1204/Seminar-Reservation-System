@@ -6,7 +6,7 @@ import { paginationAndSorting } from '../helpers/globalHelper.js';
 /**
 * DOCU: This function is used to fetch all seminars. <br>
 * This is being called when user wants fetch all seminars. <br>
-* Last Updated Date: December 19, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -22,9 +22,11 @@ const getSeminars = async (req, res) => {
 
         /* Initialize an empty filter object */
         const filter = {};
-        /* Check if a search term is provided */
         if(search){
-            filter.title = { $regex: search, $options: 'i' }; // Case-insensitive search on title
+            filter.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { 'speaker.name': { $regex: search, $options: 'i' } },
+            ];        
         }
 
         /* Check if the authenticated user is not an admin */

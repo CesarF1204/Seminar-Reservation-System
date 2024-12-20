@@ -89,7 +89,7 @@ const Seminar = () => {
                                 </svg>
                                 <input
                                     type="text"
-                                    placeholder="Search title"
+                                    placeholder="Search title or name"
                                     value={search}
                                     onChange={onSearchChange}
                                     className="w-full outline-none bg-transparent text-gray-600 text-sm"
