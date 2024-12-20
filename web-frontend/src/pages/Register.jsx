@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,8 @@ import * as apiClient from '../api-client';
 import { useAppContext } from '../contexts/AppContext';
 
 const Register = () => {
+    const [ isCreating, setIsCreating ] = useState(false);
+
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -33,11 +35,16 @@ const Register = () => {
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"})
+            /* Set isCreating state to false to indicate the form is not submitted */
+            setIsCreating(false);
         }
     })
 
     /* Handle form submission */
     const onSubmit = handleSubmit((data)=>{
+        /* Set isCreating state to true to indicate the form is being submitted */
+        setIsCreating(true);
+
         mutation.mutate(data)
     })
 
@@ -116,9 +123,11 @@ const Register = () => {
 
                 <button 
                     type="submit" 
-                    className="p-3 mt-4 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition mb-4"
+                    className={`p-3 mt-4 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition mb-4
+                        ${isCreating ? 'cursor-not-allowed' : ''}`}
+                    disabled={isCreating ? true : false}
                 >
-                    Register
+                    {isCreating ? 'Account Creating...' : 'Register'}
                 </button>
             </form>
             <p className="text-sm">

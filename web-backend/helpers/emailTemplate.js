@@ -365,10 +365,77 @@ const sendEmailNewSeminar = async (users_data, seminar) => {
     }
 }
 
+/**
+* DOCU: This function is used to send an email for new users that has successfully created an account.
+* This is being called when the there's a new user registered. <br>
+* Last Updated Date: December 20, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const sendEmailRegisterAccount = async (user) => {
+    try{
+        /* Email Content */
+        const to = user.email;
+        const subject = 'Welcome! Your Registration is Complete';
+        const text = `
+            Dear ${user.firstName} ${user.lastName},
+            Congratulations! Your account has been successfully registered. We are thrilled to have you on board.
+            
+            Here are the details of your new account:
+            Full Name: ${user.firstName} ${user.lastName}
+            Email Address: ${user.email}
+
+            If you have any questions or run into any issues, our support team is here to help.
+            You can reach us at seminar.reservation.system@gmail.com.
+            
+            Once again, welcome! We're excited to have you with us and look forward to supporting you every step of the way.
+
+            Best regards,
+            Admin - Seminar Reservation System
+        `;
+        const html = `
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
+                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Congratulations! Your account has been successfully registered. We are thrilled to have you on board.</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Here are the details of your new account:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Full Name:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${user.firstName} ${user.lastName}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Email Address:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${user.email}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 14px; margin-bottom: 20px;">If you have any questions or run into any issues, our support team is here to help. You can reach us at 
+                        <a href="mailto:seminar.reservation.system@gmail.com" style="color: #007bff; text-decoration: none;">seminar.reservation.system@gmail.com</a>.
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Once again, welcome! We're excited to have you with us and look forward to supporting you every step of the way.</p>
+                    <p style="font-size: 14px; font-weight: bold;">Best regards,</p>
+                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        /* Use sendEmail for sending email */
+        await sendEmail(to, subject, text, html);
+    }
+    catch(error){
+        throw new Error('Error sending email for accoount registration', error.message);
+    }
+}
+
 export {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
     sendEmailRejectedReservation,
     sendEmailAccountRecovery,
     sendEmailNewSeminar,
+    sendEmailRegisterAccount,
 };

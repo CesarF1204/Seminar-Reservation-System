@@ -3,11 +3,12 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { validationResult } from "express-validator";
 import { capitalizeFirstLetter } from '../helpers/globalHelper.js';
+import { sendEmailRegisterAccount } from '../helpers/emailTemplate.js';
 
 /**
 * DOCU: This function is used to handle the user's registration. <br>
 * This is being called when registering a new account. <br>
-* Last Updated Date: December 17, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -41,6 +42,12 @@ const register = async (req, res) => {
 
         /* Create a new user in the database */
         const user = await User.create({ firstName: capitalizedFirstName, lastName: capitalizedLastName, email: emailAddress, password: hashedPassword });
+
+        /* Check if registration is successful and new user is created */
+        if(user){
+            /* Call sendEmailRegisterAccount for sending email for new user */
+            await sendEmailRegisterAccount(user);
+        }
 
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
