@@ -132,16 +132,31 @@ const Analytics = () => {
 
     /* This function handles the exporting of the content of the analytics page as a PNG image */
     const handleExportAll = async () => {
+        /* Get the reference to the dashboard element */
         const element = dashboardRef.current;
+        /* Get the export button element */
+        const exportButton = document.querySelector('#export-btn');
+        /* This will hide the export button to the exported image */
+        exportButton.style.display = 'none';
+
+        /* Check if the element to export exists */
         if (element) {
+            /* Use html2canvas to capture the content of the element as a canvas image */
             const canvas = await html2canvas(element, {
-                backgroundColor: '#fff',
-                useCORS: true,
-                scale: 2,
+                backgroundColor: '#fff', /* Set the background color to white */
+                useCORS: true, /* Enable CORS for external resources */
+                scale: 2, /* Set the scale to 2 for higher resolution (1,2,3) */
             });
+
+            /* Show the export button after done exporting */
+            exportButton.style.display = 'block';
+            /* Create an anchor link to download the image */
             const link = document.createElement('a');
+            /* Set the download link to the generated image data */
             link.href = canvas.toDataURL('image/png');
+            /* Set the filename for the image download */
             link.download = 'seminar_analytics.png';
+            /* Trigger the download by simulating a click on the link */
             link.click();
         }
     };
@@ -201,7 +216,7 @@ const Analytics = () => {
                 />
             </div>
             <div className="flex justify-center">
-                <button onClick={handleExportAll} className="p-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition mb-4">Export Analytics</button>
+                <button id="export-btn" onClick={handleExportAll} className="p-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition mb-4">Export Analytics</button>
             </div>
         </div>
     );
