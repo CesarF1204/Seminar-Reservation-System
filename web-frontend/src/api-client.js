@@ -633,6 +633,29 @@ const deleteBookedSeminar = async (booking_id, token) => {
     }
 };
 
+
+
+
+
+/*
+    getCoordinates function: 
+    Sends a GET request to the /api/seminars/get_coordinates endpoint to get the longtitude and latitude of the given address.
+*/
+const getCoordinates = async (address) => {
+    /* Sending a GET request to seminars API */
+    const response = await fetch(`${API_BASE_URL}/api/seminars/get_coordinates?address=${encodeURIComponent(address)}`, {
+        method: "GET",
+    });
+
+    if (!response.ok) {
+        throw new Error('Error fetching coordinates');
+    }
+
+    const data = await response.json();
+
+    return data;
+};
+
 export {
     register,
     signIn,
@@ -659,4 +682,5 @@ export {
     fetchAllBookings,
     updateBookingStatus,
     deleteBookedSeminar,
+    getCoordinates,
 };

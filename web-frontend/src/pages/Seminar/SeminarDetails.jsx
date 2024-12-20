@@ -6,6 +6,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import { FaArrowLeft, FaEdit, FaTrashAlt } from "react-icons/fa";
 import DeleteSeminarModal from '../../components/Seminar/DeleteSeminarModal';
 import BookSeminar from '../../components/Seminar/BookSeminar';
+import MiniMap from '../../components/MiniMap';
 
 const SeminarDetails = () => {
     /* Get the seminar ID from the URL parameters */
@@ -70,9 +71,11 @@ const SeminarDetails = () => {
                 <p className="text-md text-gray-700"><strong>Time:</strong> {timeFrame.from} - {timeFrame.to}</p>
                 <p className="text-md text-gray-700"><strong>Venue:</strong> {venue}</p>
             </div>
-            <div className="speaker-info mt-8">
+            {/* MiniMap Component */}
+            <MiniMap seminar={seminar} />
+            <div className="speaker-info mt-4">
                 <h3 className="text-xl font-semibold text-gray-800">Speaker</h3>
-                <div className="speaker mt-4 flex items-center space-x-4">
+                <div className="speaker mt-2 flex items-center space-x-4">
                 <img
                     src={speaker.image}
                     alt={speaker.name}
@@ -93,7 +96,7 @@ const SeminarDetails = () => {
                 </div>
                 </div>
             </div>
-            <div className="seminar-fee mt-6 flex justify-start items-center">
+            <div className="seminar-fee mt-4 flex justify-start items-center">
                 <div>
                     <p className="text-md text-gray-700"><strong>Fee:</strong> ₱{fee}</p>
                     <p className="text-md text-gray-700"><strong>Available Slots:</strong> {slotsAvailable}</p>

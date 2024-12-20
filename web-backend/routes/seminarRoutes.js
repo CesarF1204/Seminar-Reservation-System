@@ -1,5 +1,12 @@
 import express from 'express';
-import { getSeminars, getSeminarDetails , createSeminar, updateSeminar, deleteSeminar } from '../controllers/seminarController.js';
+import { 
+    getSeminars, 
+    getSeminarDetails, 
+    createSeminar, 
+    updateSeminar, 
+    deleteSeminar,
+    getCoordinates
+} from '../controllers/seminarController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
 import multer from 'multer';
@@ -49,6 +56,9 @@ const seminarValidationRules = [
 /* Route to fetch all seminars. Requires authentication and admin privileges using authMiddleware */
 router.get('/', authMiddleware, getSeminars);
 
+/* Route to get the coordinates of the given address */
+router.get('/get_coordinates', getCoordinates);
+
 /* Route to fetch details of a specific seminar by ID. Requires authentication and admin privileges using authMiddleware */
 router.get('/:id', authMiddleware, getSeminarDetails);
 
@@ -72,5 +82,6 @@ router.put('/:id',
 
 /* Route to delete a seminar by ID. Requires authentication and admin privileges using authMiddleware and adminMiddleware */
 router.delete('/:id', authMiddleware, adminMiddleware, deleteSeminar);
+
 
 export default router;
