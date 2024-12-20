@@ -431,6 +431,96 @@ const sendEmailRegisterAccount = async (user) => {
     }
 }
 
+
+/**
+* DOCU: This function is used to send an email for users prior to the update of the booked seminar.
+* This is being called when the there's an update for a booked seminar. <br>
+* Last Updated Date: December 20, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const sendEmailUpdatedSeminar = async (users_data, seminar) => {
+    try{
+        /* Email Content */
+        const subject = `Updated Details for the ${seminar.title} Seminar`;
+        const text = (user) => `
+            Dear ${user.firstName} ${user.lastName},
+            I am writing to inform you that, unfortunately, there have been some changes to the ${seminar.title} seminar details.
+            Please see the revised information below:
+            
+            Topic: ${seminar.title}
+            Details: ${seminar.description}
+            Date: ${seminar.date}
+            Time: ${seminar.timeFrame.from} - ${seminar.timeFrame.to}
+            Venue: ${seminar.venue}
+            Speaker: ${seminar.speaker.name}
+
+            We encourage everyone to review the new details and make the necessary adjustments to your schedules.
+            If you have any questions or require further information, please do not hesitate to reach out.
+            
+            Thank you for your understanding and cooperation.
+
+            Best regards,
+            Admin - Seminar Reservation System
+        `;
+        const html = (user) => `
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
+                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">I am writing to inform you that, unfortunately, there have been some changes to the seminar titled <b>${seminar.title}</b>.</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Please see the revised information below:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Topic:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.title}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Details:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.description}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Date:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.date}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Time:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.timeFrame.from} - ${seminar.timeFrame.to}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Venue:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.venue}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Speaker:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.speaker.name}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 14px; margin-bottom: 20px;">We encourage everyone to review the new details and make the necessary adjustments to your schedules.</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">If you have any questions or require further information, please do not hesitate to reach out.</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Thank you for your understanding and cooperation.</p>
+                    <p style="font-size: 14px; font-weight: bold;">Best regards,</p>
+                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        /* Iterate over users_data to send emails to all users */
+        for (const user of users_data) {
+            const to = user.email;
+
+            /* Use sendEmail for sending email */
+            await sendEmail(to, subject, text(user), html(user));
+        }
+    }
+    catch(error){
+        throw new Error('Error sending email for accoount registration', error.message);
+    }
+}
+
 export {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
@@ -438,4 +528,5 @@ export {
     sendEmailAccountRecovery,
     sendEmailNewSeminar,
     sendEmailRegisterAccount,
+    sendEmailUpdatedSeminar,
 };

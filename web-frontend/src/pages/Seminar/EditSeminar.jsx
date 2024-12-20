@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa";
 import * as apiClient from '../../api-client';
 import { useAppContext } from '../../contexts/AppContext';
-import { convertTo24HourFormat } from '../../helpers/globalHelpers';
+import { convertTo24HourFormat, convertToAmPm } from '../../helpers/globalHelpers';
 
 const EditSeminar = () => {
+    const [ isUpdating, setIsUpdating ] = useState(false);
+
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -49,6 +51,8 @@ const EditSeminar = () => {
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"});
+            /* Set isUpdating state to false to indicate the form is not submitted */
+            setIsUpdating(false);
         }
     })
 
@@ -60,14 +64,17 @@ const EditSeminar = () => {
         formData.append("title", data.title);
         formData.append("description", data.description);
         formData.append("date", data.date);
-        formData.append("timeFrame.from", data.timeFrame.from);
-        formData.append("timeFrame.to", data.timeFrame.to);
+        formData.append("timeFrame.from", convertToAmPm(data.timeFrame.from));
+        formData.append("timeFrame.to", convertToAmPm(data.timeFrame.to));
         formData.append("venue", data.venue);
         formData.append("speaker.name", data.speaker.name);
         formData.append("speaker.image", data.speaker.image[0] || seminar.speaker.image);
         formData.append("speaker.linkedin", data.speaker.linkedin || "");
         formData.append("fee", data.fee);
         formData.append("slotsAvailable", data.slotsAvailable);
+
+        /* Set isUpdating state to true to indicate the form is being submitted */
+        setIsUpdating(true);
 
         mutation.mutate(formData);
     })
@@ -214,11 +221,16 @@ const EditSeminar = () => {
                     <span className="text-red-500">{errors.slotsAvailable.message}</span>
                 )}
 
-                <button type="submit" className="py-2 px-4 mt-4 rounded bg-green-500 text-white hover:bg-green-600">
-                    Update Seminar
+                <button 
+                    type="submit" 
+                    className={`py-2 px-4 mt-4 rounded bg-green-500 text-white hover:bg-green-600"
+                        ${isUpdating ? 'cursor-not-allowed' : ''}`}
+                    disabled={isUpdating ? true : false}
+                >
+                    {isUpdating ? 'Updating Seminar...' : 'Update Seminar'}
                 </button>
             </form>
-            <button className="flex items-center px-4 py-2 mt-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
+            <button className="flex items-center px-4 py-2 mt-4 mb-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
                 <FaArrowLeft className="mr-2" /> Go Back
             </button>
         </div>

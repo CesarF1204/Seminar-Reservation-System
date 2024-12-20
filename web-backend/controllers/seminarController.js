@@ -1,9 +1,11 @@
 import Seminar from '../models/Seminar.js';
 import User from '../models/User.js';
+import Booking from '../models/Booking.js';
 import cloudinary from 'cloudinary';
 import { validationResult } from "express-validator";
 import { paginationAndSorting } from '../helpers/globalHelper.js';
-import { sendEmailNewSeminar } from '../helpers/emailTemplate.js';
+import { sendEmailNewSeminar, sendEmailUpdatedSeminar } from '../helpers/emailTemplate.js';
+import mongoose from 'mongoose';
 
 /**
 * DOCU: This function is used to fetch all seminars. <br>
@@ -132,7 +134,7 @@ const createSeminar = async (req, res) => {
 /**
 * DOCU: This function is used to update a seminar. <br>
 * This is being called when admin wants to update a seminar. <br>
-* Last Updated Date: December 17, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -168,7 +170,58 @@ const updateSeminar = async (req, res) => {
 
         /* Update the seminar by ID with the new data from the request body */
         const updated_seminar = await Seminar.findByIdAndUpdate(req.params.id, seminar_to_update, { new: true });
-        
+
+        /* Check if updating the seminar is successful */
+        if(updated_seminar){
+            /* Query to the Bookings database to retrieve the users that has a pending or confirmed status who have book the selected seminar */
+            const bookings = await Booking.aggregate([
+                {
+                    $lookup: {
+                        from: 'seminars',
+                        localField: 'seminar',
+                        foreignField: '_id',
+                        as: 'seminar'
+                    }
+                },
+                {
+                    $unwind: '$seminar'
+                },
+                {
+                    $match: {
+                        'seminar._id':  new mongoose.Types.ObjectId(req.params.id),
+                        'paymentStatus': { $in: ['pending', 'confirmed'] }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                },
+                {
+                    $unwind: '$user'
+                },
+                {
+                    $project: {
+                        'user.firstName': 1,
+                        'user.lastName': 1,
+                        'user.email': 1,
+                    },
+                },
+            ]);
+
+            const users_data = [];
+            /* Loop through bookings to get only the users details add it to users_data array */
+            for (let i = 0; i < bookings.length; i++) {
+                users_data.push(bookings[i].user);
+            }
+
+            /* Call sendEmailUpdatedSeminar for sending email for the updated seminar details */
+            await sendEmailUpdatedSeminar(users_data, updated_seminar);
+        }
+
         res.status(200).json({ message: 'Seminar updated successfully', seminar: updated_seminar });
     } catch (error) {
         res.status(500).json({ message: 'Error updating seminar', error });
