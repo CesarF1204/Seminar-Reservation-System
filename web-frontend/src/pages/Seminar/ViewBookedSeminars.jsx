@@ -13,8 +13,8 @@ const ViewBookedSeminars = () => {
     /* Default state for page, limit, sortKey, sortDirection, search, and debouncedSearch  */
     const [ page, setPage ] = useState(1);
     const [ limit, setLimit ] = useState(5);
-    const [ sortKey, setSortKey ] = useState('seminar.title');
-    const [ sortDirection, setSortDirection ] = useState('asc');
+    const [ sortKey, setSortKey ] = useState('createdAt');
+    const [ sortDirection, setSortDirection ] = useState('desc');
     const [ search, setSearch ] = useState('');
     const [ debouncedSearch, setDebouncedSearch ] = useState('');
 
