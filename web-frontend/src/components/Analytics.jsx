@@ -150,21 +150,21 @@ const Analytics = () => {
         <div className="p-4 space-y-8" ref={dashboardRef}>
             <h2 className="text-2xl font-semibold text-center">Analytics</h2>
     
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Accounts Pie Chart */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
+                <div className="bg-white py-4 rounded-lg shadow-md">
                     <h3 className="text-lg font-medium text-center">Accounts</h3>
                     <p className="text-sm text-center">Total: {accounts_data.accounts}</p>
                     <Pie data={accountsChartData} className="w-full h-64 sm:h-48 mx-auto" />
                 </div>
                 {/* Seminars Pie Chart */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
+                <div className="bg-white py-4 rounded-lg shadow-md">
                     <h3 className="text-lg font-medium text-center">Seminars</h3>
                     <p className="text-sm text-center">Total: {seminar_data.seminars_count}</p>
                     <Pie data={seminarsChartData} className="w-full h-64 sm:h-48 mx-auto" />
                 </div>
                 {/* Bookings Pie Chart */}
-                <div className="bg-white p-4 rounded-lg shadow-md">
+                <div className="bg-white py-4 rounded-lg shadow-md">
                     <h3 className="text-lg font-medium text-center">Bookings</h3>
                     <p className="text-sm text-center">Total: {booking_data.bookings}</p>
                     <Pie data={bookingsChartData} className="w-full h-64 sm:h-48 mx-auto" />
