@@ -56,8 +56,11 @@ const QRCodePayment = () => {
                     type="file"
                     accept="image/*"
                     className="w-full mb-4 px-4 py-2 border rounded-md cursor-pointer"
-                    {...register("proofOfPayment")}
+                    {...register("proofOfPayment", { required: "*This field is required" })}
                 />
+                {errors.proofOfPayment && (
+                    <span className="text-red-500">{errors.proofOfPayment.message}</span>
+                )}
                 <input type="hidden" {...register("seminarId", { value: seminar_id })} />
                 <div className="flex justify-end space-x-2">
                     <button

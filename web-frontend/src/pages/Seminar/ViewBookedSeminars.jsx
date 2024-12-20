@@ -105,7 +105,7 @@ const ViewBookedSeminars = () => {
     
     return (
         <div className="flex items-center justify-center bg-gray-100">
-            <div className="mt-4 max-w-6xl w-full px-4">
+            <div className="mt-4 w-full px-4">
                 <div className="flex items-center justify-between">
                     {/* Title */}
                     <h2 className="text-2xl font-semibold text-center hidden sm:block">Booked Seminars</h2>
@@ -174,7 +174,7 @@ const ViewBookedSeminars = () => {
                                     </th>
                                     <th className="px-4 py-2" onClick={() => handleSort('proofOfPayment')}>
                                         <div className="flex items-center justify-start">
-                                            Proof of Payment {renderSortIcon('proofOfPayment')}
+                                            Payment {renderSortIcon('proofOfPayment')}
                                         </div>
                                     </th>
                                     <th className="px-4 py-2" onClick={() => handleSort('paymentStatus')}>
@@ -205,7 +205,7 @@ const ViewBookedSeminars = () => {
                                         }
                                         <td className="px-4 py-2">{convertDateFormat(booking.createdAt)}</td>
                                         <td className="px-4 py-2">{convertDateFormat(booking.seminar.date)}</td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-2 whitespace-nowrap">
                                             {booking.proofOfPayment
                                             ? 
                                                 <Link
