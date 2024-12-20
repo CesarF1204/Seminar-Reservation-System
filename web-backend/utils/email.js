@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
 /**
 * DOCU: This function is used to send an email.
 * It requires the recipient, subject, plain text, and HTML content of the email.
-* Last Updated Date: December 6, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {string} to - the recipient email address
 * @param {string} subject - the subject of the email
@@ -33,16 +33,17 @@ const transporter = nodemailer.createTransport({
 */
 const sendEmail = async (to, subject, text, html) => {
     try {
-        await transporter.sendMail({
+        const result = await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to,
             subject,
             text,
             html,
         });
-        console.log('Email sent successfully');
+        
+        return result;
     } catch (error) {
-        console.error('Error sending email:', error);
+        throw new Error(`Failed to send email: ${error.message}`);
     }
 };
 
