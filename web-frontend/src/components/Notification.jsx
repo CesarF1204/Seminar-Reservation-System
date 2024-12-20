@@ -27,16 +27,28 @@ const Notification = ({ isNavbarCollapsed }) => {
     /* Array to hold reminder messages */
     const reminder_msg = [];
 
-    /* Loop through booked seminars and generate reminder messages */
-    booked_seminars.forEach((booking) => {
-        /* Check if the seminar is today and it is a confirmed booking */
-        if(convertDateFormat(booking.seminar.date) === convertDateFormat(Date.now()) 
-            && booking.paymentStatus === 'confirmed') {
-                reminder_msg.push({
-                    message: `Don't forget your seminar today, ${booking.seminar.title} from ${booking.seminar.timeFrame.from} - ${booking.seminar.timeFrame.to}!`,
-                });
+    /* Check if role is an admin, then show reminder for pending status
+    else if not an admin, show reminder for the booked seminar */
+    if(data.role === 'admin'){
+        const isPending = booked_seminars.some(booking => booking.paymentStatus === 'pending');
+        if(isPending){
+            reminder_msg.push({
+                message: `Please update the pending statuses at your earliest convenience!`,
+            });
         }
-    });
+    }
+    else{
+        /* Loop through booked seminars and generate reminder messages */
+        booked_seminars.forEach((booking) => {
+            /* Check if the seminar is today and it is a confirmed booking */
+            if(convertDateFormat(booking.seminar.date) === convertDateFormat(Date.now()) 
+                && booking.paymentStatus === 'confirmed') {
+                    reminder_msg.push({
+                        message: `Don't forget your seminar today, ${booking.seminar.title} from ${booking.seminar.timeFrame.from} - ${booking.seminar.timeFrame.to}!`,
+                    });
+            }
+        });
+    }
 
     /* Determine if there are any reminders to show to the notification bell */
     const isBellActive = reminder_msg.length > 0;

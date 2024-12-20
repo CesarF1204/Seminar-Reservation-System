@@ -126,9 +126,7 @@ const AppNavbar = ({ user }) => {
                 
                 {/* Right Section: Notifications and Burger Icon */}
                 <div className="flex items-center space-x-4 lg:hidden">
-                {user.role !== 'admin' &&
                     <Notification />
-                }
                     <button 
                         className="text-white" 
                         onClick={() => setIsNavbarCollapsed(!isNavbarCollapsed)}
@@ -141,9 +139,7 @@ const AppNavbar = ({ user }) => {
 
                 {/* Right Section: Notifications and Logout for large screens */}
                 <div className="hidden lg:flex items-center space-x-4">
-                {user.role !== 'admin' &&
                     <Notification />
-                }
                     <LogOutButton />
                 </div>
             </div>
