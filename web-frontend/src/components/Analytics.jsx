@@ -5,6 +5,7 @@ import { useAppContext } from '../contexts/AppContext';
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import html2canvas from 'html2canvas';
+import { convertDateFormat } from '../helpers/globalHelpers';
 
 /* Register the required components for Chart.js */
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -148,6 +149,11 @@ const Analytics = () => {
                 scale: 2, /* Set the scale to 2 for higher resolution (1,2,3) */
             });
 
+            /* Get todays date */
+            const todayDate = convertDateFormat(Date.now());
+            /* Use regex to convert slash to dash */
+            const today = todayDate.replace(/\//g, "-");
+            
             /* Show the export button after done exporting */
             exportButton.style.display = 'block';
             /* Create an anchor link to download the image */
@@ -155,7 +161,7 @@ const Analytics = () => {
             /* Set the download link to the generated image data */
             link.href = canvas.toDataURL('image/png');
             /* Set the filename for the image download */
-            link.download = 'seminar_analytics.png';
+            link.download = `Seminar_Analytics_${today}.png`;
             /* Trigger the download by simulating a click on the link */
             link.click();
         }
