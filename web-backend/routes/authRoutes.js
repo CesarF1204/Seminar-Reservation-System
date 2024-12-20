@@ -9,7 +9,7 @@ router.post('/register',
     [
         check('firstName')
             .isLength({ min: 1 }).withMessage('First Name is required')
-            .matches(/^[A-Za-z\s]+$/).withMessage('Last Name should only contain letters and spaces'),
+            .matches(/^[A-Za-z\s]+$/).withMessage('First Name should only contain letters and spaces'),
 
         check('lastName')
             .isLength({ min: 1 }).withMessage('Last Name is required')
