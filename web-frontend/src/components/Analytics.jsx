@@ -141,7 +141,7 @@ const Analytics = () => {
             });
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
-            link.download = 'dashboard.png';
+            link.download = 'seminar_analytics.png';
             link.click();
         }
     };
@@ -149,7 +149,6 @@ const Analytics = () => {
     return (
         <div className="p-4 space-y-8" ref={dashboardRef}>
             <h2 className="text-2xl font-semibold text-center">Analytics</h2>
-    
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Accounts Pie Chart */}
                 <div className="bg-white py-4 rounded-lg shadow-md">
