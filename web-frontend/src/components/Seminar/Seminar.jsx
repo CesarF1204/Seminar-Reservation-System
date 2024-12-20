@@ -77,7 +77,7 @@ const Seminar = () => {
     return (
         <>
             <div className="flex items-center justify-center bg-gray-100">
-                <div className="mt-4 max-w-6xl w-full px-4">
+                <div className="mt-4 w-full px-4">
                     <div className="flex flex-col sm:flex-row items-center justify-between">
                         {/* Title */}
                         <h2 className="text-2xl font-semibold whitespace-nowrap hidden sm:block">Available Seminars</h2>
