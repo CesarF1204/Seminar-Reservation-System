@@ -59,7 +59,7 @@ const AccountDisable = ({ user }) => {
     return (
         <form onChange={onChange}>
             <select 
-                className="text-black bg-white border border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-black bg-white border border-gray-300 rounded-md px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 {...register('isDisabled', { required: '*This field is required' })}>
                     <option value={user.isDisabled}>{user.isDisabled ? 'Yes': 'No'}</option>
                     <option value={user.isDisabled ? false : true}>{user.isDisabled ? 'No' : 'Yes'}</option>

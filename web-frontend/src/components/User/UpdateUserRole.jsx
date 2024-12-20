@@ -42,7 +42,7 @@ const UpdateUserRole = ({ user }) => {
     return (
         <form onChange={onChange}>
             <select 
-                className="text-black bg-white border border-gray-300 rounded-md px-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="text-black bg-white border border-gray-300 rounded-md px-1 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 {...register('role', { required: 'Role is required' })}>
                     <option value={user.role}>{capitalizeFirstLetter(user.role)}</option>
                     <option value={user.role !== 'admin' ? 'admin' : 'user'}>{user.role !== 'admin' ? 'Admin' : 'User'}</option>
