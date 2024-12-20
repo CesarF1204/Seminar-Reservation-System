@@ -41,14 +41,15 @@ const CreditCardPayment = () => {
                 if (error) {
                     /* Show toast error message */
                     showToast({ message: error.message, type: 'ERROR' });
+                    /* Set processing state to false to indicate the form is not submitted */
+                    setIsProcessing(false);
                 } else if (paymentIntent?.status === 'succeeded') {
                     /* If success, show toast success message and redirect to /dashboard page */
                     showToast({ message: 'Payment Successful. Seminar Booked!', type: 'SUCCESS' });
                     navigate("/dashboard");
                 }
 
-                /* Set processing state to false to indicate the form is not submitted */
-                setIsProcessing(false);
+                
             },
             onError: (error) => {
                 /* Show toast error message */
@@ -100,7 +101,8 @@ const CreditCardPayment = () => {
                 <button
                     type="submit"
                     disabled={!stripe || isProcessing}
-                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
+                    className={`px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition 
+                        ${isProcessing ? 'cursor-not-allowed' : ''}`}
                 >
                     {isProcessing ? 'Processing...' : 'Pay Now'}
                 </button>
