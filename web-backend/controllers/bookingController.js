@@ -87,7 +87,7 @@ const createBooking = async (req, res) => {
 /**
 * DOCU: This function is used to fetch booked seminars. <br>
 * This is being called when admin or user wants fetch booked seminars. <br>
-* Last Updated Date: December 17, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -173,8 +173,43 @@ const getUserBookings = async (req, res) => {
             },
         ]);
 
-        /* Get the total count of documents for pagination */
-        const totalCount = await Booking.countDocuments(role !== 'admin' ? {user: user_id} : {});
+        /* Query to calculate total count when searching */
+        const totalCountResult = await Booking.aggregate([
+            {
+                $lookup: {
+                    from: 'seminars',
+                    localField: 'seminar',
+                    foreignField: '_id',
+                    as: 'seminar'
+                }
+            },
+            {
+                $unwind: '$seminar'
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $match: {
+                    ...matchUserIdBasedOnRole,
+                    ...filter
+                }
+            },
+            {
+                $count: 'totalCount'
+            }
+        ]);
+
+        /* Get the total count of booked seminars when filtering or searching */
+        const totalCount = totalCountResult.length > 0 ? totalCountResult[0].totalCount : 0;
 
         res.status(200).json({
             bookings,
