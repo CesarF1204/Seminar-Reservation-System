@@ -272,9 +272,103 @@ const sendEmailAccountRecovery = async (user, recoveryUrl) => {
     }
 }
 
+/**
+* DOCU: This function is used to send an email for the update on new seminar available.
+* This is being called when the there's a new created seminar available. <br>
+* Last Updated Date: December 20, 2024 <br>
+* @function
+* @param {object} req - request
+* @param {object} res - response
+* @author Cesar
+*/
+const sendEmailNewSeminar = async (users_data, seminar) => {
+    try {
+        /* Email Content */
+        const subject = 'New Available Seminar';
+        const text = (user) => `
+            Dear ${user.firstName} ${user.lastName},
+            We are excited to announce a new seminar titled ${seminar.title} that will be available on ${formatToLocaleDate(seminar.date)} at ${seminar.timeFrame.from} - ${seminar.timeFrame.to}.
+            Below are the details for your reference:
+            
+            Topic: ${seminar.title}
+            Details: ${seminar.description}
+            Date: ${seminar.date}
+            Time: ${seminar.timeFrame.from} - ${seminar.timeFrame.to}
+            Venue: ${seminar.venue}
+            Speaker: ${seminar.speaker.name}
+
+            Please feel free to forward this information to anyone who may be interested in attending.
+            If you have any questions or need assistance, don't hesitate to reach out.
+
+            Best regards,
+            Admin - Seminar Reservation System
+        `;
+        const html = (user) => `
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9f9f9; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;">
+                    <p style="font-size: 16px; font-weight: bold; margin-bottom: 20px;">Dear ${user.firstName} ${user.lastName},</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">We are excited to announce a new seminar titled <b>${seminar.title}</b>!</p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">
+                        It will be available on <b>${seminar.date.toLocaleDateString()}</b> at <b>${seminar.timeFrame.from}</b> - <b>${seminar.timeFrame.to}</b>.
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">Below are the details for your reference:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Topic:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.title}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Details:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.description}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Date:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.date.toLocaleDateString()}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Time:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.timeFrame.from} - ${seminar.timeFrame.to}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Venue:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.venue}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 14px; font-weight: bold; padding: 8px; border-bottom: 1px solid #ddd;">Speaker:</td>
+                            <td style="font-size: 14px; padding: 8px; border-bottom: 1px solid #ddd;">${seminar.speaker.name}</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 14px; margin-bottom: 20px;">
+                        Please feel free to forward this information to anyone who may be interested in attending.
+                    </p>
+                    <p style="font-size: 14px; margin-bottom: 20px;">
+                        If you have any questions or need assistance, don't hesitate to reach out to us at
+                        <a href="mailto:seminar.reservation.system@gmail.com" style="color: #007bff; text-decoration: none;">seminar.reservation.system@gmail.com</a>.
+                    </p>
+                    <p style="font-size: 14px; font-weight: bold;">Best regards,</p>
+                    <p style="font-size: 14px;">Admin - Seminar Reservation System</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        /* Iterate over users_data to send emails to all users */
+        for (const user of users_data) {
+            const to = user.email;
+
+            /* Use sendEmail for sending email */
+            await sendEmail(to, subject, text(user), html(user));
+        }
+    } catch (error) {
+        throw new Error('Error sending email for the available seminar', error.message);
+    }
+}
+
 export {
     sendEmailBookingReservation, 
     sendEmailConfirmedReservation, 
     sendEmailRejectedReservation,
     sendEmailAccountRecovery,
+    sendEmailNewSeminar,
 };

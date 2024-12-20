@@ -1,7 +1,9 @@
 import Seminar from '../models/Seminar.js';
+import User from '../models/User.js';
 import cloudinary from 'cloudinary';
 import { validationResult } from "express-validator";
 import { paginationAndSorting } from '../helpers/globalHelper.js';
+import { sendEmailNewSeminar } from '../helpers/emailTemplate.js';
 
 /**
 * DOCU: This function is used to fetch all seminars. <br>
@@ -64,7 +66,7 @@ const getSeminars = async (req, res) => {
 /**
 * DOCU: This function is used to create a seminar. <br>
 * This is being called when admin wants to create a seminar. <br>
-* Last Updated Date: December 17, 2024 <br>
+* Last Updated Date: December 20, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -97,8 +99,29 @@ const createSeminar = async (req, res) => {
             /* Assign and save to seminar the uploaded image URL to the speaker's image field */
             seminar.speaker.image = upload_result.url; 
         }
-        
-        await seminar.save();
+
+        /* Save the new seminar created to DB */
+        const new_seminar = await seminar.save();
+
+        /* Check if new_seminar is created and exists */
+        if(new_seminar){
+            /* Query to Users db to get all users, excluding password */
+            const users = await User.find().select('-password');
+
+            /* Check if the user emails not found found */
+            if (!users) return res.status(404).json({ message: 'User not found' });
+            
+            const users_data = [];
+            /* Loop through users to get only the users who's role is 'user' and add it to users_data array */
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].role === 'user') {
+                    users_data.push(users[i]);
+                }
+            }
+
+            /* Call sendEmailNewSeminar for sending email for new seminar created */
+            await sendEmailNewSeminar(users_data, new_seminar);
+        }
 
         res.status(201).json({ message: 'Seminar created successfully', seminar });
     } catch (error) {

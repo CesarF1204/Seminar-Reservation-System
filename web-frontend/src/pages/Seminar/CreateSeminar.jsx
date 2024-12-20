@@ -8,6 +8,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import { convertToAmPm } from '../../helpers/globalHelpers';
 
 const CreateSeminar = () => {
+    const [ isCreating, setIsCreating ] = useState(false);
+
     /* Navigate to different routes */
     const navigate = useNavigate();
     /* Extract showToast function from context for displaying notifications */
@@ -31,6 +33,8 @@ const CreateSeminar = () => {
         onError: (error) => {
             /* Show error toast  */
             showToast({ message: error.message, type: "ERROR"});
+            /* Set isCreating state to false to indicate the form is not submitted */
+            setIsCreating(false);
         }
     })
 
@@ -50,6 +54,9 @@ const CreateSeminar = () => {
         formData.append("speaker.linkedin", data.speaker.linkedin || "");
         formData.append("fee", data.fee);
         formData.append("slotsAvailable", data.slotsAvailable);
+
+        /* Set isCreating state to true to indicate the form is being submitted */
+        setIsCreating(true);
 
         mutation.mutate(formData);
     })
@@ -185,8 +192,13 @@ const CreateSeminar = () => {
                     <span className="text-red-500">{errors.slotsAvailable.message}</span>
                 )}
 
-                <button type="submit" className="py-2 px-4 mt-4 rounded bg-green-500 text-white hover:bg-green-600">
-                    Create Seminar
+                <button 
+                    type="submit" 
+                    className={`px-4 py-2 mt-4 bg-green-500 text-white rounded-md hover:bg-green-600 transition 
+                            ${isCreating ? 'cursor-not-allowed' : ''}`}
+                    disabled={isCreating ? true : false}
+                >
+                    {isCreating ? 'Creating Seminar...' : 'Create Seminar'}
                 </button>
             </form>
             <button className="flex items-center px-4 py-2 mt-4 mb-4 bg-gray-700 text-white disabled:bg-gray-400" onClick={() => navigate(-1)}>
