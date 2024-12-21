@@ -65,7 +65,7 @@ const AppNavbar = ({ user }) => {
     }, [isNavbarCollapsed]);
 
     return (
-        <nav className="bg-gray-900 p-4 shadow-md sticky top-0 z-10">
+        <nav className="bg-gray-900 p-4 shadow-md sticky top-0 z-10 h-20">
             <div className="container mx-auto flex justify-between items-center">
                 {/* Left Section: Header and Links */}
                 <div className="flex items-center space-x-4">

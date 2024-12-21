@@ -49,7 +49,7 @@ const MiniMap = ({ seminar }) => {
             <MapContainer
                 center={location}
                 zoom={18}
-                style={{ height: '300px', width: '400px' }}
+                style={{ height: '300px', width: '400px', 'z-index': 0 }}
             >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
