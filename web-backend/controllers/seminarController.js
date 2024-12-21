@@ -3,7 +3,7 @@ import User from '../models/User.js';
 import Booking from '../models/Booking.js';
 import cloudinary from 'cloudinary';
 import { validationResult } from "express-validator";
-import { paginationAndSorting } from '../helpers/globalHelper.js';
+import { getUploadedImageUrl, paginationAndSorting } from '../helpers/globalHelper.js';
 import { sendEmailNewSeminar, sendEmailUpdatedSeminar } from '../helpers/emailTemplate.js';
 import mongoose from 'mongoose';
 
@@ -68,7 +68,7 @@ const getSeminars = async (req, res) => {
 /**
 * DOCU: This function is used to create a seminar. <br>
 * This is being called when admin wants to create a seminar. <br>
-* Last Updated Date: December 20, 2024 <br>
+* Last Updated Date: December 21, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -85,21 +85,13 @@ const createSeminar = async (req, res) => {
         /* Create a new seminar using the data from the request body */
         const seminar = await Seminar.create(req.body);
         
-        /* Get the uploaded image file from the request */
-        const image_file = req?.file;
-
-        if(image_file){
-            /* Convert the image file buffer into a base64 encoded string */
-            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
-            
-            /* Construct the data URI for the image */
-            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
-
-            /* Upload the image to Cloudinary and get the image URL */
-            const upload_result = await cloudinary.v2.uploader.upload(dataURI);
+        /* Check if there is an uploaded image file */
+        if(req.file){
+            /* Call getUploadedImageUrl helper to get the image url uploaded */
+            const image_url = await getUploadedImageUrl(req.file);
 
             /* Assign and save to seminar the uploaded image URL to the speaker's image field */
-            seminar.speaker.image = upload_result.url; 
+            seminar.speaker.image = image_url; 
         }
 
         /* Save the new seminar created to DB */
@@ -134,7 +126,7 @@ const createSeminar = async (req, res) => {
 /**
 * DOCU: This function is used to update a seminar. <br>
 * This is being called when admin wants to update a seminar. <br>
-* Last Updated Date: December 20, 2024 <br>
+* Last Updated Date: December 21, 2024 <br>
 * @function
 * @param {object} req - request
 * @param {object} res - response
@@ -151,21 +143,13 @@ const updateSeminar = async (req, res) => {
         /* Get the updated seminar details from the request */
         const seminar_to_update = req.body;
 
-        /* Get the updated image file from the request */
-        const image_file = req.file;
-
-        if(image_file){
-            /* Convert the image file buffer into a base64 encoded string */
-            const convert_to_base64 = Buffer.from(image_file.buffer).toString("base64");
-            
-            /* Construct the data URI for the image */
-            let dataURI = `data:${image_file.mimetype};base64,${convert_to_base64}`;
-
-            /* Upload the image to Cloudinary and get the image URL */
-            const upload_result = await cloudinary.v2.uploader.upload(dataURI);
+        /* Check if there is an uploaded image file */
+        if(req.file){
+            /* Call getUploadedImageUrl helper to get the image url uploaded */
+            const image_url = await getUploadedImageUrl(req.file);
 
             /* Assign and save to seminar_to_update the updated image URL to the speaker's image field */
-            seminar_to_update['speaker.image'] = upload_result.url;
+            seminar_to_update['speaker.image'] = image_url;
         }
 
         /* Update the seminar by ID with the new data from the request body */
@@ -269,48 +253,10 @@ const getSeminarDetails = async (req, res) => {
     }
 };
 
-/**
-* DOCU: This function is used to get the coordinates (longtitude, latitude) of the given address. <br>
-* This is being called on seminar details, getting the coordinates to use on the minimap. <br>
-* Last Updated Date: December 21, 2024 <br>
-* @function
-* @param {object} req - request
-* @param {object} res - response
-* @author Cesar
-*/
-const getCoordinates = async (req, res) => {
-    /* Get address from query string */
-    const { address } = req.query;
-    /* Construct the URL to query the Nominatim API with the provided address */
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
-
-    try{
-        /* Make a request to the Nominatim API */
-        const response = await fetch(url);
-
-        const data = await response.json();
-
-        /* Check if the response contains at least one result */
-        if(data.length > 0){
-            /* Extract latitude and longitude from the first result */
-            const { lat, lon } = data[0];
-
-            res.json({ lat: parseFloat(lat), lon: parseFloat(lon) });
-        }
-        else{
-            res.status(404).json({ error: 'No results found' });
-        }
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Error fetching coordinates' });
-    }
-}
-
 export { 
     getSeminars, 
     createSeminar, 
     updateSeminar, 
     deleteSeminar, 
-    getSeminarDetails,
-    getCoordinates,
+    getSeminarDetails
 };

@@ -4,11 +4,11 @@ import {
     getSeminarDetails, 
     createSeminar, 
     updateSeminar, 
-    deleteSeminar,
-    getCoordinates
+    deleteSeminar
 } from '../controllers/seminarController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import adminMiddleware from '../middleware/adminMiddleware.js';
+import getCoordinates from '../utils/getCoordinate.js';
 import multer from 'multer';
 import { check } from "express-validator";
 
