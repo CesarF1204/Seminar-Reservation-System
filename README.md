@@ -117,6 +117,8 @@ npm install
 npm run dev
 ```
 ### You may also test it at:
-https://seminar-reservation-system.netlify.app/
+Link: https://seminar-reservation-system.netlify.app/
+
+Test Accounts: https://shorturl.at/DJIfj
 
 Enjoy working with the Seminar Reservation System!
