@@ -119,6 +119,6 @@ npm run dev
 ### You may also test it at:
 Link: https://seminar-reservation-system.netlify.app/
 
-Test Accounts: https://shorturl.at/DJIfj
+Test Accounts: https://docs.google.com/spreadsheets/d/1-7sfF9H-6WsaWbk11t81rwBKeaTajoHu_s3GImeW54Q/edit?gid=474235092#gid=474235092
 
 Enjoy working with the Seminar Reservation System!
